@@ -1,0 +1,20 @@
+package com.example.gkys.model;
+import java.util.List;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "room")
+public class Room {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    private String name;
+
+    @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL)
+    private List<RoomLvl> roomLvl;
+
+    @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL)
+    private List<UserRoom> userRoom;
+}

@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-GkysApplication<gkys>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.gkys.GkysApplication",
+            "projectName": "gkys",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
