@@ -2,6 +2,7 @@ package com.example.walkiepaws
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Message
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -10,11 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class MainActivity : AppCompatActivity() {
+class RegistrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_registration)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -23,33 +24,35 @@ class MainActivity : AppCompatActivity() {
 
         val writeLogin: EditText = findViewById(R.id.write_login)
         val writePassword: EditText = findViewById(R.id.write_pass)
+        val buttonRegistration: Button = findViewById(R.id.user_registration)
+        val buttonBack: Button = findViewById(R.id.user_back)
 
-        val buttonLog: Button = findViewById(R.id.user_login)
-        val buttonReg: Button = findViewById(R.id.user_registration)
-
-        buttonLog.setOnClickListener{
+        buttonRegistration.setOnClickListener {
             val login = writeLogin.text.toString().trim()
             val password = writePassword.text.toString().trim()
 
             if(login.isBlank() || password.isBlank())
                 ShowText("Не все поля заполнены!")
             else {
-                ShowText("Вы успешно вошли!")
+                ShowText("Регистрация прошла успешно!")
+                navigateToMain()
+
             }
+
         }
 
-        buttonReg.setOnClickListener {
-            navigateToRegistration()
+        buttonBack.setOnClickListener {
+            navigateToMain()
         }
 
     }
 
-    private fun ShowText(message: String) {
+     fun ShowText(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun navigateToRegistration() {
-        val intent = Intent(this, RegistrationActivity::class.java)
+    private fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 }
