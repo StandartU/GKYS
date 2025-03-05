@@ -1,33 +1,66 @@
 package com.example.gkys.model;
 
-import java.util.List;
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.Collections;
 
+import org.springframework.security.core.GrantedAuthority;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
+    @Column(unique = true, nullable = false)
     private String login;
+
+    @Column(nullable = false)
     private String password;
+
     private int cash;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private List<Steps> steps;
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private List<UserState> userState;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
+    }
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private List<UserItem> userItem;
+    @Override
+    public String getUsername() {
+        return login;
+    }
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private List<UserRoom> userRoom;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-    // Getters and Setters
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

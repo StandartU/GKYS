@@ -1,8 +1,12 @@
 package com.example.gkys.model;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "pet_item")
+@Setter
+@Getter
 public class PetItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

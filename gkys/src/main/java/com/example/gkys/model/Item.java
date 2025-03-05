@@ -1,11 +1,15 @@
 package com.example.gkys.model;
 import java.util.List;
+import lombok.Setter;
+import lombok.Getter;
 
 import jakarta.persistence.*;
 
 
 @Entity
 @Table(name = "item")
+@Setter
+@Getter
 public class Item {
 
     @Id

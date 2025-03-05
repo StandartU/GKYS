@@ -23,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.7'
     implementation 'org.projectlombok:lombok:1.18.30'
+    implementation 'com.auth0:java-jwt:4.4.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     // JWT (разделяем на API, Impl и Jackson для полной работы)

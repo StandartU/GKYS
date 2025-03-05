@@ -1,9 +1,13 @@
 package com.example.gkys.model;
 import java.util.Date;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "steps")
+@Setter
+@Getter
 public class Steps {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
