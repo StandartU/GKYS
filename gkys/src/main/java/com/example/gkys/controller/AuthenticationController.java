@@ -6,7 +6,6 @@ import com.example.gkys.dto.RegisterDTO;
 import com.example.gkys.model.User;
 import com.example.gkys.repository.UserRepository;
 import com.example.gkys.security.TokenService;
-import com.example.gkys.security.CustomAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
