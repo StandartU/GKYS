@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
                 ShowText("Не все поля заполнены!")
             else {
                 ShowText("Вы успешно вошли!")
+                navigateToMainGameScreen()
             }
         }
 
@@ -50,6 +51,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToRegistration() {
         val intent = Intent(this, RegistrationActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToMainGameScreen() {
+        val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 }

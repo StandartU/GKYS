@@ -7,4 +7,9 @@
     <string name="write_login">Введите логин</string>
     <string name="write_password">Введите пароль</string>
     <string name="back">Назад</string>
+    <string name="button_game">Кнопка "Играть"</string>
+    <string name="button_customize">Назад "Кастомизация"</string>
+    <string name="button_shop">Назад "Магазин"</string>
+    <string name="stat">Статистика</string>
+    <string name="settings">НАСТРОЙКИ</string>
 </resources>
