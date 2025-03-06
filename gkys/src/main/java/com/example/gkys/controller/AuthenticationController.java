@@ -3,7 +3,7 @@ package com.example.gkys.controller;
 import com.example.gkys.dto.AuthenticationDTO;
 import com.example.gkys.dto.LoginResponseDTO;
 import com.example.gkys.dto.RegisterDTO;
-import com.example.gkys.model.User;
+import com.example.gkys.model.UserModel;
 import com.example.gkys.repository.UserRepository;
 import com.example.gkys.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody AuthenticationDTO data) throws InterruptedException {
         var credentials = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(credentials);
-        var token = tokenService.generateToken((User) auth.getPrincipal());
+        var token = tokenService.generateToken((UserModel) auth.getPrincipal());
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
@@ -40,7 +40,7 @@ public class AuthenticationController {
         if (userRepository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = passwordEncoder.encode(data.password());
-        User user = new User(data.login(), encryptedPassword);
+        UserModel user = new UserModel(data.login(), encryptedPassword);
         userRepository.save(user);
 
         return ResponseEntity.ok().build();

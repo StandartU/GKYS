@@ -8,14 +8,14 @@ import lombok.Setter;
 @Table(name = "steps")
 @Setter
 @Getter
-public class Steps {
+public class StepsModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private UserModel userId;
     
     @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private Date date;

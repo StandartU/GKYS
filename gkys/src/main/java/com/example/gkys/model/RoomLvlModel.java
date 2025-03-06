@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name = "room_lvl")
 @Setter
 @Getter
-public class RoomLvl {
+public class RoomLvlModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class RoomLvl {
     @ManyToOne
     @JoinColumn(name = "room_id")
     
-    private Room roomId;
+    private RoomModel roomId;
 
     private int lvl;
 

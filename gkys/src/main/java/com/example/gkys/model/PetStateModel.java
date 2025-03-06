@@ -7,14 +7,14 @@ import lombok.Setter;
 @Table(name = "pet_state")
 @Setter
 @Getter
-public class PetState {
+public class PetStateModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    private Pet petId;
+    private PetModel petId;
 
     private int lvl;
 

@@ -1,6 +1,8 @@
 package com.example.gkys.security;
 
-import com.example.gkys.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,22 +20,25 @@ import java.util.Collections;
 @Component
 public class CustomAuthenticationManager implements AuthenticationManager {
 
-    @Autowired
-    private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationManager.class);
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String login = authentication.getName();
         String password = authentication.getCredentials().toString();
-
-        UserDetails user = userRepository.findByLogin(login);
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+        
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(login);
+        logger.info(userDetails.getUsername() + userDetails.getPassword());
+        if (userDetails == null || !passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid login or password");
         }
 
-        return new UsernamePasswordAuthenticationToken(user, password, Collections.emptyList());
+        return new UsernamePasswordAuthenticationToken(userDetails, password, Collections.emptyList());
     }
 }

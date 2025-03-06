@@ -8,18 +8,18 @@ import lombok.Setter;
 @Table(name = "user_state")
 @Setter
 @Getter
-public class UserState {
+public class UserStateModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private UserModel userId;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
-    private State stateId;
+    private StateModel stateId;
 
     private int value;
 }

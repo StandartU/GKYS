@@ -7,18 +7,18 @@ import lombok.Setter;
 @Table(name = "pet_item")
 @Setter
 @Getter
-public class PetItem {
+public class PetItemModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    private Pet petId;
+    private PetModel petId;
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    private Item itemId;
+    private ItemModel itemId;
 
     private String template;
 

@@ -7,18 +7,18 @@ import lombok.Setter;
 @Table(name = "user_room")
 @Setter
 @Getter
-public class UserRoom {
+public class UserRoomModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private UserModel userId;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
-    private Room roomId;
+    private RoomModel roomId;
 
     private int lvl;
 

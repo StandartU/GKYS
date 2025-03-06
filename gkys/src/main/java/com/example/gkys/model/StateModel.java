@@ -8,7 +8,7 @@ import lombok.Setter;
 @Table(name = "state")
 @Setter
 @Getter
-public class State {
+public class StateModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -16,10 +16,10 @@ public class State {
     private String name;
 
     @OneToMany(mappedBy = "stateId", cascade = CascadeType.ALL)
-    private List<Market> market;
+    private List<MarketModel> market;
 
     @OneToMany(mappedBy = "stateId", cascade = CascadeType.ALL)
-    private List<UserState> userState;
+    private List<UserStateModel> userState;
 
     // Getters and Setters
 }

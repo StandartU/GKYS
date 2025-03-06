@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @Table(name = "item")
 @Setter
 @Getter
-public class Item {
+public class ItemModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +21,8 @@ public class Item {
     private int price;
 
     @OneToMany(mappedBy = "itemId", cascade = CascadeType.ALL)
-    private List<PetItem> petItem;
+    private List<PetItemModel> petItem;
 
     @OneToMany(mappedBy = "itemId", cascade = CascadeType.ALL)
-    private List<UserItem> userItem;
+    private List<UserItemModel> userItem;
 }

@@ -8,14 +8,14 @@ import lombok.Setter;
 @Table(name = "market")
 @Setter
 @Getter
-public class Market {
+public class MarketModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
-    private State stateId;
+    private StateModel stateId;
 
     private String name;
 
