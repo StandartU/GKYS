@@ -5,10 +5,8 @@ import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.gkys.model.UserModel;
-
+import com.example.gkys.model.StateModel;
 
 @Repository
-public interface UserRepository extends CrudRepository<UserModel, Long> {
-    Optional<UserModel> findByLogin(String login);
+public interface StateRepository extends CrudRepository<StateModel, Integer> {
 }

@@ -11,15 +11,15 @@ import lombok.Setter;
 public class UserStateModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserModel userId;
+    private UserModel user;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
-    private StateModel stateId;
+    private StateModel state;
 
     private int value;
 }

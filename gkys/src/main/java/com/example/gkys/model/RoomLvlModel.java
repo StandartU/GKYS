@@ -1,12 +1,14 @@
 package com.example.gkys.model;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Entity
-
 @Table(name = "room_lvl")
 @Setter
 @Getter
@@ -18,17 +20,11 @@ public class RoomLvlModel {
 
     @ManyToOne
     @JoinColumn(name = "room_id")
-    
-    private RoomModel roomId;
+    private RoomModel room;
 
     private int lvl;
 
-    @ElementCollection
-    @CollectionTable(name = "templates", joinColumns = @JoinColumn(name = "room_id"))
-    @Column(name = "template")
     private List<String> templates;
 
-
-    // Getters and Setters
-
+    private int price;
 }

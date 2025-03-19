@@ -14,13 +14,19 @@ public class UserItemModel {
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    private ItemModel itemId;
+    private ItemModel item;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserModel userId;
+    private UserModel user;
 
     private boolean active;
+
+    public UserItemModel(ItemModel itemModel, UserModel userModel) {
+        this.item = itemModel;
+        this.user = userModel;
+        this.active = false;
+    }
 
     // Getters and Setters
 }

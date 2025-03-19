@@ -1,5 +1,7 @@
 package com.example.gkys.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,4 +30,15 @@ public class UserModel {
         this.login = login;
         this.password = password;
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<StepsModel> steps;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserItemModel> userItems;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserRoomModel> userRooms;
+
+    
 }

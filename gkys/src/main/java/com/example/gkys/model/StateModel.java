@@ -15,11 +15,11 @@ public class StateModel {
 
     private String name;
 
-    @OneToMany(mappedBy = "stateId", cascade = CascadeType.ALL)
-    private List<MarketModel> market;
+    @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
+    private List<MarketModel> markets;
 
-    @OneToMany(mappedBy = "stateId", cascade = CascadeType.ALL)
-    private List<UserStateModel> userState;
+    @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
+    private List<UserStateModel> userStates;
 
     // Getters and Setters
 }

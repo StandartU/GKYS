@@ -12,11 +12,11 @@ public class PetStateModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "pet_id")
-    private PetModel petId;
-
     private int lvl;
 
     private String template;
+
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    private PetModel pet;
 }

@@ -20,9 +20,9 @@ public class ItemModel {
 
     private int price;
 
-    @OneToMany(mappedBy = "itemId", cascade = CascadeType.ALL)
-    private List<PetItemModel> petItem;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<PetItemModel> petItems;
 
-    @OneToMany(mappedBy = "itemId", cascade = CascadeType.ALL)
-    private List<UserItemModel> userItem;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<UserItemModel> userItems;
 }

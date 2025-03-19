@@ -14,11 +14,11 @@ public class PetItemModel {
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    private PetModel petId;
+    private PetModel pet;
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    private ItemModel itemId;
+    private ItemModel item;
 
     private String template;
 

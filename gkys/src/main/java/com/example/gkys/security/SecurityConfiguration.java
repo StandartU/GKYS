@@ -27,15 +27,15 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/gkys/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/gkys/auth/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(CustomAuthenticationManager customAuthenticationManager) {
+    public AuthenticationManager authenticationManager(@Autowired CustomAuthenticationManager customAuthenticationManager) {
         return customAuthenticationManager;
     }
 

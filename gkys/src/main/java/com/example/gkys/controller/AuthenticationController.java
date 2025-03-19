@@ -1,38 +1,37 @@
 package com.example.gkys.controller;
 
-import com.example.gkys.dto.AuthenticationDTO;
-import com.example.gkys.dto.LoginResponseDTO;
-import com.example.gkys.dto.RegisterDTO;
 import com.example.gkys.model.UserModel;
+import com.example.gkys.model.dto.request.AuthenticationDTO;
+import com.example.gkys.model.dto.request.RegisterDTO;
+import com.example.gkys.model.dto.responce.LoginDTO;
 import com.example.gkys.repository.UserRepository;
 import com.example.gkys.security.TokenService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/auth", produces = {"application/json"})
+@RequestMapping(value = "/gkys/auth", produces = {"application/json"})
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private TokenService tokenService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody AuthenticationDTO data) throws InterruptedException {
-        var credentials = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        var auth = this.authenticationManager.authenticate(credentials);
-        var token = tokenService.generateToken((UserModel) auth.getPrincipal());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+    public ResponseEntity<LoginDTO> login(@RequestBody AuthenticationDTO data) {
+        var token = tokenService.generateToken(data.login());
+        return ResponseEntity.ok(new LoginDTO(token));
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)

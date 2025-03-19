@@ -16,9 +16,9 @@ public class RoomModel {
 
     private String name;
 
-    @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL)
-    private List<RoomLvlModel> roomLvl;
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<RoomLvlModel> roomLvls;
 
-    @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL)
-    private List<UserRoomModel> userRoom;
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<UserRoomModel> userRooms;
 }

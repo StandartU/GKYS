@@ -14,13 +14,11 @@ public class UserRoomModel {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserModel userId;
+    private UserModel user;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
-    private RoomModel roomId;
+    private RoomModel room;
 
     private int lvl;
-
-    // Getters and Setters
 }

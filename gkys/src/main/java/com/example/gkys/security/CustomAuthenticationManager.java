@@ -34,10 +34,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
         String password = authentication.getCredentials().toString();
         
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(login);
+        logger.info(userDetails.getUsername());
+        try { Thread.sleep(10000);} catch (Exception e) {}
         logger.info(userDetails.getUsername() + userDetails.getPassword());
         if (userDetails == null || !passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid login or password");
         }
+        logger.info(new UsernamePasswordAuthenticationToken(userDetails, password, Collections.emptyList()).getName());
 
         return new UsernamePasswordAuthenticationToken(userDetails, password, Collections.emptyList());
     }

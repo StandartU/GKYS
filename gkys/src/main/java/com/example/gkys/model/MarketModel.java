@@ -15,7 +15,7 @@ public class MarketModel {
 
     @ManyToOne
     @JoinColumn(name = "state_id")
-    private StateModel stateId;
+    private StateModel state;
 
     private String name;
 

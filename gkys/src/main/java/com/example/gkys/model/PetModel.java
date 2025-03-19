@@ -10,17 +10,15 @@ import lombok.Setter;
 @Setter
 @Getter
 public class PetModel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(mappedBy = "petId", cascade = CascadeType.ALL)
-    private List<PetStateModel> petState;
-
-    @OneToMany(mappedBy = "petId", cascade = CascadeType.ALL)
-    private List<PetItemModel> petItem;
-
     private String name;
 
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+private List<PetStateModel> petStates;
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+    private List<PetItemModel> petItems;
 }

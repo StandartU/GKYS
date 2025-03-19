@@ -1,5 +1,7 @@
 package com.example.gkys.security;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +24,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     @SuppressWarnings("unused")
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserModel user = userRepository.findByLogin(username);
+        Optional<UserModel> userOptional = userRepository.findByLogin(username);
+
+        if (!userOptional.isPresent()) {
+            throw new RuntimeException("Юзера не существует");
+        }
+
+        UserModel user = userOptional.get();
 
         logger.info(user.getLogin() + user.getPassword());
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-
-        return new CustomUserDetailsModel(user.getLogin(), user.getPassword());
+        return new CustomUserDetailsModel(user);
     }
 }

@@ -13,9 +13,9 @@ public class CustomUserDetailsModel extends UserModel implements UserDetails{
     private String login;
     private String password;
 
-    public CustomUserDetailsModel (String login, String password) {
-        this.login = login;
-        this.password = password;
+    public CustomUserDetailsModel(UserModel userModel) {
+        this.login = userModel.getLogin();
+        this.password = userModel.getPassword();
     }
 
     @Override
