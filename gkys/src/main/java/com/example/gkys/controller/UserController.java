@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.gkys.model.UserModel;
-import com.example.gkys.model.UserRoomModel;
 import com.example.gkys.model.UserStateModel;
 import com.example.gkys.model.dto.request.RoomLvlDTO;
 import com.example.gkys.model.dto.request.StepCountDTO;
 import com.example.gkys.model.dto.request.UserAddCashDTO;
 import com.example.gkys.model.dto.responce.UserRoomDTO;
 import com.example.gkys.model.dto.responce.UserStateDTO;
-import com.example.gkys.repository.UserRoomRepository;
 import com.example.gkys.security.TokenService;
 import com.example.gkys.service.StepsService;
 import com.example.gkys.service.UserRoomService;

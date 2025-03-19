@@ -1,7 +1,6 @@
 package com.example.gkys.service;
 
 import java.util.Optional;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import com.example.gkys.model.MarketModel;
 import com.example.gkys.model.StateModel;
 import com.example.gkys.model.UserModel;
 import com.example.gkys.model.UserStateModel;
-import com.example.gkys.repository.StateRepository;
 import com.example.gkys.repository.UserStateRepository;
 
 import jakarta.transaction.Transactional;
@@ -18,17 +16,8 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class UserStateService {
-
-    private final UserService userService;
-
-    private final StateRepository stateRepository;
     @Autowired
     private UserStateRepository userStateRepository;
-
-    UserStateService(StateRepository stateRepository, UserService userService) {
-        this.stateRepository = stateRepository;
-        this.userService = userService;
-    }
 
     public void setStateUser(UserModel userModel, StateModel stateModel, MarketModel marketModel) {
         Optional<UserStateModel> userStateOptional = userStateRepository.findByUserAndState(userModel, stateModel);

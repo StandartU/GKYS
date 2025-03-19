@@ -3,7 +3,6 @@ package com.example.gkys.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,11 +17,8 @@ import com.example.gkys.model.RoomLvlModel;
 import com.example.gkys.model.UserModel;
 import com.example.gkys.model.dto.request.BuyItemDTO;
 import com.example.gkys.model.dto.request.BuyRoomLvlDTO;
-import com.example.gkys.model.dto.request.ItemActive;
 import com.example.gkys.model.dto.request.MarketBuyDTO;
 import com.example.gkys.model.dto.responce.MarketAllDTO;
-import com.example.gkys.model.dto.responce.UserItemDTO;
-import com.example.gkys.repository.UserItemRepository;
 import com.example.gkys.security.TokenService;
 import com.example.gkys.service.MarketService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 @RequestMapping(value = "/gkys/market", produces = {"application/json"})
 public class MarketController {
-
-    @Autowired
-    private UserItemRepository userItemRepository;
 
     @Autowired
     private TokenService tokenService;

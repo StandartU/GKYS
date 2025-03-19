@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.gkys.controller.AuthenticationController;
 import com.example.gkys.model.RoomLvlModel;
 import com.example.gkys.model.RoomModel;
 import com.example.gkys.model.UserModel;

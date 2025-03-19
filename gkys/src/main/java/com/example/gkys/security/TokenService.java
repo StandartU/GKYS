@@ -7,8 +7,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.gkys.model.UserModel;
 import com.example.gkys.repository.UserRepository;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
