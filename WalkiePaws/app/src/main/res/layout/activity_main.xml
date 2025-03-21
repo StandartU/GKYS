@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -9,86 +8,73 @@
     android:background="#c4e1ed"
     tools:context=".MainActivity">
 
-
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="271dp"
-        android:layout_height="70dp"
+        android:id="@+id/textNameGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="68dp"
+        android:layout_marginStart="70dp"
         android:layout_marginTop="100dp"
-        android:layout_marginEnd="71dp"
+        android:layout_marginEnd="70dp"
         android:text="@string/app_name"
         android:textColor="@color/main_color_auth"
         android:textSize="50sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textAuth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginStart="102dp"
+        android:layout_gravity="center"
         android:layout_marginTop="9dp"
-        android:layout_marginEnd="102dp"
-
         android:text="@string/auth"
         android:textColor="@color/main_color_auth"
-        android:textSize="33sp" />
+        android:textSize="35sp" />
 
     <EditText
-        android:id="@+id/write_login"
+        android:id="@+id/writeLogin"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="86dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginEnd="86dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="90dp"
         android:importantForAutofill="no"
         android:ems="10"
+        android:textColor="@color/black"
         android:hint="@string/write_login"
         android:inputType="text"
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/write_pass"
+        android:id="@+id/writePassword"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="86dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
         android:layout_marginTop="25dp"
-        android:layout_marginEnd="86dp"
-        android:ems="10"
         android:importantForAutofill="no"
+        android:ems="10"
+        android:textColor="@color/black"
         android:hint="@string/write_password"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/user_login"
-        android:gravity="center"
+        android:id="@+id/buttonLogin"
         android:layout_width="280dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="65dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="180dp"
         android:backgroundTint="@color/main_color_auth"
         android:text="@string/login"
-        android:textSize="19sp" />
+        android:textSize="20sp" />
 
     <Button
-        android:id="@+id/user_registration"
-        android:gravity="center"
-        android:layout_width="210dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="104dp"
-        android:layout_marginTop="65dp"
-        android:layout_marginEnd="104dp"
+        android:id="@+id/buttonRegistration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
         android:backgroundTint="@color/main_color_auth"
         android:text="@string/registration"
-        android:textSize="16sp" />
-
+        android:textSize="15sp" />
 
 </LinearLayout>

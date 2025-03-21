@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.walkiepaws.R
 
 class LivingRoomFragment : Fragment() {
     override fun onCreateView(
@@ -12,6 +13,6 @@ class LivingRoomFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.activity_main_game_screen, container, false)
+        return inflater.inflate(R.layout.activity_living_game_screen, container, false)
     }
 }

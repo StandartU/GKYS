@@ -5,21 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bedroom_1"
-    android:scaleType="centerCrop"
+    android:background="@drawable/living_1"
     android:orientation="vertical"
-    tools:context=".BedroomGameScreen">
+    tools:context=".MainGameScreen">
 
 
-    <ImageView
-        android:id="@+id/imageTable"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/blanket_1" />
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/button_sleep"
+        android:id="@+id/button_game"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
@@ -28,9 +21,8 @@
         android:layout_toEndOf="@+id/button_shop"
         android:background="@drawable/image_border"
         android:scaleType="centerInside"
-        android:src="@drawable/icon_sleep"
+        android:src="@drawable/icon_game"
         app:shapeAppearanceOverlay="@style/Circular" />
-
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_shop"
@@ -57,8 +49,6 @@
         android:scaleType="centerInside"
         android:src="@drawable/icon_customization"
         app:shapeAppearanceOverlay="@style/Circular" />
-
-
 
 
 </RelativeLayout>

@@ -23,7 +23,7 @@
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="45dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="50dp"
         android:layout_toEndOf="@+id/button_shop"
         android:background="@drawable/image_border"
         android:scaleType="centerInside"
@@ -36,7 +36,7 @@
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/image_border"
         android:scaleType="centerInside"
         android:src="@drawable/icon_shop"
@@ -49,139 +49,13 @@
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="45dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="50dp"
         android:layout_toStartOf="@+id/button_shop"
         android:background="@drawable/image_border"
         android:scaleType="centerInside"
         android:src="@drawable/icon_customization"
         app:shapeAppearanceOverlay="@style/Circular" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/button_options"
-        android:layout_width="81dp"
-        android:layout_height="75dp"
-        android:layout_below="@+id/icon_sleep"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/image_border"
-        android:scaleType="centerInside"
-        android:src="@drawable/settings"
-        app:shapeAppearanceOverlay="@style/Circular" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/button_statistic"
-        android:layout_width="160dp"
-        android:layout_height="60dp"
-        android:layout_below="@+id/number_of_steps"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
-        android:background="@drawable/image_border"
-        android:scaleType="centerInside"
-        android:src="@drawable/stat"
-        app:shapeAppearanceOverlay="@style/Circular" />
-
-    <ProgressBar
-        android:id="@+id/happyBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="200dp"
-        android:layout_height="25dp"
-        android:layout_alignStart="@+id/icon_happy"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="25dp"
-        android:max="100"
-        android:progress="100"
-        android:progressDrawable="@drawable/progress_green" />
-
-    <ProgressBar
-        android:id="@+id/hungerBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="200dp"
-        android:layout_height="25dp"
-        android:layout_alignStart="@+id/icon_hunger"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="65dp"
-        android:max="100"
-        android:progress="100"
-        android:progressDrawable="@drawable/progress_green" />
-
-    <ProgressBar
-        android:id="@+id/sleepBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="200dp"
-        android:layout_height="25dp"
-        android:layout_alignStart="@+id/icon_sleep"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="105dp"
-        android:max="100"
-        android:progress="100"
-        android:progressDrawable="@drawable/progress_green" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/icon_happy"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/image_icon"
-        android:scaleType="centerInside"
-        android:src="@drawable/happy"
-        app:shapeAppearanceOverlay="@style/Circular" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/icon_hunger"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/image_icon"
-        android:scaleType="centerInside"
-        android:src="@drawable/hunger"
-        app:shapeAppearanceOverlay="@style/Circular" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/icon_sleep"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="100dp"
-        android:background="@drawable/image_icon"
-        android:scaleType="centerInside"
-        android:src="@drawable/sleep"
-        app:shapeAppearanceOverlay="@style/Circular" />
-
-
-    <TextView
-        android:id="@+id/number_of_steps"
-        android:layout_width="160dp"
-        android:layout_height="40dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="5dp"
-        android:background="@drawable/icon_stat"
-        android:gravity="center"
-        android:text="0"
-        android:textColor="@color/main_color_auth"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:id="@+id/icon_value"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="20dp"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/val" />
 </RelativeLayout>
 

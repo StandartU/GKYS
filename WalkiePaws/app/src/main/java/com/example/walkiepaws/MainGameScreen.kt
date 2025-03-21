@@ -7,8 +7,6 @@ import android.os.Looper
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.imageview.ShapeableImageView
 
@@ -25,9 +23,11 @@ class MainGameScreen : AppCompatActivity() {
             value >= 70 -> {
                 progressBar.progressDrawable = getDrawable(R.drawable.progress_green)
             }
+
             value >= 20 -> {
                 progressBar.progressDrawable = getDrawable(R.drawable.progress_yellow)
             }
+
             else -> {
                 progressBar.progressDrawable = getDrawable(R.drawable.progress_red)
             }
@@ -76,18 +76,12 @@ class MainGameScreen : AppCompatActivity() {
         setContentView(R.layout.activity_main_game_screen)
 
         val viewPager: ViewPager2 = findViewById(R.id.viewPager)
-        val adapter = ScreenSlidePagerAdapter(this)
-        viewPager.adapter = adapter
+        viewPager.adapter = ScreenSlidePagerAdapter(this)
+
+        viewPager.setCurrentItem(1, false)
 
 
 
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         hungerBar = findViewById(R.id.hungerBar)
         sleepBar = findViewById(R.id.sleepBar)
@@ -97,11 +91,6 @@ class MainGameScreen : AppCompatActivity() {
         handler.postDelayed(decreaseSleepRunnable, 500)
         handler.postDelayed(decreaseHappyRunnable, 500)
 
-        val imageView: ShapeableImageView = findViewById(R.id.button_game)
-        imageView.setOnClickListener {
-            val intent = Intent(this, RegistrationActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     override fun onDestroy() {

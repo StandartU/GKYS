@@ -21,11 +21,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val writeLogin: EditText = findViewById(R.id.write_login)
-        val writePassword: EditText = findViewById(R.id.write_pass)
+        val writeLogin: EditText = findViewById(R.id.writeLogin)
+        val writePassword: EditText = findViewById(R.id.writePassword)
 
-        val buttonLog: Button = findViewById(R.id.user_login)
-        val buttonReg: Button = findViewById(R.id.user_registration)
+        val buttonLog: Button = findViewById(R.id.buttonLogin)
+        val buttonReg: Button = findViewById(R.id.buttonRegistration)
 
         buttonLog.setOnClickListener{
             val login = writeLogin.text.toString().trim()

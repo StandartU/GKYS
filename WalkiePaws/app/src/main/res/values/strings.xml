@@ -13,4 +13,6 @@
     <string name="stat">Статистика</string>
     <string name="settings">НАСТРОЙКИ</string>
     <string name="music">Музыка</string>
+    <string name="sound">Звук</string>
+    <string name="current_character">Текущий персонаж</string>
 </resources>
