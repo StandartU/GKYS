@@ -32,9 +32,9 @@ class MainActivity : AppCompatActivity() {
             val password = writePassword.text.toString().trim()
 
             if(login.isBlank() || password.isBlank())
-                ShowText("Не все поля заполнены!")
+                showText("Не все поля заполнены!")
             else {
-                ShowText("Вы успешно вошли!")
+                showText("Вы успешно вошли!")
                 navigateToMainGameScreen()
             }
         }
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun ShowText(message: String) {
+    private fun showText(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainGameScreen() {
-        val intent = Intent(this, SettingsActivity::class.java)
+        val intent = Intent(this, MainGameScreen::class.java)
         startActivity(intent)
     }
 }

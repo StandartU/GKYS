@@ -8,5 +8,5 @@
         android:width="3dp"
         android:color="@color/main_color_auth"/>
     <!-- Фон -->
-    <solid android:color="@color/bg_auth"/>
+    <solid android:color="@color/stat"/>
 </shape>

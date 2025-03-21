@@ -16,8 +16,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")  // Добавляем JitPack
     }
 }
+
 
 rootProject.name = "WalkiePaws"
 include(":app")

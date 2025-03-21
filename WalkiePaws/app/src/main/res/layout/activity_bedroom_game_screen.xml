@@ -5,14 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/living_1"
+    android:background="@drawable/bedroom_1"
+    android:scaleType="centerCrop"
     android:orientation="vertical"
-    tools:context=".MainGameScreen">
+    tools:context=".BedroomGameScreen">
 
 
+    <ImageView
+        android:id="@+id/imageTable"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/blanket_1" />
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/button_game"
+        android:id="@+id/button_sleep"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
@@ -21,8 +28,9 @@
         android:layout_toEndOf="@+id/button_shop"
         android:background="@drawable/image_border"
         android:scaleType="centerInside"
-        android:src="@drawable/icon_game"
+        android:src="@drawable/icon_sleep"
         app:shapeAppearanceOverlay="@style/Circular" />
+
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_shop"
@@ -50,6 +58,7 @@
         android:src="@drawable/icon_customization"
         app:shapeAppearanceOverlay="@style/Circular" />
 
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_options"
         android:layout_width="81dp"
@@ -75,23 +84,6 @@
         android:scaleType="centerInside"
         android:src="@drawable/stat"
         app:shapeAppearanceOverlay="@style/Circular" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/happyBar"
@@ -168,7 +160,6 @@
         android:src="@drawable/sleep"
         app:shapeAppearanceOverlay="@style/Circular" />
 
-
     <TextView
         android:id="@+id/number_of_steps"
         android:layout_width="160dp"
@@ -194,11 +185,6 @@
         android:layout_marginEnd="20dp"
         android:contentDescription="@null"
         app:srcCompat="@drawable/val" />
-
-
-
-
-
 
 </RelativeLayout>
 

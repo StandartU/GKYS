@@ -5,14 +5,20 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/living_1"
+    android:background="@drawable/kitchen_1"
     android:orientation="vertical"
-    tools:context=".MainGameScreen">
+    tools:context=".KitchenGameScreen">
 
+    <ImageView
+        android:id="@+id/imageTable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/kitchen_table_1"
+        android:contentDescription="@null"/>
 
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/button_game"
+        android:id="@+id/button_food"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
@@ -21,7 +27,7 @@
         android:layout_toEndOf="@+id/button_shop"
         android:background="@drawable/image_border"
         android:scaleType="centerInside"
-        android:src="@drawable/icon_game"
+        android:src="@drawable/icon_food"
         app:shapeAppearanceOverlay="@style/Circular" />
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -75,23 +81,6 @@
         android:scaleType="centerInside"
         android:src="@drawable/stat"
         app:shapeAppearanceOverlay="@style/Circular" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/happyBar"
@@ -194,11 +183,5 @@
         android:layout_marginEnd="20dp"
         android:contentDescription="@null"
         app:srcCompat="@drawable/val" />
-
-
-
-
-
-
 </RelativeLayout>
 

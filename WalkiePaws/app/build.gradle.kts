@@ -37,7 +37,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -46,6 +45,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.29")
+    implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.29")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 }

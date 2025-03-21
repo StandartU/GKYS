@@ -1,17 +1,15 @@
 package com.example.walkiepaws
 
 import android.content.Intent
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.imageview.ShapeableImageView
 
 class MainGameScreen : AppCompatActivity() {
@@ -22,39 +20,68 @@ class MainGameScreen : AppCompatActivity() {
     private var sleepLevel = 100
     private var happyLevel = 100
 
+    private fun updateProgressBarStyle(progressBar: ProgressBar, value: Int) {
+        when {
+            value >= 70 -> {
+                progressBar.progressDrawable = getDrawable(R.drawable.progress_green)
+            }
+            value >= 20 -> {
+                progressBar.progressDrawable = getDrawable(R.drawable.progress_yellow)
+            }
+            else -> {
+                progressBar.progressDrawable = getDrawable(R.drawable.progress_red)
+            }
+        }
+    }
+
+
     private val handler = Handler(Looper.getMainLooper())
     private val decreaseHungerRunnable = object : Runnable {
         override fun run() {
             if (hungerLevel > 0) {
                 hungerLevel -= 15
                 hungerBar.progress = hungerLevel
-                handler.postDelayed(this, 7000)
+                updateProgressBarStyle(hungerBar, hungerLevel)
+                handler.postDelayed(this, 700)
             }
         }
     }
+
     private val decreaseSleepRunnable = object : Runnable {
         override fun run() {
             if (sleepLevel > 0) {
                 sleepLevel -= 10
                 sleepBar.progress = sleepLevel
-                handler.postDelayed(this, 7000) // Уменьшение каждые 7 секунд
+                updateProgressBarStyle(sleepBar, sleepLevel)
+                handler.postDelayed(this, 700)
             }
         }
     }
+
     private val decreaseHappyRunnable = object : Runnable {
         override fun run() {
             if (happyLevel > 0) {
                 happyLevel -= 5
                 happyBar.progress = happyLevel
-                handler.postDelayed(this, 7000) // Уменьшение каждые 6 секунд
+                updateProgressBarStyle(happyBar, happyLevel)
+                handler.postDelayed(this, 700)
             }
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main_game_screen)
+
+        val viewPager: ViewPager2 = findViewById(R.id.viewPager)
+        val adapter = ScreenSlidePagerAdapter(this)
+        viewPager.adapter = adapter
+
+
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
