@@ -18,24 +18,13 @@ class RegistrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupEdgeToEdge()
+        enableEdgeToEdge()
         setContentView(R.layout.activity_registration)
-        setupWindowInsets()
         initViews()
         setupClickListeners()
     }
 
-    private fun setupEdgeToEdge() {
-        enableEdgeToEdge()
-    }
 
-    private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-    }
 
     private fun initViews() {
         editTextLogin = findViewById(R.id.editTextWriteLogin)

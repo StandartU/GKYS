@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -77,6 +78,11 @@ class MainGameScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main_game_screen)
+        val characterImage = findViewById<ImageView>(R.id.imageCharacter)
+        characterImage.setImageResource(DataManager.characters[DataManager.currentCharacterIndex])
+
+
+
 
         val viewPager: ViewPager2 = findViewById(R.id.viewPager)
         viewPager.adapter = ScreenSlidePagerAdapter(this)
@@ -112,9 +118,12 @@ class MainGameScreen : AppCompatActivity() {
         handler.removeCallbacks(decreaseHungerRunnable)
         handler.removeCallbacks(decreaseSleepRunnable)
         handler.removeCallbacks(decreaseHappyRunnable)
-
-
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        findViewById<ImageView>(R.id.imageCharacter).setImageResource(
+            DataManager.characters[DataManager.currentCharacterIndex]
+        )
+    }
 }

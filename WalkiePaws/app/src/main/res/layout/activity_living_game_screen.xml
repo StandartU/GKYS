@@ -9,6 +9,7 @@
     android:orientation="vertical"
     tools:context=".LivingRoomFragment">
 
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_game"
         android:layout_width="100dp"
