@@ -15,12 +15,14 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class ItemService {
+    @Autowired
+    private UserStateService userStateService;
 
     @Autowired
     private UserItemRepository userItemRepository;
 
     public Iterable<UserItemModel> getUserItems(UserModel userModel) {
-        return userItemRepository.findAllByUser(userModel);
+        return userItemRepository.findAllByUserAndLvl(userModel, userStateService.getUserStateLvl(userModel));
     }
 
     public void setItemActive(int id, boolean active) {

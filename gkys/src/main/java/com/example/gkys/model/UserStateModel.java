@@ -9,6 +9,13 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UserStateModel {
+
+    public UserStateModel(UserModel user, StateModel state, int value) {
+        this.user = user;
+        this.state = state;
+        this.value = value;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

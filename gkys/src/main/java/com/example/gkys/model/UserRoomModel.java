@@ -8,6 +8,13 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UserRoomModel {
+
+    public UserRoomModel(UserModel user, RoomModel room, int lvl) {
+        this.user = user;
+        this.room = room;
+        this.lvl = lvl;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

@@ -7,5 +7,5 @@ import com.example.gkys.model.PetItemModel;
 
 @Repository
 public interface PetItemRepository extends CrudRepository<PetItemModel, Integer> {
-
+    
 }

@@ -37,4 +37,17 @@ public class UserStateService {
         Iterable<UserStateModel> userStates =  userStateRepository.findAllByUser(userModel);
         return userStates;
     }
+
+    public int getUserStateLvl(UserModel userModel) {
+        Iterable<UserStateModel> userStateModels = userStateRepository.findAllByUser(userModel);
+        int value = 0;
+        for (UserStateModel userStateModel : userStateModels) {
+            value += userStateModel.getValue();
+        }
+        value /= 3;
+        if (value > 70) value = 1;
+        else if (value > 30) value = 2;
+        else if (value > 0) value = 3; 
+        return value;
+    }
 }

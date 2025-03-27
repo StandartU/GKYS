@@ -16,6 +16,8 @@ public class PetItemModel {
     @JoinColumn(name = "pet_id")
     private PetModel pet;
 
+    private int lvl;
+
     @ManyToOne
     @JoinColumn(name = "item_id")
     private ItemModel item;
