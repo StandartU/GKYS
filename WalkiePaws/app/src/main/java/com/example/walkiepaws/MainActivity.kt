@@ -2,6 +2,7 @@ package com.example.walkiepaws
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -9,6 +10,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.backend.ApiService
+import com.example.walkiepaws.backend.model.dto.request.AuthenticationDTO
+import com.example.walkiepaws.backend.model.dto.responce.LoginDTO
+
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import com.example.walkiepaws.backend.RetrofitClient
 
 class MainActivity : AppCompatActivity() {
     private lateinit var editTextLogin: EditText
@@ -46,25 +55,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleLogin() {
-        val credentialsValid = validateCredentials(
+        val authDTO = AuthenticationDTO(
             editTextLogin.text.toString().trim(),
             editTextPassword.text.toString().trim()
         )
-
-        if (credentialsValid) {
-            showToast("Вы успешно вошли!")
-            navigateToMainGameScreen()
-        }
-    }
-
-    private fun validateCredentials(login: String, password: String): Boolean {
-        return when {
-            login.isBlank() || password.isBlank() -> {
-                showToast("Не все поля заполнены!")
-                false
+        val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
+        apiService.auth(authDTO).enqueue(object : Callback<LoginDTO> {
+            override fun onResponse(call: Call<LoginDTO>, response: Response<LoginDTO>) {
+                Log.d("DEBUG", response.toString())
+                if (response.code() == 200) {
+                    Log.d("DEBUG", response.body()?.token.toString())
+                    val loginResponse = response.body()
+                    (applicationContext as MyApp).token = loginResponse?.token
+                    showToast("Вы успешно вошли!")
+                    navigateToMainGameScreen()
+                } else {
+                    showToast("Неверный логин или пароль")
+                }
             }
-            else -> true
-        }
+
+            override fun onFailure(call: Call<LoginDTO>, t: Throwable) {
+                t.message?.let { Log.d("DEBUG", it) }
+                showToast("Ошибка связи с сервером")
+            }
+        })
     }
 
     private fun navigateToRegistration() {

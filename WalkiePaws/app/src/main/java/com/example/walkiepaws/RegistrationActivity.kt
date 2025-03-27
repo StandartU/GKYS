@@ -9,6 +9,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.backend.model.dto.request.RegisterDTO
+
+import com.example.walkiepaws.backend.RetrofitClient
+import com.example.walkiepaws.backend.ApiService
+import retrofit2.Callback
+import retrofit2.Call
+import retrofit2.Response
 
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var editTextLogin: EditText
@@ -56,8 +63,22 @@ class RegistrationActivity : AppCompatActivity() {
         when {
             login.isBlank() || password.isBlank() -> showToast("Не все поля заполнены!")
             else -> {
-                showToast("Регистрация прошла успешно!")
-                navigateToMain()
+                val registerDTO = RegisterDTO(login, password)
+                val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
+                apiService.register(registerDTO).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            showToast("Регистрация прошла успешно!")
+                            navigateToMain()
+                        } else {
+                            showToast("Ошибка регистрации: ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        showToast("Ошибка связи с сервером")
+                    }
+                })
             }
         }
     }
