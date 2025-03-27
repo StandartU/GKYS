@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#c4e1ed"
-    tools:context=".SettingsActivity">
-
+    tools:context=".StatisticsActivity">
 
     <ImageView
         android:id="@+id/imageBack"
@@ -20,31 +19,23 @@
         app:srcCompat="@drawable/button_exit"
         android:contentDescription="@null"/>
 
-
-
-
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/imageStatistics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:srcCompat="@drawable/block_statistics"
         android:contentDescription="@null"/>
 
-
-    <!-- График -->
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/lineChart"
+        android:id="@+id/lineChartStatistics"
         android:layout_gravity="center"
-        android:layout_width="370dp"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="50dp"
-
-        android:layout_below="@id/imageView4" />
-
+        android:layout_marginTop="50dp" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/textNumberOfSteps"
         android:layout_marginTop="100dp"
         android:layout_marginStart="70dp"
         android:layout_marginEnd="70dp"
@@ -55,17 +46,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Количество шагов за сегодня: 100000 " />
-
-
-
-
-
-
-
-
-
-
+        android:gravity="center"/>
 </LinearLayout>
 

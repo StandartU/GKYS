@@ -22,7 +22,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textAuth"
+        android:id="@+id/textAuthorization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -32,7 +32,7 @@
         android:textSize="35sp" />
 
     <EditText
-        android:id="@+id/writeLogin"
+        android:id="@+id/editTextWriteLogin"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
@@ -45,7 +45,7 @@
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/writePassword"
+        android:id="@+id/editTextWritePassword"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
@@ -76,5 +76,4 @@
         android:backgroundTint="@color/main_color_auth"
         android:text="@string/registration"
         android:textSize="15sp" />
-
 </LinearLayout>

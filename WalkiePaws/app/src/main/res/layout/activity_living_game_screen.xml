@@ -7,9 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/living_1"
     android:orientation="vertical"
-    tools:context=".MainGameScreen">
-
-
+    tools:context=".LivingRoomFragment">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_game"
@@ -36,7 +34,6 @@
         android:src="@drawable/icon_shop"
         app:shapeAppearanceOverlay="@style/Circular" />
 
-
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_customize"
         android:layout_width="100dp"
@@ -49,7 +46,5 @@
         android:scaleType="centerInside"
         android:src="@drawable/icon_customization"
         app:shapeAppearanceOverlay="@style/Circular" />
-
-
 </RelativeLayout>
 

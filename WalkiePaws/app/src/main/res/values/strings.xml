@@ -15,4 +15,7 @@
     <string name="music">Музыка</string>
     <string name="sound">Звук</string>
     <string name="current_character">Текущий персонаж</string>
+    <string name="steps_count_template">Количество шагов за сегодня: %s</string>
+    <string name="steps_label">Шаги</string>
+
 </resources>

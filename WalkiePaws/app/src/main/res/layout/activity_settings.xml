@@ -75,7 +75,6 @@
             android:textSize="16sp"
             android:thumbTint="@color/main_color_auth"
             android:trackTint="@color/stat" />
-
     </LinearLayout>
 
     <TextView
@@ -100,6 +99,5 @@
         app:srcCompat="@drawable/gepard"
         android:progressDrawable="@drawable/seekbar1"
         android:contentDescription="@null"/>
-
 </LinearLayout>
 

@@ -26,7 +26,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/button_options"
+        android:id="@+id/buttonSettings"
         android:layout_width="81dp"
         android:layout_height="75dp"
         android:layout_below="@+id/icon_sleep"
@@ -39,7 +39,7 @@
         app:shapeAppearanceOverlay="@style/Circular" />
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/button_statistic"
+        android:id="@+id/buttonStatistics"
         android:layout_width="160dp"
         android:layout_height="60dp"
         android:layout_below="@+id/number_of_steps"
@@ -154,11 +154,6 @@
         android:layout_marginEnd="20dp"
         android:contentDescription="@null"
         app:srcCompat="@drawable/val" />
-
-
-
-
-
 
 </RelativeLayout>
 

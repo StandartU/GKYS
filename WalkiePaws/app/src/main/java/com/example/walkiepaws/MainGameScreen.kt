@@ -1,5 +1,6 @@
 package com.example.walkiepaws
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.imageview.ShapeableImageView
+
 
 class MainGameScreen : AppCompatActivity() {
     private lateinit var hungerBar: ProgressBar
@@ -33,7 +35,6 @@ class MainGameScreen : AppCompatActivity() {
             }
         }
     }
-
 
     private val handler = Handler(Looper.getMainLooper())
     private val decreaseHungerRunnable = object : Runnable {
@@ -77,11 +78,22 @@ class MainGameScreen : AppCompatActivity() {
 
         val viewPager: ViewPager2 = findViewById(R.id.viewPager)
         viewPager.adapter = ScreenSlidePagerAdapter(this)
-
         viewPager.setCurrentItem(1, false)
 
 
+        val buttonStatistics = findViewById<ShapeableImageView>(R.id.buttonStatistics)
 
+        val buttonSettings = findViewById<ShapeableImageView>(R.id.buttonSettings)
+
+        buttonStatistics.setOnClickListener {
+            val intent = Intent(this, StatisticsActivity::class.java)
+            startActivity(intent)
+        }
+
+        buttonSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
 
         hungerBar = findViewById(R.id.hungerBar)
         sleepBar = findViewById(R.id.sleepBar)

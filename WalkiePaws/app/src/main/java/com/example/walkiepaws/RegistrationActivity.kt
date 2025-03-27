@@ -2,7 +2,6 @@ package com.example.walkiepaws
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Message
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -12,47 +11,62 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class RegistrationActivity : AppCompatActivity() {
+    private lateinit var editTextLogin: EditText
+    private lateinit var editTextPassword: EditText
+    private lateinit var buttonRegistration: Button
+    private lateinit var buttonBack: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        setupEdgeToEdge()
         setContentView(R.layout.activity_registration)
+        setupWindowInsets()
+        initViews()
+        setupClickListeners()
+    }
+
+    private fun setupEdgeToEdge() {
+        enableEdgeToEdge()
+    }
+
+    private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        val writeLogin: EditText = findViewById(R.id.write_login)
-        val writePassword: EditText = findViewById(R.id.write_pass)
-        val buttonRegistration: Button = findViewById(R.id.user_registration)
-        val buttonBack: Button = findViewById(R.id.user_back)
-
-        buttonRegistration.setOnClickListener {
-            val login = writeLogin.text.toString().trim()
-            val password = writePassword.text.toString().trim()
-
-            if(login.isBlank() || password.isBlank())
-                ShowText("Не все поля заполнены!")
-            else {
-                ShowText("Регистрация прошла успешно!")
-                navigateToMain()
-
-            }
-
-        }
-
-        buttonBack.setOnClickListener {
-            navigateToMain()
-        }
-
     }
 
-     fun ShowText(message: String) {
+    private fun initViews() {
+        editTextLogin = findViewById(R.id.editTextWriteLogin)
+        editTextPassword = findViewById(R.id.editTextWritePassword)
+        buttonRegistration = findViewById(R.id.buttonRegistration)
+        buttonBack = findViewById(R.id.buttonBack)
+    }
+
+    private fun setupClickListeners() {
+        buttonRegistration.setOnClickListener { handleRegistration() }
+        buttonBack.setOnClickListener { navigateToMain() }
+    }
+
+    private fun handleRegistration() {
+        val login = editTextLogin.text.toString().trim()
+        val password = editTextPassword.text.toString().trim()
+
+        when {
+            login.isBlank() || password.isBlank() -> showToast("Не все поля заполнены!")
+            else -> {
+                showToast("Регистрация прошла успешно!")
+                navigateToMain()
+            }
+        }
+    }
+
+    private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun navigateToMain() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, MainActivity::class.java))
     }
 }

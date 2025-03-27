@@ -9,7 +9,7 @@
     tools:context=".RegistrationActivity">
 
     <TextView
-        android:id="@+id/reg"
+        android:id="@+id/textRegistration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -20,7 +20,7 @@
         android:textSize="40sp" />
 
     <EditText
-        android:id="@+id/write_login"
+        android:id="@+id/editTextWriteLogin"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
@@ -33,7 +33,7 @@
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/write_pass"
+        android:id="@+id/editTextWritePassword"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
@@ -46,7 +46,7 @@
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/user_registration"
+        android:id="@+id/buttonRegistration"
         android:layout_width="280dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
@@ -56,7 +56,7 @@
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/user_back"
+        android:id="@+id/buttonBack"
         android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
