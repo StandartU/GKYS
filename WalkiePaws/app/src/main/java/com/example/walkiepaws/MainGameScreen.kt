@@ -1,6 +1,7 @@
 package com.example.walkiepaws
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -20,6 +21,7 @@ class MainGameScreen : AppCompatActivity() {
     private var sleepLevel = 100
     private var happyLevel = 100
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateProgressBarStyle(progressBar: ProgressBar, value: Int) {
         when {
             value >= 70 -> {
@@ -40,10 +42,10 @@ class MainGameScreen : AppCompatActivity() {
     private val decreaseHungerRunnable = object : Runnable {
         override fun run() {
             if (hungerLevel > 0) {
-                hungerLevel -= 15
+                hungerLevel -= 10
                 hungerBar.progress = hungerLevel
                 updateProgressBarStyle(hungerBar, hungerLevel)
-                handler.postDelayed(this, 700)
+                handler.postDelayed(this, 500)
             }
         }
     }
@@ -54,7 +56,7 @@ class MainGameScreen : AppCompatActivity() {
                 sleepLevel -= 10
                 sleepBar.progress = sleepLevel
                 updateProgressBarStyle(sleepBar, sleepLevel)
-                handler.postDelayed(this, 700)
+                handler.postDelayed(this, 500)
             }
         }
     }
@@ -62,10 +64,10 @@ class MainGameScreen : AppCompatActivity() {
     private val decreaseHappyRunnable = object : Runnable {
         override fun run() {
             if (happyLevel > 0) {
-                happyLevel -= 5
+                happyLevel -= 10
                 happyBar.progress = happyLevel
                 updateProgressBarStyle(happyBar, happyLevel)
-                handler.postDelayed(this, 700)
+                handler.postDelayed(this, 500)
             }
         }
     }
