@@ -22,6 +22,8 @@ public class UserItemModel {
 
     private boolean active;
 
+    private int lvl;
+
     public UserItemModel(ItemModel itemModel, UserModel userModel) {
         this.item = itemModel;
         this.user = userModel;

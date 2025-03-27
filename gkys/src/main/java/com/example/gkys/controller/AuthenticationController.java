@@ -35,7 +35,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> register(@RequestBody RegisterDTO data) {
-        if (userRepository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
+        if (userRepository.findByLogin(data.login()) == null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = passwordEncoder.encode(data.password());
         UserModel user = new UserModel(data.login(), encryptedPassword);
