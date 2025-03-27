@@ -6,4 +6,5 @@ class App : Application() {
         super.onCreate()
         DataManager.init(this)
     }
+    var token: String? = null
 }

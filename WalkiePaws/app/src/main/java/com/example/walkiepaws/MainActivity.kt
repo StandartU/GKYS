@@ -8,8 +8,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.model.dto.request.AuthenticationDTO
 import com.example.walkiepaws.backend.model.dto.responce.LoginDTO
@@ -58,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                 if (response.code() == 200) {
                     Log.d("DEBUG", response.body()?.token.toString())
                     val loginResponse = response.body()
-                    (applicationContext as MyApp).token = loginResponse?.token
+                    (applicationContext as App).token = loginResponse?.token
                     showToast("Вы успешно вошли!")
                     navigateToMainGameScreen()
                 } else {
