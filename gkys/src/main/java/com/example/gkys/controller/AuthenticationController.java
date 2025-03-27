@@ -6,6 +6,7 @@ import com.example.gkys.model.dto.request.RegisterDTO;
 import com.example.gkys.model.dto.responce.LoginDTO;
 import com.example.gkys.repository.UserRepository;
 import com.example.gkys.security.TokenService;
+import com.example.gkys.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,6 +24,8 @@ public class AuthenticationController {
     private TokenService tokenService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserService userService;
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LoginDTO> login(@RequestBody AuthenticationDTO data) {
@@ -37,6 +40,7 @@ public class AuthenticationController {
         String encryptedPassword = passwordEncoder.encode(data.password());
         UserModel user = new UserModel(data.login(), encryptedPassword);
         userRepository.save(user);
+        userService.initUser(user);
 
         return ResponseEntity.ok().build();
     }
