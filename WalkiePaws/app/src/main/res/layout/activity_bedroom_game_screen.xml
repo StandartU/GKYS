@@ -10,6 +10,16 @@
     android:orientation="vertical"
     tools:context=".BedroomFragment">
 
+    <ImageView
+        android:id="@+id/imageCharacter"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="250dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/gepard" />
+
 
     <ImageView
         android:id="@+id/imageTable"

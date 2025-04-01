@@ -10,6 +10,16 @@
     tools:context=".KitchenFragment">
 
     <ImageView
+        android:id="@+id/imageCharacter"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="200dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/gepard" />
+
+    <ImageView
         android:id="@+id/imageTable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
