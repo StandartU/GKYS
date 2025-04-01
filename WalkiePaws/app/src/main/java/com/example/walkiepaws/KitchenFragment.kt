@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 
 class KitchenFragment : Fragment() {
+
     private lateinit var characterImage: ImageView
 
     override fun onCreateView(
@@ -17,52 +18,62 @@ class KitchenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.activity_kitchen_game_screen, container, false)
-
         characterImage = view.findViewById(R.id.imageCharacter)
-        characterImage.visibility = View.INVISIBLE
-        characterImage.alpha = 0f
-
-        updateCharacterImage()
-
-        // Запуск анимации после отрисовки
-        view.post { showCharacterWithAnimation() }
-
+        resetCharacterState()
         return view
-    }
-
-    override fun onPause() {
-        // Мгновенно скрываем персонажа при начале перехода
-        if (::characterImage.isInitialized) {
-            characterImage.visibility = View.INVISIBLE
-            characterImage.alpha = 0f
-        }
-        super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        updateCharacterImage()
-        // Показываем с анимацией при возвращении на фрагмент
-        view?.post { showCharacterWithAnimation() }
-    }
-
-    private fun updateCharacterImage() {
-        if (view != null && ::characterImage.isInitialized &&
-            DataManager.currentCharacterIndex in DataManager.characters.indices) {
-            characterImage.setImageResource(DataManager.characters[DataManager.currentCharacterIndex])
+        if (isAdded && !isHidden) {
+            showCharacterSmoothly()
         }
     }
 
-    private fun showCharacterWithAnimation() {
-        if (view != null && ::characterImage.isInitialized && characterImage.visibility != View.VISIBLE) {
-            characterImage.apply {
-                visibility = View.VISIBLE
-                animate()
-                    .alpha(1f)
-                    .setDuration(5) // Укороченная анимация
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .start()
+    override fun onPause() {
+        hideCharacterImmediately()
+        super.onPause()
+    }
+
+    private fun resetCharacterState() {
+        if (::characterImage.isInitialized) {
+            characterImage.visibility = View.INVISIBLE
+            characterImage.alpha = 0f
+            characterImage.translationX = 0f
+            characterImage.translationY = 0f
+        }
+    }
+
+    fun hideCharacterImmediately() {
+        view?.post {
+            if (::characterImage.isInitialized) {
+                characterImage.animate().cancel()
+                characterImage.visibility = View.INVISIBLE
+                characterImage.alpha = 0f
             }
+        }
+    }
+
+    fun showCharacterSmoothly() {
+        view?.post {
+            if (::characterImage.isInitialized && isVisible) {
+                updateCharacterImage()
+                characterImage.apply {
+                    visibility = View.VISIBLE
+                    animate()
+                        .alpha(1f)
+                        .setDuration(400)
+                        .setInterpolator(AccelerateDecelerateInterpolator())
+                        .start()
+                }
+            }
+        }
+    }
+
+    private fun updateCharacterImage() {
+        if (::characterImage.isInitialized &&
+            DataManager.currentCharacterIndex in DataManager.characters.indices) {
+            characterImage.setImageResource(DataManager.characters[DataManager.currentCharacterIndex])
         }
     }
 

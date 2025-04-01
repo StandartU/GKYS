@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 
 class BedroomFragment : Fragment() {
-    private lateinit var characterImage: ImageView // Выносим в поле класса для повторного использования
+    private lateinit var characterImage: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -16,21 +17,58 @@ class BedroomFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.activity_bedroom_game_screen, container, false)
-
         characterImage = view.findViewById(R.id.imageCharacter)
-        updateCharacterImage()
-
+        resetCharacterState()
         return view
     }
 
     override fun onResume() {
         super.onResume()
-        updateCharacterImage()
+        showCharacterSmoothly()
+    }
+
+    override fun onPause() {
+        hideCharacterImmediately()
+        super.onPause()
+    }
+
+    private fun resetCharacterState() {
+        if (::characterImage.isInitialized) {
+            characterImage.visibility = View.INVISIBLE
+            characterImage.alpha = 0f
+        }
+    }
+
+    fun hideCharacterImmediately() {
+        if (::characterImage.isInitialized) {
+            characterImage.animate().cancel()
+            characterImage.visibility = View.INVISIBLE
+            characterImage.alpha = 0f
+        }
+    }
+
+    fun showCharacterSmoothly() {
+        if (::characterImage.isInitialized && isVisible) {
+            updateCharacterImage()
+            characterImage.apply {
+                visibility = View.VISIBLE
+                animate()
+                    .alpha(1f)
+                    .setDuration(400)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .start()
+            }
+        }
     }
 
     private fun updateCharacterImage() {
-        if (view != null) { // Проверяем, что View существует
+        if (::characterImage.isInitialized &&
+            DataManager.currentCharacterIndex in DataManager.characters.indices) {
             characterImage.setImageResource(DataManager.characters[DataManager.currentCharacterIndex])
         }
+    }
+
+    companion object {
+        fun newInstance() = BedroomFragment()
     }
 }
