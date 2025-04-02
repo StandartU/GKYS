@@ -15,7 +15,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:contentDescription="@null"
-        app:srcCompat="@drawable/button_exit" />
+        app:srcCompat="@drawable/block_exit" />
 
     <ImageView
         android:id="@+id/shop"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageBack"
         android:contentDescription="@null"
-        app:srcCompat="@drawable/shop" />
+        app:srcCompat="@drawable/block_shop" />
 
     <TextView
         android:id="@+id/textView"
@@ -79,7 +79,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shop_tovar"
+            android:background="@drawable/style_shop_tovar"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="15dp">

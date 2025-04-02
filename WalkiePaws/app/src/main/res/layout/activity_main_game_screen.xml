@@ -18,35 +18,35 @@
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/buttonSettings"
-        android:layout_width="81dp"
+        android:layout_width="80dp"
         android:layout_height="75dp"
         android:layout_below="@+id/icon_sleep"
         android:layout_alignParentStart="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/image_border"
+        android:background="@drawable/bg_button"
         android:scaleType="centerInside"
-        android:src="@drawable/settings"
+        android:src="@drawable/icon_settings"
         app:shapeAppearanceOverlay="@style/Circular" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/buttonStatistics"
-        android:layout_width="160dp"
+        android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_below="@+id/number_of_steps"
+        android:layout_below="@+id/relativeLayout2"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
-        android:background="@drawable/image_border"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_button"
         android:scaleType="centerInside"
-        android:src="@drawable/stat"
+        android:src="@drawable/text_statistics"
         app:shapeAppearanceOverlay="@style/Circular" />
 
     <ProgressBar
@@ -55,8 +55,9 @@
         android:layout_width="200dp"
         android:layout_height="25dp"
         android:layout_alignStart="@+id/icon_happy"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="25dp"
+        android:layout_toStartOf="@+id/relativeLayout2"
+        android:layout_marginStart="20dp"
         android:max="100"
         android:progress="100"
         android:progressDrawable="@drawable/progress_green" />
@@ -67,8 +68,9 @@
         android:layout_width="200dp"
         android:layout_height="25dp"
         android:layout_alignStart="@+id/icon_hunger"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="65dp"
+        android:layout_toStartOf="@+id/relativeLayout2"
+        android:layout_marginStart="20dp"
         android:max="100"
         android:progress="100"
         android:progressDrawable="@drawable/progress_green" />
@@ -79,8 +81,9 @@
         android:layout_width="200dp"
         android:layout_height="25dp"
         android:layout_alignStart="@+id/icon_sleep"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="105dp"
+        android:layout_toStartOf="@+id/relativeLayout2"
+        android:layout_marginStart="20dp"
         android:max="100"
         android:progress="100"
         android:progressDrawable="@drawable/progress_green" />
@@ -93,7 +96,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/image_icon"
+        android:background="@drawable/bg_bar"
         android:scaleType="centerInside"
         android:src="@drawable/happy"
         app:shapeAppearanceOverlay="@style/Circular" />
@@ -106,7 +109,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="60dp"
-        android:background="@drawable/image_icon"
+        android:background="@drawable/bg_bar"
         android:scaleType="centerInside"
         android:src="@drawable/hunger"
         app:shapeAppearanceOverlay="@style/Circular" />
@@ -119,36 +122,45 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="100dp"
-        android:background="@drawable/image_icon"
+        android:background="@drawable/bg_bar"
         android:scaleType="centerInside"
         android:src="@drawable/sleep"
         app:shapeAppearanceOverlay="@style/Circular" />
 
-    <TextView
-        android:id="@+id/number_of_steps"
-        android:layout_width="160dp"
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="150dp"
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
+        android:layout_marginStart="38dp"
         android:layout_marginTop="25dp"
-        android:layout_marginEnd="5dp"
-        android:background="@drawable/icon_stat"
-        android:gravity="center"
-        android:text="0"
-        android:textColor="@color/main_color_auth"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_marginEnd="5dp">
 
-    <ImageView
-        android:id="@+id/icon_value"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="20dp"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/val" />
+        <TextView
+            android:id="@+id/number_of_steps"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/style_bg_for_coins"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/main_color_auth"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/icon_value"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/icon_coin" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
 

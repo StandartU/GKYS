@@ -1,31 +1,28 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Фон прогрессбара -->
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="20dp"/>
-            <solid android:color="#C4E1ED"/> <!-- Цвет фона -->
-            <stroke android:width="3dp" android:color="#2A5668"/> <!-- Цвет границы фона -->
+            <solid android:color="#C4E1ED"/>
+            <stroke android:width="3dp" android:color="#2A5668"/>
         </shape>
     </item>
 
-    <!-- Обводка прогресса -->
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
                 <corners android:radius="20dp"/>
-                <solid android:color="@android:color/transparent"/> <!-- Прозрачный фон -->
-                <stroke android:width="3dp" android:color="#2A5668"/> <!-- Цвет границы прогресса -->
+                <solid android:color="@android:color/transparent"/>
+                <stroke android:width="3dp" android:color="#2A5668"/>
             </shape>
         </clip>
     </item>
 
-    <!-- Прогресс, который будет уменьшаться -->
     <item android:id="@android:id/progress">
         <clip>
             <shape>
-                <corners android:radius="20dp"/> <!-- Закругленные края -->
-                <solid android:color="#F9C54E"/> <!-- Цвет прогресса по умолчанию -->
-                <stroke android:width="3dp" android:color="#C8744E"/> <!-- Цвет границы прогресса -->
+                <corners android:radius="20dp"/>
+                <solid android:color="#F9C54E"/>
+                <stroke android:width="3dp" android:color="#C8744E"/>
             </shape>
         </clip>
     </item>

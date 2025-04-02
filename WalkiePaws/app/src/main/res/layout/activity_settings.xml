@@ -16,7 +16,7 @@
         android:layout_gravity="end"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
-        app:srcCompat="@drawable/button_exit"
+        app:srcCompat="@drawable/block_exit"
         android:contentDescription="@null"/>
 
 
@@ -49,7 +49,7 @@
         android:layout_marginEnd="100dp"
         android:max="10"
         android:progress="3"
-        android:progressDrawable="@drawable/seekbar1" />
+        android:progressDrawable="@drawable/style_seekbar" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -104,9 +104,9 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="50dp"
 
-            android:background="@drawable/pers"
+            android:background="@drawable/style_character"
             android:contentDescription="@null"
-            android:progressDrawable="@drawable/seekbar1"
+            android:progressDrawable="@drawable/style_seekbar"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/gepard" />
 
@@ -118,7 +118,7 @@
             android:layout_alignTop="@+id/imageCharacter"
             android:layout_marginStart="15dp"
             android:layout_marginTop="160dp"
-            app:srcCompat="@drawable/polygon_5"
+            app:srcCompat="@drawable/block_left"
             android:contentDescription="@null"/>
 
         <ImageView
@@ -129,7 +129,7 @@
             android:layout_alignEnd="@+id/imageCharacter"
             android:layout_marginTop="160dp"
             android:layout_marginEnd="15dp"
-            app:srcCompat="@drawable/polygon_4"
+            app:srcCompat="@drawable/block_right"
             android:contentDescription="@null"/>
     </RelativeLayout>
 </LinearLayout>
