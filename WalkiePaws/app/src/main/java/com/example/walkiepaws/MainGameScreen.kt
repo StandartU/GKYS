@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -121,6 +122,13 @@ class MainGameScreen : AppCompatActivity() {
                 is BedroomFragment -> currentFragment.showCharacterSmoothly()
             }
         }
+    }
+
+    fun onCustomizationItemSelected(itemName: String) {
+        // Здесь можно обработать выбранный элемент
+        Toast.makeText(this, "Выбрано: $itemName", Toast.LENGTH_SHORT).show()
+
+        // Или применить выбранную кастомизацию к персонажу
     }
 
     override fun onDestroy() {

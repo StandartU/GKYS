@@ -7,9 +7,6 @@
     <string name="write_login">Введите логин</string>
     <string name="write_password">Введите пароль</string>
     <string name="back">Назад</string>
-    <string name="button_game">Кнопка "Играть"</string>
-    <string name="button_customize">Назад "Кастомизация"</string>
-    <string name="button_shop">Назад "Магазин"</string>
     <string name="stat">Статистика</string>
     <string name="settings">НАСТРОЙКИ</string>
     <string name="music">Музыка</string>
@@ -17,8 +14,7 @@
     <string name="current_character">Текущий персонаж</string>
     <string name="steps_count_template">Количество шагов за сегодня: %s</string>
     <string name="steps_label">Шаги</string>
-    <string name="food">Еда</string>
-    <string name="cloths">Одежда</string>
-    <string name="rooms">Комнаты</string>
-
+    <string name="food">ЕДА</string>
+    <string name="cloths">ОДЕЖДА</string>
+    <string name="rooms">КОМНАТА</string>
 </resources>
