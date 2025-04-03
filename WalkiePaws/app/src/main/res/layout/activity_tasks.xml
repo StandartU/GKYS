@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:background="#c4e1ed"
     tools:context=".TasksActivity">
 
@@ -88,7 +89,6 @@
                     android:clickable="false"/>
             </RelativeLayout>
 
-            <!-- Задание 2 -->
             <RelativeLayout
                 android:id="@+id/task2Container"
                 android:layout_width="match_parent"
@@ -131,8 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:checked="true"
-                    android:clickable="false"/>
+                    android:clickable="false" />
             </RelativeLayout>
 
             <!-- Задание 3 -->

@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:srcCompat="@drawable/block_statistics"
+        app:srcCompat="@drawable/sss.svg"
         android:contentDescription="@null"/>
 
     <com.github.mikephil.charting.charts.LineChart
