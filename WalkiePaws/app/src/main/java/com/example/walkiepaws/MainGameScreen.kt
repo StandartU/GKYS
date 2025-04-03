@@ -95,6 +95,10 @@ class MainGameScreen : AppCompatActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
+        findViewById<ShapeableImageView>(R.id.buttonTasks).setOnClickListener {
+            startActivity(Intent(this, TasksActivity::class.java))
+        }
+
         hungerBar = findViewById(R.id.hungerBar)
         sleepBar = findViewById(R.id.sleepBar)
         happyBar = findViewById(R.id.happyBar)
@@ -125,10 +129,8 @@ class MainGameScreen : AppCompatActivity() {
     }
 
     fun onCustomizationItemSelected(itemName: String) {
-        // Здесь можно обработать выбранный элемент
         Toast.makeText(this, "Выбрано: $itemName", Toast.LENGTH_SHORT).show()
-
-        // Или применить выбранную кастомизацию к персонажу
+        
     }
 
     override fun onDestroy() {

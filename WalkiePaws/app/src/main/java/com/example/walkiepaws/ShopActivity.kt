@@ -61,9 +61,18 @@ class ShopActivity : AppCompatActivity() {
         resetCategoryButtons()
 
         when (category) {
-            "food" -> foodCategory.setBackgroundResource(R.drawable.category_button_selected)
-            "clothes" -> clothesCategory.setBackgroundResource(R.drawable.category_button_selected)
-            "rooms" -> roomsCategory.setBackgroundResource(R.drawable.category_button_selected)
+            "food" -> {
+                foodCategory.setBackgroundResource(R.drawable.category_button_selected)
+                foodCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            }
+            "clothes" -> {
+                clothesCategory.setBackgroundResource(R.drawable.category_button_selected)
+                clothesCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            }
+            "rooms" -> {
+                roomsCategory.setBackgroundResource(R.drawable.category_button_selected)
+                roomsCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            }
         }
 
         itemsContainer.removeAllViews()
@@ -73,9 +82,16 @@ class ShopActivity : AppCompatActivity() {
     }
 
     private fun resetCategoryButtons() {
+        val defaultTextColor = ContextCompat.getColor(this, R.color.black)
+
         foodCategory.setBackgroundResource(R.drawable.category_button)
+        foodCategory.setTextColor(defaultTextColor)
+
         clothesCategory.setBackgroundResource(R.drawable.category_button)
+        clothesCategory.setTextColor(defaultTextColor)
+
         roomsCategory.setBackgroundResource(R.drawable.category_button)
+        roomsCategory.setTextColor(defaultTextColor)
     }
 
     @SuppressLint("SetTextI18n")

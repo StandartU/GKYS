@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#c4e1ed"
+    tools:context=".TasksActivity">
+
+    <ImageView
+        android:id="@+id/imageBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/block_exit" />
+
+    <ImageView
+        android:id="@+id/tasksImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageBack"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/block_tasks" />
+
+    <ScrollView
+        android:id="@+id/tasksScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tasksImage"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="15dp">
+
+        <LinearLayout
+            android:id="@+id/tasksContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/style_shop_tovar"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <!-- Задание 1 -->
+            <RelativeLayout
+                android:id="@+id/task1Container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:padding="15dp">
+
+                <TextView
+                    android:id="@+id/task1Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/main_color_auth"
+                    android:text="Покормить питомца 3 раза"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/task1Reward"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/task1Text"
+                    android:layout_marginTop="5dp"
+                    android:text="Приз: 10 монет"
+                    android:textColor="@color/main_color_auth"
+                    android:textSize="15sp"/>
+
+                <ProgressBar
+                    android:id="@+id/task1Progress"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_below="@id/task1Reward"
+                    android:layout_marginTop="10dp"
+                    android:max="5"
+                    android:progressDrawable="@drawable/progress_base"/>
+
+                <CheckBox
+                    android:id="@+id/task1Checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"/>
+            </RelativeLayout>
+
+            <!-- Задание 2 -->
+            <RelativeLayout
+                android:id="@+id/task2Container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:padding="15dp">
+
+                <TextView
+                    android:id="@+id/task2Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/main_color_auth"
+                    android:text="Поиграть с питомцем 5 минут"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/task2Reward"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/task2Text"
+                    android:layout_marginTop="5dp"
+                    android:text="Приз: 15 монет"
+                    android:textColor="@color/main_color_auth"
+                    android:textSize="15sp"/>
+
+                <ProgressBar
+                    android:id="@+id/task2Progress"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_below="@id/task2Reward"
+                    android:layout_marginTop="10dp"
+                    android:max="5"
+                    android:progressDrawable="@drawable/progress_base"/>
+
+                <CheckBox
+                    android:id="@+id/task2Checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:checked="true"
+                    android:clickable="false"/>
+            </RelativeLayout>
+
+            <!-- Задание 3 -->
+            <RelativeLayout
+                android:id="@+id/task3Container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp">
+
+                <TextView
+                    android:id="@+id/task3Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/main_color_auth"
+                    android:text="Сделать 15 тыс шагов"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/task3Reward"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/task3Text"
+                    android:layout_marginTop="5dp"
+                    android:text="Приз: 20 монет"
+                    android:textColor="@color/main_color_auth"
+                    android:textSize="15sp"/>
+
+                <ProgressBar
+                    android:id="@+id/task3Progress"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_below="@id/task3Reward"
+                    android:layout_marginTop="10dp"
+                    android:max="5"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_base"/>
+
+                <CheckBox
+                    android:id="@+id/task3Checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
