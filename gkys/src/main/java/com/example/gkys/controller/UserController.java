@@ -78,7 +78,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/ser_state", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/set_state", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> setState(@RequestBody UserSetStateDTO dto) {
         userStateService.setState(dto.userStateModel(), dto.value());
         return ResponseEntity.ok().build();
