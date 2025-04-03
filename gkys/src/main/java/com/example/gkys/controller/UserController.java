@@ -14,6 +14,7 @@ import com.example.gkys.model.UserStateModel;
 import com.example.gkys.model.dto.request.RoomLvlDTO;
 import com.example.gkys.model.dto.request.StepCountDTO;
 import com.example.gkys.model.dto.request.UserAddCashDTO;
+import com.example.gkys.model.dto.request.UserSetStateDTO;
 import com.example.gkys.model.dto.responce.UserRoomDTO;
 import com.example.gkys.model.dto.responce.UserStateDTO;
 import com.example.gkys.security.TokenService;
@@ -76,6 +77,13 @@ public class UserController {
         userRoomService.setRoomLvl(dto.lvl(), dto.name(), userModel);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(value = "/ser_state", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> setState(@RequestBody UserSetStateDTO dto) {
+        userStateService.setState(dto.userStateModel(), dto.value());
+        return ResponseEntity.ok().build();
+    }
+    
 
 
 }

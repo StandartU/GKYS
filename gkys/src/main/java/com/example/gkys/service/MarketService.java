@@ -91,7 +91,7 @@ public class MarketService {
             throw new RuntimeException("Недостаточно средств");
         }
 
-        userStateService.setStateUser(user, market.getState(), market);
+        userStateService.setStateUserByMarket(user, market.getState(), market);
         userService.setUserCash(-market.getValue(), user);
     }
 

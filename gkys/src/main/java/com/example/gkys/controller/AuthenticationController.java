@@ -8,6 +8,8 @@ import com.example.gkys.repository.UserRepository;
 import com.example.gkys.security.TokenService;
 import com.example.gkys.service.UserService;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +31,14 @@ public class AuthenticationController {
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LoginDTO> login(@RequestBody AuthenticationDTO data) {
-        var token = tokenService.generateToken(data.login());
-        return ResponseEntity.ok(new LoginDTO(token));
+        Optional<UserModel> userOptional = userRepository.findByLogin(data.login());
+        if (userOptional.isPresent()) {
+            var token = tokenService.generateToken(data.login());
+            return ResponseEntity.ok(new LoginDTO(token));
+        }
+        else {
+            return ResponseEntity.status(403).build();
+        }
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)

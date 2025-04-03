@@ -19,7 +19,7 @@ public class UserStateService {
     @Autowired
     private UserStateRepository userStateRepository;
 
-    public void setStateUser(UserModel userModel, StateModel stateModel, MarketModel marketModel) {
+    public void setStateUserByMarket(UserModel userModel, StateModel stateModel, MarketModel marketModel) {
         Optional<UserStateModel> userStateOptional = userStateRepository.findByUserAndState(userModel, stateModel);
 
         if (!userStateOptional.isPresent()) {
@@ -49,5 +49,10 @@ public class UserStateService {
         else if (value > 30) value = 2;
         else if (value > 0) value = 3; 
         return value;
+    }
+
+    public void setState(UserStateModel userStateModel, int value) {
+        userStateModel.setValue(userStateModel.getValue() + value);
+        userStateRepository.save(userStateModel);
     }
 }
