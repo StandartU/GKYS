@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                 if (response.code() == 200) {
                     Log.d("DEBUG", response.body()?.token.toString())
                     val loginResponse = response.body()
-                    (applicationContext as App).token = loginResponse?.token
+                    (applicationContext as App).token = "Bearer " + loginResponse?.token
                     showToast("Вы успешно вошли!")
                     navigateToMainGameScreen()
                 } else {
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToRegistration() {
-        startActivity(Intent(this, MainGameScreen::class.java))
+        startActivity(Intent(this, RegistrationActivity::class.java))
     }
 
     private fun navigateToMainGameScreen() {

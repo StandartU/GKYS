@@ -1,26 +1,52 @@
 package com.example.walkiepaws.backend.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Setter
-@Getter
 public class UserRoomModel {
+    private int id;
+    private UserModel user;
+    private RoomModel room;
+    private int lvl;
 
-    public UserRoomModel(UserModel user, RoomModel room, int lvl) {
+    // Пустой конструктор
+    public UserRoomModel() {}
+
+    // Полный конструктор
+    public UserRoomModel(int id, UserModel user, RoomModel room, int lvl) {
+        this.id = id;
         this.user = user;
         this.room = room;
         this.lvl = lvl;
     }
 
+    // Геттеры и сеттеры
+    public int getId() {
+        return id;
+    }
 
-    private int id;
+    public void setId(int id) {
+        this.id = id;
+    }
 
+    public UserModel getUser() {
+        return user;
+    }
 
-    private UserModel user;
+    public void setUser(UserModel user) {
+        this.user = user;
+    }
 
+    public RoomModel getRoom() {
+        return room;
+    }
 
-    private RoomModel room;
+    public void setRoom(RoomModel room) {
+        this.room = room;
+    }
 
-    private int lvl;
+    public int getLvl() {
+        return lvl;
+    }
+
+    public void setLvl(int lvl) {
+        this.lvl = lvl;
+    }
 }
