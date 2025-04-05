@@ -27,6 +27,7 @@
         android:contentDescription="@null"
         app:srcCompat="@drawable/block_tasks" />
 
+
     <ScrollView
         android:id="@+id/tasksScrollView"
         android:layout_width="match_parent"

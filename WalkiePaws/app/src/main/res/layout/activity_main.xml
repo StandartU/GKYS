@@ -38,10 +38,10 @@
         android:layout_marginTop="90dp"
         android:importantForAutofill="no"
         android:ems="10"
-        android:textColor="@color/black"
+        android:textColor="@color/main_color_auth"
         android:hint="@string/write_login"
         android:inputType="text"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/main_color_auth"
         android:textSize="20sp" />
 
     <EditText
@@ -52,10 +52,10 @@
         android:layout_marginTop="25dp"
         android:importantForAutofill="no"
         android:ems="10"
-        android:textColor="@color/black"
+        android:textColor="@color/main_color_auth"
         android:hint="@string/write_password"
         android:inputType="textPassword"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/main_color_auth"
         android:textSize="20sp" />
 
     <Button

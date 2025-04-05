@@ -1,5 +1,6 @@
 package com.example.walkiepaws
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment
 class KitchenFragment : Fragment() {
 
     private lateinit var characterImage: ImageView
+    private lateinit var shopButton: ImageView
+    private lateinit var customizeButton: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -19,7 +22,20 @@ class KitchenFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.activity_kitchen_game_screen, container, false)
         characterImage = view.findViewById(R.id.imageCharacter)
+
+        shopButton = view.findViewById(R.id.button_shop)
+        customizeButton = view.findViewById(R.id.button_customize)
+
         resetCharacterState()
+
+        shopButton.setOnClickListener {
+            openShop()
+        }
+
+        customizeButton.setOnClickListener {
+            openCustomization()
+        }
+
         return view
     }
 
@@ -75,6 +91,16 @@ class KitchenFragment : Fragment() {
             DataManager.currentCharacterIndex in DataManager.characters.indices) {
             characterImage.setImageResource(DataManager.characters[DataManager.currentCharacterIndex])
         }
+    }
+
+    private fun openShop() {
+        val intent = Intent(activity, ShopActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openCustomization() {
+        val intent = Intent(activity, CustomizationActivity::class.java)
+        startActivity(intent)
     }
 
     companion object {
