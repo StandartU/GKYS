@@ -57,14 +57,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/get_state", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/get_state")
     public ResponseEntity<UserStateDTO> getState(@RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
-        Iterable<UserStateModel> userStates = userStateService.getState(userModel);
+        List<UserStateModel> userStates = userStateService.getState(userModel);
         return ResponseEntity.ok(new UserStateDTO(userStates));
     }
 
-    @GetMapping(value = "/get_rooms", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/get_rooms")
     public ResponseEntity<List<UserRoomDTO>> getRooms(@RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
         List<UserRoomDTO> userRoomsData = userRoomService.getRooms(userModel);

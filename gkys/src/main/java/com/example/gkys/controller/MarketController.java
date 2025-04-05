@@ -57,13 +57,13 @@ public class MarketController {
     }
     
     @SuppressWarnings("unchecked")
-    @GetMapping(value = "/all_buyers", consumes = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(value = "/all_buyers")
     public ResponseEntity<MarketAllDTO> getAllMarkets(@RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
-        List<Iterable<?>> marketRoomItem = marketService.getAllMarkets(userModel);
+        List<List<?>> marketRoomItem = marketService.getAllMarkets(userModel);
         return ResponseEntity.ok(new MarketAllDTO(
-            (Iterable<MarketModel>) marketRoomItem.get(0),
-            (Iterable<RoomLvlModel>) marketRoomItem.get(1),
-            (Iterable<ItemModel>) marketRoomItem.get(2)));
+            (List<MarketModel>) marketRoomItem.get(0),
+            (List<RoomLvlModel>) marketRoomItem.get(1),
+            (List<ItemModel>) marketRoomItem.get(2)));
     }
 }

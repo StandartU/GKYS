@@ -1,5 +1,7 @@
 package com.example.gkys.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,11 @@ public class ItemService {
     @Autowired
     private UserItemRepository userItemRepository;
 
-    public Iterable<UserItemModel> getUserItems(UserModel userModel) {
-        return userItemRepository.findAllByUserAndLvl(userModel, userStateService.getUserStateLvl(userModel));
+    public List<UserItemModel> getUserItems(UserModel userModel) {
+        Iterable<UserItemModel> userIterable = userItemRepository.findAllByUserAndLvl(userModel, userStateService.getUserStateLvl(userModel));
+        List<UserItemModel> answer = new ArrayList<>();
+        userIterable.forEach(answer::add);
+        return answer;
     }
 
     public void setItemActive(int id, boolean active) {

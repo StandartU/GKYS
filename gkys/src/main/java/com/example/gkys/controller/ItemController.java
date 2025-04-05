@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
 
 import com.example.gkys.model.UserModel;
 import com.example.gkys.model.dto.request.ItemActive;
@@ -25,13 +26,13 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
-    @GetMapping("/get_items")
+    @GetMapping(value = "/get_items")
     public ResponseEntity<UserItemDTO> getUserItems(@RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
         return ResponseEntity.ok(new UserItemDTO(itemService.getUserItems(userModel)));
     }
     
-    @PostMapping("/set_item_active")
+    @PostMapping(value = "/set_item_active", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postMethodName(@RequestBody ItemActive dto) {
         itemService.setItemActive(dto.id(), dto.active());
         return ResponseEntity.ok().build();

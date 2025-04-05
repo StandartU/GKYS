@@ -4,4 +4,6 @@ import com.example.gkys.model.ItemModel;
 import com.example.gkys.model.MarketModel;
 import com.example.gkys.model.RoomLvlModel;
 
-public record MarketAllDTO(Iterable<MarketModel> marketModels, Iterable<RoomLvlModel> roomModels, Iterable<ItemModel> itemModels) {}
+import java.util.List;
+
+public record MarketAllDTO(List<MarketModel> marketModels, List<RoomLvlModel> roomModels, List<ItemModel> itemModels) {}

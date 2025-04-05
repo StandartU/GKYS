@@ -51,8 +51,10 @@ public class MarketService {
     @Autowired
     private UserItemRepository userItemRepository;
 
-    public List<Iterable<?>> getAllMarkets(UserModel userModel) {
+    public List<List<?>> getAllMarkets(UserModel userModel) {
         Iterable<MarketModel> marketModels = marketRepository.findAll();
+        List<MarketModel> marketModelList = new ArrayList<>();
+        marketModels.forEach(marketModelList::add);
         Iterable<UserRoomModel> userRoomModels = userRoomRepository.findAllByUser(userModel);
         List<RoomLvlModel> roomLvlModelsList = new ArrayList<RoomLvlModel>();
         for (UserRoomModel userRoomModel : userRoomModels) {
@@ -63,7 +65,7 @@ public class MarketService {
             RoomLvlModel roomLvlModel = roomLvlOptional.get();
             roomLvlModelsList.add(roomLvlModel);
         }
-        Iterable<RoomLvlModel> roomLvlModels = roomLvlModelsList;
+
         Iterable<ItemModel> itemModels = itemRepository.findAll();
         List<UserItemModel> userItemModels = userModel.getUserItems();
         List<Integer> userItemIds = userItemModels.stream()
@@ -71,9 +73,8 @@ public class MarketService {
                                     .collect(Collectors.toList());
         List<ItemModel> itemsNotOwnedList = StreamSupport.stream(itemModels.spliterator(), false)
                                                 .filter(item -> !userItemIds.contains(item.getId()))
-                                                .collect(Collectors.toList());
-        Iterable<ItemModel> itemModelsNotOwned = itemsNotOwnedList;     
-        return List.of(marketModels, roomLvlModels, itemModelsNotOwned);
+                                                .collect(Collectors.toList());    
+        return List.of(marketModelList, roomLvlModelsList, itemsNotOwnedList);
     }
 
     public void buyState(int marketId, Long userId) {

@@ -1,8 +1,11 @@
 package com.example.gkys.model;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Setter;
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 
@@ -10,6 +13,7 @@ import jakarta.persistence.*;
 @Table(name = "item")
 @Setter
 @Getter
+@NoArgsConstructor
 public class ItemModel {
 
     @Id
@@ -20,9 +24,11 @@ public class ItemModel {
 
     private int price;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<PetItemModel> petItems;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<UserItemModel> userItems;
 }

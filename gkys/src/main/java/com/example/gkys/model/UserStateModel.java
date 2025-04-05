@@ -1,6 +1,7 @@
 package com.example.gkys.model;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -8,6 +9,7 @@ import lombok.Setter;
 @Table(name = "user_state")
 @Setter
 @Getter
+@NoArgsConstructor
 public class UserStateModel {
 
     public UserStateModel(UserModel user, StateModel state, int value) {

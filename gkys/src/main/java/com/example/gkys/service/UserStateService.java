@@ -1,5 +1,7 @@
 package com.example.gkys.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,11 @@ public class UserStateService {
         userStateRepository.save(userStateModel);
     }
 
-    public Iterable<UserStateModel> getState (UserModel userModel) {
+    public List<UserStateModel> getState (UserModel userModel) {
         Iterable<UserStateModel> userStates =  userStateRepository.findAllByUser(userModel);
-        return userStates;
+        List<UserStateModel> userStateModelList = new ArrayList<>();
+        userStates.forEach(userStateModelList::add);
+        return userStateModelList;
     }
 
     public int getUserStateLvl(UserModel userModel) {
