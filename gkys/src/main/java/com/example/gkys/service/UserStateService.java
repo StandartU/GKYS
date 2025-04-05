@@ -11,6 +11,7 @@ import com.example.gkys.model.MarketModel;
 import com.example.gkys.model.StateModel;
 import com.example.gkys.model.UserModel;
 import com.example.gkys.model.UserStateModel;
+import com.example.gkys.repository.StateRepository;
 import com.example.gkys.repository.UserStateRepository;
 
 import jakarta.transaction.Transactional;
@@ -20,6 +21,9 @@ import jakarta.transaction.Transactional;
 public class UserStateService {
     @Autowired
     private UserStateRepository userStateRepository;
+
+    @Autowired
+    private StateRepository stateRepository;
 
     public void setStateUserByMarket(UserModel userModel, StateModel stateModel, MarketModel marketModel) {
         Optional<UserStateModel> userStateOptional = userStateRepository.findByUserAndState(userModel, stateModel);
@@ -59,4 +63,14 @@ public class UserStateService {
         userStateModel.setValue(userStateModel.getValue() + value);
         userStateRepository.save(userStateModel);
     }
+
+    public void decreaseState(String stateName) {
+        stateRepository.findByName(stateName).ifPresent(state -> {
+            userStateRepository.findAllByState(state).forEach(userState -> {
+                userState.setValue(userState.getValue() > 0 ? userState.getValue() - 1 : 0);
+                userStateRepository.save(userState);
+            });
+        });
+    }
+
 }

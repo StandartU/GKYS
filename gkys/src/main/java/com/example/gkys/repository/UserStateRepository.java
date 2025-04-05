@@ -14,4 +14,6 @@ public interface UserStateRepository extends CrudRepository<UserStateModel, Long
     Optional<UserStateModel> findByUserAndState(UserModel user, StateModel state);
 
     Iterable<UserStateModel> findAllByUser(UserModel user);
+
+    Iterable<UserStateModel> findAllByState(StateModel state);
 }
