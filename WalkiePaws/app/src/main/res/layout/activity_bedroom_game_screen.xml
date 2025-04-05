@@ -36,7 +36,7 @@
         android:layout_marginStart="45dp"
         android:layout_marginBottom="50dp"
         android:layout_toEndOf="@+id/button_shop"
-        android:background="@drawable/bg_button"
+        android:background="@drawable/bg_icon"
         android:scaleType="centerInside"
         android:src="@drawable/icon_sleep"
         app:shapeAppearanceOverlay="@style/Circular" />
@@ -49,7 +49,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
-        android:background="@drawable/bg_button"
+        android:background="@drawable/bg_icon"
         android:scaleType="centerInside"
         android:src="@drawable/icon_shop"
         app:shapeAppearanceOverlay="@style/Circular" />
@@ -63,7 +63,7 @@
         android:layout_marginEnd="45dp"
         android:layout_marginBottom="50dp"
         android:layout_toStartOf="@+id/button_shop"
-        android:background="@drawable/bg_button"
+        android:background="@drawable/bg_icon"
         android:scaleType="centerInside"
         android:src="@drawable/icon_customization"
         app:shapeAppearanceOverlay="@style/Circular" />

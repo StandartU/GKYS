@@ -14,7 +14,7 @@
     <string name="current_character">Текущий персонаж</string>
     <string name="steps_count_template">Количество шагов за сегодня: %s</string>
     <string name="steps_label">Шаги</string>
-    <string name="food">ЕДА</string>
-    <string name="cloths">ОДЕЖДА</string>
-    <string name="rooms">КОМНАТА</string>
+    <string name="food">Еда</string>
+    <string name="cloths">Одежда</string>
+    <string name="rooms">Комната</string>
 </resources>
