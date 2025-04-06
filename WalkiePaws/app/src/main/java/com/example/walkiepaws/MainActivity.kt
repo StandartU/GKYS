@@ -22,9 +22,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var editTextPassword: EditText
     private lateinit var buttonLogin: Button
     private lateinit var buttonRegistration: Button
+    private lateinit var apiService: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        apiService = RetrofitClient.getApiService()
         setContentView(R.layout.activity_main)
         enableEdgeToEdge()
         initViews()
@@ -49,12 +51,10 @@ class MainActivity : AppCompatActivity() {
             editTextLogin.text.toString().trim(),
             editTextPassword.text.toString().trim()
         )
-        val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
+
         apiService.auth(authDTO).enqueue(object : Callback<LoginDTO> {
             override fun onResponse(call: Call<LoginDTO>, response: Response<LoginDTO>) {
-                Log.d("DEBUG", response.toString())
                 if (response.code() == 200) {
-                    Log.d("DEBUG", response.body()?.token.toString())
                     val loginResponse = response.body()
                     (applicationContext as App).token = "Bearer " + loginResponse?.token
                     showToast("Вы успешно вошли!")
@@ -72,10 +72,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToRegistration() {
-        startActivity(Intent(this, MainGameScreen::class.java))
+        startActivity(Intent(this, RegistrationActivity::class.java))
     }
 
     private fun navigateToMainGameScreen() {
+        DataManager.updateCharList()
         startActivity(Intent(this, MainGameScreen::class.java))
     }
 

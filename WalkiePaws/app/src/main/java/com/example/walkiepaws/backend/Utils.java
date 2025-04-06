@@ -5,7 +5,7 @@ import android.content.Context;
 
 public class Utils {
     @SuppressLint("DiscouragedApi")
-    public static int getDrawableIdByName(Context context, String fileName) {
+    public int getDrawableIdByName(Context context, String fileName) {
         return context.getResources().getIdentifier(fileName, "drawable", context.getPackageName());
     }
 

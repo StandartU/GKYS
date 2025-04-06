@@ -1,4 +1,4 @@
 package com.example.walkiepaws.backend.model.dto.responce;
 
-public record CashDTO() {
+public record CashDTO(int cash) {
 }

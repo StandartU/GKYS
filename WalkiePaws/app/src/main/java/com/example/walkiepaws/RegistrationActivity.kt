@@ -22,9 +22,11 @@ class RegistrationActivity : AppCompatActivity() {
     private lateinit var editTextPassword: EditText
     private lateinit var buttonRegistration: Button
     private lateinit var buttonBack: Button
+    private lateinit var apiService: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        apiService = RetrofitClient.getApiService()
         enableEdgeToEdge()
         setContentView(R.layout.activity_registration)
         initViews()
@@ -53,7 +55,6 @@ class RegistrationActivity : AppCompatActivity() {
             login.isBlank() || password.isBlank() -> showToast("Не все поля заполнены!")
             else -> {
                 val registerDTO = RegisterDTO(login, password)
-                val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
                 apiService.register(registerDTO).enqueue(object : Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
                         if (response.isSuccessful) {

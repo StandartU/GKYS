@@ -7,7 +7,7 @@ public class RetrofitClient {
     private static Retrofit retrofit;
     private static final String BASE_URL = "http://92.53.115.143:8873/";
 
-    public static Retrofit getInstance() {
+    private static Retrofit getInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -15,5 +15,9 @@ public class RetrofitClient {
                     .build();
         }
         return retrofit;
+    }
+
+    public static ApiService getApiService() {
+        return getInstance().create(ApiService.class);
     }
 }

@@ -11,6 +11,7 @@ import com.example.walkiepaws.backend.model.dto.request.RoomLvlDTO;
 import com.example.walkiepaws.backend.model.dto.request.StepCountDTO;
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO;
 import com.example.walkiepaws.backend.model.dto.request.UserSetStateDTO;
+import com.example.walkiepaws.backend.model.dto.responce.CashDTO;
 import com.example.walkiepaws.backend.model.dto.responce.LoginDTO;
 import com.example.walkiepaws.backend.model.dto.responce.MarketAllDTO;
 import com.example.walkiepaws.backend.model.dto.responce.PetDTO;
@@ -92,5 +93,8 @@ public interface ApiService {
     @POST(abs_path + "user/set_state")
     @Headers("Content-Type: application/json")
     Call<Void> setState(@Header("Authorization") String token, @Body UserSetStateDTO dto);
+
+    @GET(abs_path + "user/get_cash")
+    Call<CashDTO> getCash (@Header("Authorization") String token);
 
 }

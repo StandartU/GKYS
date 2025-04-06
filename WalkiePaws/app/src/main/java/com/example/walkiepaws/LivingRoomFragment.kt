@@ -82,7 +82,7 @@ class LivingRoomFragment : Fragment() {
         if (::characterImage.isInitialized &&
             DataManager.currentCharacterIndex in DataManager.characters.indices) {
 
-            val resId = DataManager.characters[DataManager.currentCharacterIndex]
+            val resId = DataManager.getChars()[DataManager.currentCharacterIndex]
 
             Glide.with(this)
                 .asDrawable()

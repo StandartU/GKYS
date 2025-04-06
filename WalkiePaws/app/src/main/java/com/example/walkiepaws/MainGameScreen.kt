@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.walkiepaws.backend.RetrofitClient
+import com.example.walkiepaws.backend.Utils
+import com.example.walkiepaws.backend.model.dto.responce.CashDTO
 import com.example.walkiepaws.backend.model.dto.responce.UserStateDTO
 
 class MainGameScreen : AppCompatActivity() {
@@ -25,6 +28,8 @@ class MainGameScreen : AppCompatActivity() {
     private lateinit var sleepBar: ProgressBar
     private lateinit var happyBar: ProgressBar
     private lateinit var viewPager: ViewPager2
+    private lateinit var textSteps: TextView
+    private lateinit var apiService: ApiService
 
     private var hungerLevel = 100
     private var sleepLevel = 100
@@ -34,9 +39,7 @@ class MainGameScreen : AppCompatActivity() {
 
     private val updateBars = object : Runnable {
         override fun run() {
-            val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
-
-            // Запрос к серверу для получения состояния пользователя
+            textSteps = findViewById(R.id.number_of_steps)
             apiService.getState("${(applicationContext as App).token}")
                 .enqueue(object : Callback<UserStateDTO> {
                     override fun onResponse(call: Call<UserStateDTO>, response: Response<UserStateDTO>) {
@@ -50,7 +53,6 @@ class MainGameScreen : AppCompatActivity() {
                                 else if (userState.state.name.equals("happiness")) {happyLevel = userState.value}
                             }
 
-                            Log.d("DEBUG", hungerLevel.toString() + sleepLevel.toString() + hungerLevel.toString())
                             hungerBar.progress = hungerLevel
                             sleepBar.progress = sleepLevel
                             happyBar.progress = happyLevel
@@ -68,6 +70,18 @@ class MainGameScreen : AppCompatActivity() {
                     }
                 })
 
+            apiService.getCash((applicationContext as App).token).enqueue(object: Callback<CashDTO> {
+                @SuppressLint("SetTextI18n")
+                override fun onResponse(call: Call<CashDTO>, response: Response<CashDTO>) {
+                    textSteps.text = response.body()?.cash.toString();
+                }
+
+                override fun onFailure(call: Call<CashDTO>, t: Throwable) {
+                    Log.e("DEBUG", "Failure: ${t.message}")
+                }
+
+            })
+            DataManager.updateCharList()
             // Повторный запуск через 10 секунд
             handler.postDelayed(this, 10000)
         }
@@ -85,6 +99,8 @@ class MainGameScreen : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        apiService = RetrofitClient.getApiService()
         enableEdgeToEdge()
         setContentView(R.layout.activity_main_game_screen)
 
