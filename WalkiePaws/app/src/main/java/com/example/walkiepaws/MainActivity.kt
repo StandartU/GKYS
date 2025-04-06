@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToRegistration() {
-        startActivity(Intent(this, RegistrationActivity::class.java))
+        startActivity(Intent(this, MainGameScreen::class.java))
     }
 
     private fun navigateToMainGameScreen() {

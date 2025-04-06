@@ -18,9 +18,9 @@ object DataManager {
         set(value) = prefs.edit().putInt(CHARACTER_INDEX_KEY, value).apply()
 
     val characters = listOf(
-        R.drawable.gepard,
-        R.drawable.kangaroo,
-        R.drawable.hamster,
-        R.drawable.rabbit
+        R.drawable.gepard_norm,
+        R.drawable.kangaroo_norm,
+        R.drawable.hamster_norm,
+        R.drawable.rabbit_norm
     )
 }

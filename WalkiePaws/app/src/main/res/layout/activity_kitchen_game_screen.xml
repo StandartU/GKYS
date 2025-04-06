@@ -17,7 +17,7 @@
         android:layout_marginBottom="200dp"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
-        app:srcCompat="@drawable/gepard" />
+        app:srcCompat="@drawable/gepard_norm" />
 
     <ImageView
         android:id="@+id/imageTable"

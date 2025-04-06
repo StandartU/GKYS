@@ -9,15 +9,6 @@
     android:orientation="vertical"
     tools:context=".LivingRoomFragment">
 
-    <ImageView
-        android:id="@+id/imageCharacter"
-        android:layout_width="match_parent"
-        android:layout_height="600dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="150dp"
-        android:contentDescription="@null"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/gepard"/>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_game"
@@ -56,5 +47,16 @@
         android:scaleType="centerInside"
         android:src="@drawable/icon_customization"
         app:shapeAppearanceOverlay="@style/Circular" />
+
+    <ImageView
+        android:id="@+id/imageCharacter"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="150dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/gepard_norm"/>
+
 </RelativeLayout>
 

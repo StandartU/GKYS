@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 
 class BedroomFragment : Fragment() {
     private lateinit var characterImage: ImageView
@@ -80,7 +81,13 @@ class BedroomFragment : Fragment() {
     private fun updateCharacterImage() {
         if (::characterImage.isInitialized &&
             DataManager.currentCharacterIndex in DataManager.characters.indices) {
-            characterImage.setImageResource(DataManager.characters[DataManager.currentCharacterIndex])
+
+            val resId = DataManager.characters[DataManager.currentCharacterIndex]
+
+            Glide.with(this)
+                .asDrawable()
+                .load(resId)
+                .into(characterImage)
         }
     }
 

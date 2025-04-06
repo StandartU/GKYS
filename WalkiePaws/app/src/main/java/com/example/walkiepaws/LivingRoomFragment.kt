@@ -1,6 +1,8 @@
 package com.example.walkiepaws
 
 import android.content.Intent
+import android.graphics.drawable.AnimatedImageDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 
 class LivingRoomFragment : Fragment() {
     private lateinit var characterImage: ImageView
@@ -78,9 +81,16 @@ class LivingRoomFragment : Fragment() {
     private fun updateCharacterImage() {
         if (::characterImage.isInitialized &&
             DataManager.currentCharacterIndex in DataManager.characters.indices) {
-            characterImage.setImageResource(DataManager.characters[DataManager.currentCharacterIndex])
+
+            val resId = DataManager.characters[DataManager.currentCharacterIndex]
+
+            Glide.with(this)
+                .asDrawable()
+                .load(resId)
+                .into(characterImage)
         }
     }
+
 
     private fun openShop() {
         val intent = Intent(activity, ShopActivity::class.java)
