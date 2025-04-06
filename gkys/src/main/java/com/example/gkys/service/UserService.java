@@ -42,6 +42,10 @@ public class UserService {
         }
     }
 
+    public int getCash(UserModel userModel) {
+        return userModel.getCash();
+    }
+
     public void initUser(UserModel userModel) {
         Iterable<StateModel> stateModels = stateRepository.findAll();
         Iterable<RoomModel> roomModels = roomRepository.findAll();

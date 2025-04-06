@@ -15,6 +15,7 @@ import com.example.gkys.model.dto.request.RoomLvlDTO;
 import com.example.gkys.model.dto.request.StepCountDTO;
 import com.example.gkys.model.dto.request.UserAddCashDTO;
 import com.example.gkys.model.dto.request.UserSetStateDTO;
+import com.example.gkys.model.dto.responce.CashDTO;
 import com.example.gkys.model.dto.responce.UserRoomDTO;
 import com.example.gkys.model.dto.responce.UserStateDTO;
 import com.example.gkys.security.TokenService;
@@ -84,6 +85,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
     
+    @GetMapping(value = "/get_cash")
+    public ResponseEntity<CashDTO> getCash(@RequestHeader("Authorization") String authHeader) {
+        UserModel userModel = tokenService.getUserByJWT(authHeader);
+        return ResponseEntity.ok(new CashDTO(userService.getCash(userModel)));
+    }
 
 
 }
