@@ -45,6 +45,15 @@ object DataManager {
         R.drawable.rabbit_norm
     )
 
+    val sleepingCharacters = listOf(
+        R.drawable.gepard_sleep,
+        R.drawable.kangaroo_sleep,
+        R.drawable.hamster_sleep,
+        R.drawable.rabbit_sleep
+    )
+
+    fun getCurrentSleepingCharacter(): Int = sleepingCharacters[currentCharacterIndex]
+
     fun getChars(): List<Int> {
         return charactersIds
     }
