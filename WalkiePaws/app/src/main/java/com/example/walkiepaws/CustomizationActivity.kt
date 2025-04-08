@@ -23,25 +23,25 @@ class CustomizationActivity : AppCompatActivity() {
     private var currentCategory = 0
     
     private val hatsItems = mutableListOf(
-        Item("Шапка", "500 монет", R.drawable.cap),
-        Item("Шляпа", "600 монет", R.drawable.hat),
-        Item("Кепка", "800 монет", R.drawable.kepka),
-        Item("Бандана", "800 монет", R.drawable.bandana),
-        Item("Шлем", "800 монет", R.drawable.helmet)
+        Item("Шапка", "Удобная шапка", R.drawable.cap),
+        Item("Шляпа", "Удобная шляпка", R.drawable.hat),
+        Item("Кепка", "Стильная кепка", R.drawable.kepka),
+        Item("Бандана", "Стильная бандана", R.drawable.bandana),
+        Item("Шлем", "Безопасный шлем", R.drawable.helmet)
     )
 
     private val topsItems = mutableListOf(
-        Item("Футболка", "1200 монет", R.drawable.tshirt),
-        Item("Рубашка", "1500 монет", R.drawable.shirt),
-        Item("Жилетка", "2000 монет", R.drawable.vest)
+        Item("Футболка", "Удобная футболка", R.drawable.tshirt),
+        Item("Рубашка", "Удобная рубашка", R.drawable.shirt),
+        Item("Жилетка", "Удобная жилетка", R.drawable.vest)
     )
 
     private val accessoriesItems = mutableListOf(
-        Item("Очки", "900 монет", R.drawable.glasses),
-        Item("Шарф", "700 монет", R.drawable.scarf),
-        Item("Шарф", "800 монет", R.drawable.scarf),
-        Item("Наушники", "800 монет", R.drawable.headphones),
-        Item("Подвеска", "800 монет", R.drawable.pendant),
+        Item("Очки", "Стильные очки", R.drawable.glasses),
+        Item("Шарф", "Стильный шарф", R.drawable.scarf),
+        Item("Маска", "Стильная маска", R.drawable.mask),
+        Item("Наушники", "Стильные наушники", R.drawable.headphones),
+        Item("Подвеска", "Стильная подвеска", R.drawable.pendant)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

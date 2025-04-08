@@ -98,15 +98,15 @@ class StatisticsActivity : AppCompatActivity() {
         }
 
         val dataSet = LineDataSet(entries, getString(R.string.steps_label)).apply {
-            color = getColorCompat(R.color.main_color_auth)
+            color = getColorCompat(R.color.ddd)
             setDrawCircles(true)
             setDrawFilled(true)
-            fillColor = getColorCompat(R.color.ddd)
+            fillColor = getColorCompat(R.color.ddd1)
             mode = LineDataSet.Mode.CUBIC_BEZIER
             lineWidth = 2f
             circleRadius = 4f
             valueTextSize = 15f
-            valueTextColor = getColorCompat(R.color.main_color_auth)
+            valueTextColor = getColorCompat(R.color.ddd)
         }
 
         lineChartStatistics.apply {
