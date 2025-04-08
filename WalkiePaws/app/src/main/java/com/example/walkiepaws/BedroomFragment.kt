@@ -84,10 +84,12 @@ class BedroomFragment : Fragment() {
 
             val resId = DataManager.getChars()[DataManager.currentCharacterIndex]
 
-            Glide.with(this)
-                .asDrawable()
-                .load(resId)
-                .into(characterImage)
+            if (characterImage.id != resId) {
+                Glide.with(this)
+                    .asDrawable()
+                    .load(resId)
+                    .into(characterImage)
+            }
         }
     }
 

@@ -81,13 +81,14 @@ class LivingRoomFragment : Fragment() {
     private fun updateCharacterImage() {
         if (::characterImage.isInitialized &&
             DataManager.currentCharacterIndex in DataManager.characters.indices) {
+            val resId: Int = DataManager.getChars()[DataManager.currentCharacterIndex]
 
-            val resId = DataManager.getChars()[DataManager.currentCharacterIndex]
-
-            Glide.with(this)
-                .asDrawable()
-                .load(resId)
-                .into(characterImage)
+            if (characterImage.id != resId) {
+                Glide.with(this)
+                    .asDrawable()
+                    .load(resId)
+                    .into(characterImage)
+            }
         }
     }
 
