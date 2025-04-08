@@ -45,7 +45,7 @@ object DataManager {
         R.drawable.rabbit_norm
     )
 
-    val sleepingCharacters = listOf(
+    private val sleepingCharacters = listOf(
         R.drawable.gepard_sleep,
         R.drawable.kangaroo_sleep,
         R.drawable.hamster_sleep,
@@ -60,17 +60,17 @@ object DataManager {
 
     fun updateCharList(onComplete: (() -> Unit)? = null) {
         val characterNames = listOf("gepard", "kangaroo", "hamster", "rabbit")
-        val charList = MutableList(characterNames.size) { 0 } // создаем список того же размера, что и characterNames
+        val charList = MutableList(characterNames.size) { 0 }
         val latch = CountDownLatch(characterNames.size)
 
-        for ((index, char) in characterNames.withIndex()) { // используем withIndex, чтобы получить индекс
+        for ((index, char) in characterNames.withIndex()) {
             val reqDTO = GetPetDTO(char)
             apiService.getPet((appContext as App).token, reqDTO)
                 .enqueue(object : Callback<PetDTO> {
                     override fun onResponse(call: Call<PetDTO>, response: Response<PetDTO>) {
                         val name = response.body()?.template
                         val drawableId = Utils().getDrawableIdByName(appContext, name.toString())
-                        charList[index] = drawableId  // добавляем в нужный индекс
+                        charList[index] = drawableId
                         latch.countDown()
                     }
 
@@ -82,7 +82,7 @@ object DataManager {
         }
 
         Thread {
-            latch.await() // ждём все ответы
+            latch.await()
             charactersIds = charList
             onComplete?.invoke()
         }.start()

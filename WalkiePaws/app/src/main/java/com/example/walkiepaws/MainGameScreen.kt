@@ -145,6 +145,7 @@ class MainGameScreen : AppCompatActivity() {
         handler.post(updateBars)
     }
 
+
     private fun hideActiveCharacter() {
         supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")?.let { currentFragment ->
             when (currentFragment) {
