@@ -4,12 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 
@@ -18,6 +20,8 @@ class BedroomFragment : Fragment() {
     private lateinit var shopButton: ImageView
     private lateinit var customizeButton: ImageView
     private lateinit var sleepButton: ImageView
+    private lateinit var imageBlanket: ImageView
+    private lateinit var mainLayout: RelativeLayout
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -28,11 +32,16 @@ class BedroomFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        DataManager.updateRoomsTemplates()
+        handler.post(updateRoom)
         val view = inflater.inflate(R.layout.activity_bedroom_game_screen, container, false)
         characterImage = view.findViewById(R.id.imageCharacter)
         shopButton = view.findViewById(R.id.button_shop)
         customizeButton = view.findViewById(R.id.button_customize)
         sleepButton = view.findViewById(R.id.button_sleep)
+
+        mainLayout = view.findViewById(R.id.main)
+        imageBlanket = view.findViewById(R.id.imageTable)
 
         resetCharacterState()
 
@@ -47,7 +56,6 @@ class BedroomFragment : Fragment() {
         }
 
         sleepButton.setOnClickListener { toggleSleepState() }
-
         return view
     }
 
@@ -134,6 +142,11 @@ class BedroomFragment : Fragment() {
                 Log.e("BedroomFragment", "Error loading character image", e)
             }
         }
+    }
+
+    val updateRoom = Runnable {
+        imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)
+        mainLayout.setBackgroundResource(DataManager.rooms["bedroom"]?.getOrNull(0) ?: 0)
     }
 
     private fun openShop() {

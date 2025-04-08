@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainGameScreen() {
-        DataManager.updateCharList()
+        DataManager.updateData()
         startActivity(Intent(this, MainGameScreen::class.java))
     }
 

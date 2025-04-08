@@ -11,6 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.backend.ApiService
+import com.example.walkiepaws.backend.RetrofitClient
+import com.example.walkiepaws.backend.Utils
+import com.example.walkiepaws.backend.model.ItemModel
+import com.example.walkiepaws.backend.model.dto.responce.ItemDTO
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CustomizationActivity : AppCompatActivity() {
 
@@ -19,34 +27,21 @@ class CustomizationActivity : AppCompatActivity() {
     private lateinit var topsCategory: TextView
     private lateinit var accessoriesCategory: TextView
     private lateinit var imageBack: ImageView
+    private lateinit var apiService: ApiService
 
     private var currentCategory = 0
     
-    private val hatsItems = mutableListOf(
-        Item("Шапка", "500 монет", R.drawable.cap),
-        Item("Шляпа", "600 монет", R.drawable.hat),
-        Item("Кепка", "800 монет", R.drawable.kepka),
-        Item("Бандана", "800 монет", R.drawable.bandana),
-        Item("Шлем", "800 монет", R.drawable.helmet)
-    )
+    private lateinit var hatsItems: MutableList<Item>
 
-    private val topsItems = mutableListOf(
-        Item("Футболка", "1200 монет", R.drawable.tshirt),
-        Item("Рубашка", "1500 монет", R.drawable.shirt),
-        Item("Жилетка", "2000 монет", R.drawable.vest)
-    )
+    private lateinit var topsItems: MutableList<Item>
 
-    private val accessoriesItems = mutableListOf(
-        Item("Очки", "900 монет", R.drawable.glasses),
-        Item("Шарф", "700 монет", R.drawable.scarf),
-        Item("Шарф", "800 монет", R.drawable.scarf),
-        Item("Наушники", "800 монет", R.drawable.headphones),
-        Item("Подвеска", "800 монет", R.drawable.pendant),
-    )
+    private lateinit var accessoriesItems: MutableList<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        apiService = RetrofitClient.getApiService()
         setContentView(R.layout.activity_customization)
+        initItems()
         initViews()
         setupClickListeners()
         loadCategory(currentCategory)
@@ -56,6 +51,27 @@ class CustomizationActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun initItems() {
+        topsItems = emptyList<Item>().toMutableList()
+        hatsItems = emptyList<Item>().toMutableList()
+        accessoriesItems = emptyList<Item>().toMutableList()
+        apiService.getItems((applicationContext as App).token).enqueue(object : Callback<ItemDTO> {
+            override fun onResponse(call: Call<ItemDTO>, response: Response<ItemDTO>) {
+                val items = response.body()?.items
+                items?.forEach{ item ->
+                    when (item.category) {
+                        "top" -> topsItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(applicationContext, item.name), item))
+                        "hat" -> hatsItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(applicationContext, item.name), item))
+                        "accs" -> accessoriesItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(applicationContext, item.name), item))
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ItemDTO>, t: Throwable) {}
+
+        })
     }
 
     private fun initViews() {
@@ -125,7 +141,7 @@ class CustomizationActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.itemName).text = item.name
             findViewById<TextView>(R.id.itemPrice).text = item.price
             findViewById<ImageView>(R.id.itemImage).apply {
-                setImageResource(item.imageRes) // Устанавливаем изображение из ресурсов
+                setImageResource(item.imageRes)
                 scaleType = ImageView.ScaleType.CENTER_CROP
             }
 
@@ -139,22 +155,22 @@ class CustomizationActivity : AppCompatActivity() {
         Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
     }
 
-    fun addHatItem(name: String, price: String, imageRes: Int) {
-        hatsItems.add(Item(name, price, imageRes))
+    fun addHatItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        hatsItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 0) {
             addItemToContainer(hatsItems.last())
         }
     }
 
-    fun addTopItem(name: String, price: String, imageRes: Int) {
-        topsItems.add(Item(name, price, imageRes))
+    fun addTopItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        topsItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 1) {
             addItemToContainer(topsItems.last())
         }
     }
 
-    fun addAccessoryItem(name: String, price: String, imageRes: Int) {
-        accessoriesItems.add(Item(name, price, imageRes))
+    fun addAccessoryItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        accessoriesItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 2) {
             addItemToContainer(accessoriesItems.last())
         }
@@ -164,6 +180,7 @@ class CustomizationActivity : AppCompatActivity() {
     data class Item(
         val name: String,
         val price: String,
-        val imageRes: Int // Теперь храним ID ресурса изображения
+        val imageRes: Int, // Теперь храним ID ресурса изображения
+        val dto: ItemModel
     )
 }

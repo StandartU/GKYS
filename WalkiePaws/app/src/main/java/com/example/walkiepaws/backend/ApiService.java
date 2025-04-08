@@ -12,6 +12,7 @@ import com.example.walkiepaws.backend.model.dto.request.StepCountDTO;
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO;
 import com.example.walkiepaws.backend.model.dto.request.UserSetStateDTO;
 import com.example.walkiepaws.backend.model.dto.responce.CashDTO;
+import com.example.walkiepaws.backend.model.dto.responce.ItemDTO;
 import com.example.walkiepaws.backend.model.dto.responce.LoginDTO;
 import com.example.walkiepaws.backend.model.dto.responce.MarketAllDTO;
 import com.example.walkiepaws.backend.model.dto.responce.PetDTO;
@@ -42,8 +43,11 @@ public interface ApiService {
     Call<Void> register(@Body RegisterDTO dto);
 
     //ITEM CONTROLLER
-    @GET(abs_path + "item/get_items")
+    @GET(abs_path + "item/get_user_items")
     Call<UserItemDTO> getUserItems(@Header("Authorization") String token);
+
+    @GET(abs_path + "item/get_items")
+    Call<ItemDTO> getItems(@Header("Authorization") String token);
 
     @POST(abs_path + "item/set_item_active")
     @Headers("Content-Type: application/json")

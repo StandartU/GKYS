@@ -4,11 +4,14 @@ import android.content.Intent
 import android.graphics.drawable.AnimatedImageDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 
@@ -16,15 +19,21 @@ class LivingRoomFragment : Fragment() {
     private lateinit var characterImage: ImageView
     private lateinit var shopButton: ImageView
     private lateinit var customizeButton: ImageView
+    private lateinit var mainLayout: RelativeLayout
+
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
+        DataManager.updateRoomsTemplates()
+        handler.post(updateRoom)
         val view = inflater.inflate(R.layout.activity_living_game_screen, container, false)
 
         characterImage = view.findViewById(R.id.imageCharacter)
         shopButton = view.findViewById(R.id.button_shop)
         customizeButton = view.findViewById(R.id.button_customize)
+        mainLayout = view.findViewById(R.id.main)
 
         resetCharacterState()
 
@@ -35,7 +44,6 @@ class LivingRoomFragment : Fragment() {
         customizeButton.setOnClickListener {
             openCustomization()
         }
-
         return view
     }
 
@@ -92,6 +100,9 @@ class LivingRoomFragment : Fragment() {
         }
     }
 
+    val updateRoom = Runnable {
+        mainLayout.setBackgroundResource(DataManager.rooms["living"]?.get(0) ?: 0)
+    }
 
     private fun openShop() {
         val intent = Intent(activity, ShopActivity::class.java)

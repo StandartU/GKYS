@@ -8,6 +8,7 @@ import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.Utils
 import com.example.walkiepaws.backend.model.dto.request.GetPetDTO
 import com.example.walkiepaws.backend.model.dto.responce.PetDTO
+import com.example.walkiepaws.backend.model.dto.responce.UserRoomDTO
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,6 +34,11 @@ object DataManager {
         prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
+    fun updateData() {
+        updateCharList()
+        updateRoomsTemplates()
+    }
+
     var currentCharacterIndex: Int
         get() = prefs.getInt(CHARACTER_INDEX_KEY, 0)
         set(value) = prefs.edit().putInt(CHARACTER_INDEX_KEY, value).apply()
@@ -43,6 +49,12 @@ object DataManager {
         R.drawable.kangaroo_norm,
         R.drawable.hamster_norm,
         R.drawable.rabbit_norm
+    )
+
+    val rooms: MutableMap<String, List<Int>> = mutableMapOf(
+        "living" to listOf(R.drawable.living_1),
+        "kitchen" to listOf(R.drawable.kitchen_1, R.drawable.kitchen_table_1),
+        "bedroom" to listOf(R.drawable.bedroom_1, R.drawable.blanket_1)
     )
 
     private val sleepingCharacters = listOf(
@@ -87,4 +99,32 @@ object DataManager {
             onComplete?.invoke()
         }.start()
     }
+
+    fun updateRoomsTemplates () {
+        apiService.getRooms((appContext as App).token).enqueue(object : Callback<List<UserRoomDTO>> {
+            override fun onResponse(
+                call: Call<List<UserRoomDTO>>,
+                response: Response<List<UserRoomDTO>>
+            ) {
+                val dataRooms = response.body()
+                dataRooms?.forEach { room ->
+                    when (room.room.name) {
+                        "livingroom" -> rooms["living"] = room.templates.map { template ->
+                            Utils().getDrawableIdByName(appContext, template)
+                        }.toList()
+                        "sleeproom" -> rooms["bedroom"] = room.templates.map { template ->
+                            Utils().getDrawableIdByName(appContext, template)
+                        }.toList()
+                        "kitchen" -> rooms["kitchen"] = room.templates.map { template ->
+                            Utils().getDrawableIdByName(appContext, template)
+                        }.toList()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<UserRoomDTO>>, t: Throwable) {}
+
+        })
+    }
 }
+
