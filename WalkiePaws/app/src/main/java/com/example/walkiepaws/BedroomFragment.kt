@@ -2,6 +2,7 @@ package com.example.walkiepaws
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,9 @@ class BedroomFragment : Fragment() {
     private lateinit var characterImage: ImageView
     private lateinit var shopButton: ImageView
     private lateinit var customizeButton: ImageView
+    private lateinit var sleepButton: ImageView
 
+    private var isSleeping = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,34 +28,61 @@ class BedroomFragment : Fragment() {
         characterImage = view.findViewById(R.id.imageCharacter)
         shopButton = view.findViewById(R.id.button_shop)
         customizeButton = view.findViewById(R.id.button_customize)
+        sleepButton = view.findViewById(R.id.button_sleep)
 
         resetCharacterState()
 
         shopButton.setOnClickListener {
+            resetSleepState()
             openShop()
         }
 
         customizeButton.setOnClickListener {
+            resetSleepState()
             openCustomization()
         }
+
+        sleepButton.setOnClickListener { toggleSleepState() }
 
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        showCharacterSmoothly()
+    private fun resetSleepState() {
+        if (isSleeping) {
+            isSleeping = false
+            updateCharacterImage()
+            characterImage.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(200)
+                .start()
+        }
+    }
+
+    private fun toggleSleepState() {
+        isSleeping = !isSleeping
+        updateCharacterImage()
+
+        characterImage.animate()
+            .scaleX(if (isSleeping) 0.9f else 1f)
+            .scaleY(if (isSleeping) 0.9f else 1f)
+            .setDuration(300)
+            .start()
     }
 
     override fun onPause() {
-        hideCharacterImmediately()
         super.onPause()
+        resetSleepState()
+        hideCharacterImmediately()
     }
 
     private fun resetCharacterState() {
         if (::characterImage.isInitialized) {
             characterImage.visibility = View.INVISIBLE
             characterImage.alpha = 0f
+            isSleeping = false
+            characterImage.scaleX = 1f
+            characterImage.scaleY = 1f
         }
     }
 
@@ -79,16 +109,25 @@ class BedroomFragment : Fragment() {
     }
 
     private fun updateCharacterImage() {
-        if (::characterImage.isInitialized &&
-            DataManager.currentCharacterIndex in DataManager.characters.indices) {
-
-            val resId = DataManager.getChars()[DataManager.currentCharacterIndex]
+        if (::characterImage.isInitialized) {
+            try {
+                val resId = if (isSleeping) {
+                    DataManager.getCurrentSleepingCharacter()
+                } else {
+                    DataManager.getChars()[DataManager.currentCharacterIndex]
+                }
 
             if (characterImage.id != resId) {
                 Glide.with(this)
                     .asDrawable()
                     .load(resId)
                     .into(characterImage)
+                Glide.with(this)
+                    .load(resId)
+                    .into(characterImage)
+            }
+            } catch (e: Exception) {
+                Log.e("BedroomFragment", "Error loading character image", e)
             }
         }
     }

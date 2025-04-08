@@ -11,8 +11,8 @@
         <clip>
             <shape>
                 <corners android:radius="20dp"/>
-                <solid android:color="@color/seekbarbg"/>
-                <stroke android:width="3dp" android:color="@color/main_color_auth"/>
+                <solid android:color="@color/ddd1"/>
+                <stroke android:width="3dp" android:color="@color/ddd"/>
             </shape>
         </clip>
     </item>

@@ -10,5 +10,7 @@
     <color name="settings">#6eb1c6</color>
     <color name="stat">#b5d2de</color>
     <color name="seekbarbg">#6750a4</color>
-    <color name="ddd">#7e7dee</color>
+    <color name="ddd">#371e72</color>
+    <color name="ddd1">#d1bcff</color>
+
 </resources>
