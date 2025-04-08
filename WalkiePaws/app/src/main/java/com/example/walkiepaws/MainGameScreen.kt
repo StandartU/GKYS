@@ -81,8 +81,14 @@ class MainGameScreen : AppCompatActivity() {
                 }
 
             })
+
             DataManager.updateCharList()
-            // Повторный запуск через 10 секунд
+            val currentFragment = supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
+            when (currentFragment) {
+                is KitchenFragment -> currentFragment.showCharacterSmoothly()
+                is LivingRoomFragment -> currentFragment.showCharacterSmoothly()
+                is BedroomFragment -> currentFragment.showCharacterSmoothly()
+            }
             handler.postDelayed(this, 10000)
         }
     }
@@ -138,6 +144,7 @@ class MainGameScreen : AppCompatActivity() {
 
         handler.post(updateBars)
     }
+
 
     private fun hideActiveCharacter() {
         supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")?.let { currentFragment ->

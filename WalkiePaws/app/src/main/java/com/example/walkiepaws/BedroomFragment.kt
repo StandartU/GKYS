@@ -2,6 +2,8 @@ package com.example.walkiepaws
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,8 @@ class BedroomFragment : Fragment() {
     private lateinit var shopButton: ImageView
     private lateinit var customizeButton: ImageView
     private lateinit var sleepButton: ImageView
+
+    private val handler = Handler(Looper.getMainLooper())
 
     private var isSleeping = false
 
@@ -117,9 +121,15 @@ class BedroomFragment : Fragment() {
                     DataManager.getChars()[DataManager.currentCharacterIndex]
                 }
 
+            if (characterImage.id != resId) {
+                Glide.with(this)
+                    .asDrawable()
+                    .load(resId)
+                    .into(characterImage)
                 Glide.with(this)
                     .load(resId)
                     .into(characterImage)
+            }
             } catch (e: Exception) {
                 Log.e("BedroomFragment", "Error loading character image", e)
             }
