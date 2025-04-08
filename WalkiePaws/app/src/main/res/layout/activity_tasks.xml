@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageBack"
+        android:layout_marginTop="15dp"
         android:contentDescription="@null"
         app:srcCompat="@drawable/block_tasks" />
 
@@ -87,7 +88,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
+
                     android:clickable="false"/>
+
             </RelativeLayout>
 
             <RelativeLayout

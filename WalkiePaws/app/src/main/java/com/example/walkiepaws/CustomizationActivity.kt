@@ -7,12 +7,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-
 
 class CustomizationActivity : AppCompatActivity() {
 
@@ -23,23 +21,27 @@ class CustomizationActivity : AppCompatActivity() {
     private lateinit var imageBack: ImageView
 
     private var currentCategory = 0
-
+    
     private val hatsItems = mutableListOf(
-        Item("Бейсболка", "500 руб", R.color.white),
-        Item("Кепка", "600 руб", R.color.white),
-        Item("Шапка", "800 руб", R.color.white)
+        Item("Шапка", "500 монет", R.drawable.cap),
+        Item("Шляпа", "600 монет", R.drawable.hat),
+        Item("Кепка", "800 монет", R.drawable.kepka),
+        Item("Бандана", "800 монет", R.drawable.bandana),
+        Item("Шлем", "800 монет", R.drawable.helmet)
     )
 
     private val topsItems = mutableListOf(
-        Item("Футболка", "1200 руб", R.color.white),
-        Item("Рубашка", "1500 руб", R.color.white),
-        Item("Свитшот", "2000 руб", R.color.white)
+        Item("Футболка", "1200 монет", R.drawable.tshirt),
+        Item("Рубашка", "1500 монет", R.drawable.shirt),
+        Item("Жилетка", "2000 монет", R.drawable.vest)
     )
 
     private val accessoriesItems = mutableListOf(
-        Item("Ремень", "900 руб", R.color.white),
-        Item("Шарф", "700 руб", R.color.white),
-        Item("Перчатки", "800 руб", R.color.white)
+        Item("Очки", "900 монет", R.drawable.glasses),
+        Item("Шарф", "700 монет", R.drawable.scarf),
+        Item("Шарф", "800 монет", R.drawable.scarf),
+        Item("Наушники", "800 монет", R.drawable.headphones),
+        Item("Подвеска", "800 монет", R.drawable.pendant),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,13 +70,11 @@ class CustomizationActivity : AppCompatActivity() {
         hatsCategory.setOnClickListener { switchCategory(0) }
         topsCategory.setOnClickListener { switchCategory(1) }
         accessoriesCategory.setOnClickListener { switchCategory(2) }
-
         imageBack.setOnClickListener { finish() }
     }
 
     private fun switchCategory(categoryIndex: Int) {
         if (currentCategory == categoryIndex) return
-
         currentCategory = categoryIndex
         updateCategorySelection()
         loadCategory(categoryIndex)
@@ -125,8 +125,8 @@ class CustomizationActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.itemName).text = item.name
             findViewById<TextView>(R.id.itemPrice).text = item.price
             findViewById<ImageView>(R.id.itemImage).apply {
-                setBackgroundColor(ContextCompat.getColor(context, item.imageColor))
-                scaleType = ImageView.ScaleType.CENTER_INSIDE
+                setImageResource(item.imageRes) // Устанавливаем изображение из ресурсов
+                scaleType = ImageView.ScaleType.CENTER_CROP
             }
 
             setOnClickListener { onItemClicked(item) }
@@ -139,31 +139,31 @@ class CustomizationActivity : AppCompatActivity() {
         Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
     }
 
-    fun addHatItem(name: String, price: String) {
-        hatsItems.add(Item(name, price, R.color.white))
+    fun addHatItem(name: String, price: String, imageRes: Int) {
+        hatsItems.add(Item(name, price, imageRes))
         if (currentCategory == 0) {
             addItemToContainer(hatsItems.last())
         }
     }
 
-    fun addTopItem(name: String, price: String) {
-        topsItems.add(Item(name, price, R.color.white))
+    fun addTopItem(name: String, price: String, imageRes: Int) {
+        topsItems.add(Item(name, price, imageRes))
         if (currentCategory == 1) {
             addItemToContainer(topsItems.last())
         }
     }
 
-    fun addAccessoryItem(name: String, price: String) {
-        accessoriesItems.add(Item(name, price, R.color.white))
+    fun addAccessoryItem(name: String, price: String, imageRes: Int) {
+        accessoriesItems.add(Item(name, price, imageRes))
         if (currentCategory == 2) {
             addItemToContainer(accessoriesItems.last())
         }
     }
 
-    // Модель товара
+    // Обновленная модель товара с ID изображения вместо цвета
     data class Item(
         val name: String,
         val price: String,
-        @ColorRes val imageColor: Int
+        val imageRes: Int // Теперь храним ID ресурса изображения
     )
 }

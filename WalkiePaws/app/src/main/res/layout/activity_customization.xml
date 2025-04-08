@@ -23,14 +23,15 @@
         android:id="@+id/customizationHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageBack"
+        android:layout_below="@+id/imageBack"
+        android:layout_marginTop="-30dp"
         android:contentDescription="@null"
         app:srcCompat="@drawable/block_customization" />
 
     <LinearLayout
         android:id="@+id/categoriesContainer"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/customizationHeader"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="15dp"
@@ -41,40 +42,40 @@
         <TextView
             android:id="@+id/hatsCategory"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="50dp"
             android:layout_marginHorizontal="5dp"
-            android:background="@drawable/category_button_selected"
+            android:layout_weight="1"
+            android:background="@drawable/category_button"
             android:gravity="center"
             android:text="Головные уборы"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/topsCategory"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="50dp"
             android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
             android:background="@drawable/category_button"
             android:gravity="center"
             android:text="Верхняя одежда"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/accessoriesCategory"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="50dp"
             android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
             android:background="@drawable/category_button"
             android:gravity="center"
             android:text="Аксессуары"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -83,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/categoriesContainer"
-        android:layout_marginTop="-5dp"
+        android:layout_marginTop="5dp"
         android:paddingHorizontal="15dp">
 
         <LinearLayout
