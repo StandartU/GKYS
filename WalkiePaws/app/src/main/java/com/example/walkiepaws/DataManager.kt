@@ -1,20 +1,23 @@
 package com.example.walkiepaws
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
+import com.example.walkiepaws.games.CheetahRunnerStarter
+import com.example.walkiepaws.games.FruitTakerActivity
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.Utils
-import com.example.walkiepaws.backend.model.ItemModel
 import com.example.walkiepaws.backend.model.Model
 import com.example.walkiepaws.backend.model.dto.request.GetPetDTO
-import com.example.walkiepaws.backend.model.dto.responce.ItemDTO
 import com.example.walkiepaws.backend.model.dto.responce.MarketAllDTO
 import com.example.walkiepaws.backend.model.dto.responce.PetDTO
 import com.example.walkiepaws.backend.model.dto.responce.UserItemDTO
 import com.example.walkiepaws.backend.model.dto.responce.UserRoomDTO
 import com.example.walkiepaws.backend.model.dto.responce.WeekStepsDTO
+import com.example.walkiepaws.games.CheetahJumping
+import com.example.walkiepaws.games.DoodleJumpStarter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,7 +28,7 @@ object DataManager {
     private const val CHARACTER_INDEX_KEY = "character_index"
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var appContext: Context
+    lateinit var appContext: Context
     private lateinit var apiService: ApiService
     lateinit var hatsItems: MutableList<Item>
     lateinit var topsItems: MutableList<Item>
@@ -66,6 +69,13 @@ object DataManager {
         R.drawable.kangaroo_norm,
         R.drawable.hamster_norm,
         R.drawable.rabbit_norm
+    )
+
+    val games = listOf(
+        {appContext.startActivity(Intent(appContext, CheetahRunnerStarter::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
+        {appContext.startActivity(Intent(appContext, DoodleJumpStarter::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
+        {appContext.startActivity(Intent(appContext, FruitTakerActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
+        {appContext.startActivity(Intent(appContext, CheetahJumping::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })}
     )
 
     val rooms: MutableMap<String, List<Int>> = mutableMapOf(

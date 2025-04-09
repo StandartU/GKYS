@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 class LivingRoomFragment : Fragment() {
     private lateinit var characterImage: ImageView
     private lateinit var shopButton: ImageView
+    private lateinit var gameButton: ImageView
     private lateinit var customizeButton: ImageView
     private lateinit var mainLayout: RelativeLayout
 
@@ -32,6 +33,7 @@ class LivingRoomFragment : Fragment() {
 
         characterImage = view.findViewById(R.id.imageCharacter)
         shopButton = view.findViewById(R.id.button_shop)
+        gameButton = view.findViewById(R.id.button_game)
         customizeButton = view.findViewById(R.id.button_customize)
         mainLayout = view.findViewById(R.id.main)
 
@@ -39,6 +41,10 @@ class LivingRoomFragment : Fragment() {
 
         shopButton.setOnClickListener {
             openShop()
+        }
+
+        gameButton.setOnClickListener {
+            startGame()
         }
 
         customizeButton.setOnClickListener {
@@ -112,6 +118,10 @@ class LivingRoomFragment : Fragment() {
     private fun openCustomization() {
         val intent = Intent(activity, CustomizationActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun startGame() {
+        DataManager.games[DataManager.currentCharacterIndex]()
     }
 
     companion object {

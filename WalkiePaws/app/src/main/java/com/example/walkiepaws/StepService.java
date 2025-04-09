@@ -171,25 +171,15 @@ public class StepService extends Service implements SensorEventListener {
      * @param currentTimestampNs Текущая временная метка события сенсора.
      */
     private void detectStep(float smoothedMagnitude, long currentTimestampNs) {
-        // Логирование текущего состояния и значений (полезно для отладки)
-        Log.v(TAG, String.format(Locale.US, "detectStep: Phase=%s, Smoothed=%.2f, Peak=%.1f, Valley=%.1f",
-                (isPeakDetectionPhase ? "PEAK" : "VALLEY"), smoothedMagnitude, PEAK_THRESHOLD, VALLEY_THRESHOLD));
 
         if (isPeakDetectionPhase) {
             // --- Фаза 1: Ищем ПИК (превышение верхнего порога) ---
             if (smoothedMagnitude > PEAK_THRESHOLD) {
-                // Пик обнаружен, переходим в фазу поиска впадины
-                Log.d(TAG, "detectStep: Peak detected! Switching to VALLEY phase.");
                 isPeakDetectionPhase = false; // <-- Меняем фазу
             }
         } else {
             // --- Фаза 2: Ищем ВПАДИНУ (падение ниже нижнего порога) ---
             if (smoothedMagnitude < VALLEY_THRESHOLD) {
-                // Впадина обнаружена - это конец потенциального шага. Проверяем условия.
-                Log.d(TAG, "detectStep: Valley detected! Checking conditions...");
-
-                // Логируем значение lastStepTimestampNs ПЕРЕД проверкой
-                Log.d(TAG, "detectStep: Checking interval. lastStepTimestampNs = " + lastStepTimestampNs);
                 long timeSinceLastStepNs = currentTimestampNs - lastStepTimestampNs;
 
                 // Проверка временного интервала (ИГНОРИРУЕМ ДЛЯ ПЕРВОГО ШАГА!)
@@ -206,14 +196,8 @@ public class StepService extends Service implements SensorEventListener {
                     stepCount++;
                     lastStepTimestampNs = currentTimestampNs; // !!! ОБНОВЛЯЕМ ВРЕМЯ !!!
 
-                    Log.i(TAG, String.format(Locale.US,
-                            "====== STEP DETECTED! Count: %d | TimeΔ: %dms | Gyro: %.2f ======",
-                            stepCount,
-                            (stepCount == 1 ? 0 : timeSinceLastStepNs / 1_000_000), // Корректная дельта для лога
-                            lastGyroMagnitude));
-
                     updateNotification("Шагов: " + stepCount);
-                    sendStepUpdate(stepCount); // Отправляем обновление в Activity
+                    sendStepUpdate(stepCount);
 
                 } else {
                     // Шаг отфильтрован, логируем причину
@@ -223,30 +207,20 @@ public class StepService extends Service implements SensorEventListener {
                         reason += String.format(Locale.US,"Time Interval: %dms", timeSinceLastStepNs / 1_000_000);
                         // !!! СБРАСЫВАЕМ ВРЕМЯ, ЧТОБЫ СЛЕДУЮЩИЙ ШАГ НЕ СРАВНИВАЛСЯ СО СТАРЫМ !!!
                         lastStepTimestampNs = 0;
-                        Log.d(TAG, "Step Filtered by Time, resetting lastStepTimestampNs."); // Доп. лог
                     }
                     // Проверяем причину фильтрации - ГИРОСКОП
                     if (!gyroActivityOk) {
                         reason += (reason.isEmpty() ? "" : " | ") + String.format(Locale.US,"Gyro Low: %.2f", lastGyroMagnitude);
                         // Здесь НЕ сбрасываем время, т.к. это может быть просто короткая тряска
                     }
-                    // Логируем фильтрацию
-                    if (!reason.isEmpty()) {
-                        Log.d(TAG, "Step Filtered ("+ reason + ")");
-                    } else if (lastStepTimestampNs == 0 && !gyroActivityOk) { // Случай первого шага, отфильтрованного гироскопом
-                        Log.d(TAG, "Step Filtered (First step, Gyro Low: " + String.format(Locale.US,"%.2f", lastGyroMagnitude) + ")");
-                    } else {
-                        Log.w(TAG, "Step Filtered (Unknown reason? timeIntervalOk=" + timeIntervalOk + ", gyroActivityOk=" + gyroActivityOk + ")");
-                    }
                 }
                 // !!! ВОЗВРАТ В ФАЗУ ПИКА !!!
                 isPeakDetectionPhase = true;
-                Log.d(TAG, "detectStep: Valley processed. Switching back to PEAK phase.");
                 if (stepCount == 25) {
                     stepCount = 0;
                     apiService.addCash(
                             ((App) getApplication().getApplicationContext()).getToken(),
-                            new UserAddCashDTO(25)
+                            new UserAddCashDTO(25, true)
                     ).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {}
@@ -266,7 +240,6 @@ public class StepService extends Service implements SensorEventListener {
     }
 
     private void resetAlgorithmState() {
-        Log.i(TAG,"Resetting algorithm state. Setting lastStepTimestampNs to 0."); // <-- Уточнили лог
         stepCount = 0;
         lastStepTimestampNs = 0;
         accelMagnitudeBuffer.clear();
@@ -281,7 +254,6 @@ public class StepService extends Service implements SensorEventListener {
         Intent intent = new Intent(ACTION_STEP_UPDATE);
         intent.putExtra(EXTRA_STEP_COUNT, steps);
         broadcaster.sendBroadcast(intent);
-        Log.d(TAG, "Sent broadcast: steps = " + steps);
     }
 
 
@@ -311,8 +283,6 @@ public class StepService extends Service implements SensorEventListener {
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) {
             manager.notify(NOTIFICATION_ID, notification);
-        } else {
-            Log.e(TAG, "updateNotification: NotificationManager is null!");
         }
     }
 
@@ -326,8 +296,6 @@ public class StepService extends Service implements SensorEventListener {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
-            } else {
-                Log.e(TAG, "createNotificationChannel: NotificationManager is null!");
             }
         }
     }

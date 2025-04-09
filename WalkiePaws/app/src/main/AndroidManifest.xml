@@ -52,6 +52,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".games.CheetahJumping" android:exported="true" android:label="@string/app_name" android:theme="@style/Theme.CheetahJumpGame">
+        </activity>
+        <activity android:name=".games.DoodleJumpStarter" android:exported="true" android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".games.FruitTakerActivity" android:exported="true">
+        </activity>
+        <activity android:name=".games.CheetahRunnerStarter" android:exported="true">
+        </activity>
         <service
             android:name=".StepService"
             android:enabled="true"
