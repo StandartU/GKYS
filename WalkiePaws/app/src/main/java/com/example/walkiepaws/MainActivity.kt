@@ -28,8 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonLogin: Button
     private lateinit var buttonRegistration: Button
     private lateinit var apiService: ApiService
-    private val TAG: String = "MainActivity"
-    private val ACTIVITY_RECOGNITION_PERMISSION_CODE: Int = 100
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,104 +84,11 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun navigateToMainGameScreen() {
-        tryStartStepService()
         DataManager.updateData()
         startActivity(Intent(this, MainGameScreen::class.java))
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun tryStartStepService() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d(TAG, "ACTIVITY_RECOGNITION permission already granted.")
-            startStepServiceActual()  // Запускаем сервис, если разрешение уже дано
-        } else {
-            // Запрашиваем разрешение
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.ACTIVITY_RECOGNITION
-                )
-            ) {
-                Log.w(TAG, "Showing rationale for ACTIVITY_RECOGNITION permission.")
-                Toast.makeText(
-                    this,
-                    "Разрешение на физическую активность нужно для подсчета шагов",
-                    Toast.LENGTH_LONG
-                ).show()
-                requestActivityRecognitionPermission()
-            } else {
-                Log.d(TAG, "Requesting ACTIVITY_RECOGNITION permission...")
-                requestActivityRecognitionPermission()
-            }
-        }
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun requestActivityRecognitionPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Запрос разрешения
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                ACTIVITY_RECOGNITION_PERMISSION_CODE
-            )
-            startStepServiceActual()
-        } else {
-            onRequestPermissionsResult(
-                ACTIVITY_RECOGNITION_PERMISSION_CODE,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                intArrayOf(PackageManager.PERMISSION_GRANTED)  // Симулируем, что разрешение предоставлено
-            )
-            startStepServiceActual()
-        }
-    }
-
-    private fun startStepServiceActual() {
-
-        Log.d(TAG, "Starting StepService...")
-        val serviceIntent = Intent(
-            this,
-            StepService::class.java
-        )
-        startForegroundService(serviceIntent)
-    }
-
-    private fun stopStepService() {
-        Log.d(TAG, "Stopping StepService...")
-        val serviceIntent = Intent(
-            this,
-            StepService::class.java
-        )
-        stopService(serviceIntent)
-    }
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        // Проверка, что мы получаем результат именно для разрешения ACTIVITY_RECOGNITION
-        if (requestCode == ACTIVITY_RECOGNITION_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "ACTIVITY_RECOGNITION permission granted by user.")
-                startStepServiceActual()  // Запускаем сервис, если разрешение предоставлено
-            } else {
-                Log.w(TAG, "ACTIVITY_RECOGNITION permission denied by user.")
-                Toast.makeText(
-                    this,
-                    "Без разрешения подсчет шагов невозможен",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
     }
 }

@@ -1,7 +1,10 @@
 package com.example.walkiepaws
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,7 +13,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.model.dto.responce.LoginDTO
@@ -30,6 +36,8 @@ class MainGameScreen : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private lateinit var textSteps: TextView
     private lateinit var apiService: ApiService
+    private val TAG: String = "MainActivity"
+    private val ACTIVITY_RECOGNITION_PERMISSION_CODE: Int = 100
 
     private var hungerLevel = 100
     private var sleepLevel = 100
@@ -104,7 +112,9 @@ class MainGameScreen : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
+        tryStartStepService()
         super.onCreate(savedInstanceState)
 
         apiService = RetrofitClient.getApiService()
@@ -174,5 +184,97 @@ class MainGameScreen : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun tryStartStepService() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG, "ACTIVITY_RECOGNITION permission already granted.")
+            startStepServiceActual()  // Запускаем сервис, если разрешение уже дано
+        } else {
+            // Запрашиваем разрешение
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.ACTIVITY_RECOGNITION
+                )
+            ) {
+                Log.w(TAG, "Showing rationale for ACTIVITY_RECOGNITION permission.")
+                Toast.makeText(
+                    this,
+                    "Разрешение на физическую активность нужно для подсчета шагов",
+                    Toast.LENGTH_LONG
+                ).show()
+                requestActivityRecognitionPermission()
+            } else {
+                Log.d(TAG, "Requesting ACTIVITY_RECOGNITION permission...")
+                requestActivityRecognitionPermission()
+            }
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun requestActivityRecognitionPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Запрос разрешения
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                ACTIVITY_RECOGNITION_PERMISSION_CODE
+            )
+            startStepServiceActual()
+        } else {
+            onRequestPermissionsResult(
+                ACTIVITY_RECOGNITION_PERMISSION_CODE,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                intArrayOf(PackageManager.PERMISSION_GRANTED)  // Симулируем, что разрешение предоставлено
+            )
+            startStepServiceActual()
+        }
+    }
+
+    private fun startStepServiceActual() {
+
+        Log.d(TAG, "Starting StepService...")
+        val serviceIntent = Intent(
+            this,
+            StepService::class.java
+        )
+        startForegroundService(serviceIntent)
+    }
+
+    private fun stopStepService() {
+        Log.d(TAG, "Stopping StepService...")
+        val serviceIntent = Intent(
+            this,
+            StepService::class.java
+        )
+        stopService(serviceIntent)
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        // Проверка, что мы получаем результат именно для разрешения ACTIVITY_RECOGNITION
+        if (requestCode == ACTIVITY_RECOGNITION_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "ACTIVITY_RECOGNITION permission granted by user.")
+                startStepServiceActual()  // Запускаем сервис, если разрешение предоставлено
+            } else {
+                Log.w(TAG, "ACTIVITY_RECOGNITION permission denied by user.")
+                Toast.makeText(
+                    this,
+                    "Без разрешения подсчет шагов невозможен",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 }
