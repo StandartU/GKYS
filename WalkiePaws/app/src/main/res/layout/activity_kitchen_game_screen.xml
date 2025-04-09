@@ -40,6 +40,45 @@
         android:src="@drawable/icon_food"
         app:shapeAppearanceOverlay="@style/Circular" />
 
+    <!-- Popup для выбора еды -->
+    <RelativeLayout
+        android:id="@+id/foodPopup"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_above="@+id/button_food"
+        android:layout_alignEnd="@+id/button_food"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/style_shop_tovar"
+        android:visibility="gone"
+        android:elevation="8dp">
+
+
+        <ImageView
+            android:id="@+id/closeFoodPopup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginStart="220dp"
+            android:layout_marginTop="20dp"
+            app:srcCompat="@drawable/block_exit"
+            android:contentDescription="@null"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
+            android:padding="8dp"
+            android:clipToPadding="false">
+
+            <LinearLayout
+                android:id="@+id/foodItemsScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </ScrollView>
+    </RelativeLayout>
+
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_shop"
         android:layout_width="100dp"

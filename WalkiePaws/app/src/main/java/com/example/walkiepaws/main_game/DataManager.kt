@@ -66,10 +66,10 @@ object DataManager {
 
 
     val characters = listOf(
-        R.drawable.gepard_norm,
-        R.drawable.kangaroo_norm,
-        R.drawable.hamster_norm,
-        R.drawable.rabbit_norm
+        R.drawable.gepard,
+        R.drawable.kangaroo,
+        R.drawable.hamster,
+        R.drawable.rabbit
     )
 
     val games = listOf(
@@ -228,6 +228,15 @@ object DataManager {
 
         })
     }
+
+    private val eatingCharacters = listOf(
+        R.drawable.gepard_eats,
+        R.drawable.kangaroo_eats,
+        R.drawable.hamster_eats,
+        R.drawable.rabbit_eats
+    )
+
+    fun getCurrentEatingCharacter(): Int = eatingCharacters[currentCharacterIndex]
 
     data class Item(
         val name: String,
