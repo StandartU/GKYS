@@ -26,7 +26,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.random.Random
 
-class GameView(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
+class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
     private val holder: SurfaceHolder = getHolder()
     private var gameThread: Thread? = null
     private var isRunning = false

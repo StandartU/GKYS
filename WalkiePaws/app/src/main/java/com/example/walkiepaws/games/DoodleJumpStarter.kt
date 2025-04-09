@@ -6,6 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 class DoodleJumpStarter : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(GameViewCR(this))
+        setContentView(GameViewDD(this))
     }
 }
