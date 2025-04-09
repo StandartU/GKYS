@@ -1,4 +1,4 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
 import android.os.Bundle
 import android.widget.ImageView
@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.R
 import com.google.android.material.materialswitch.MaterialSwitch
 
 class SettingsActivity : AppCompatActivity() {

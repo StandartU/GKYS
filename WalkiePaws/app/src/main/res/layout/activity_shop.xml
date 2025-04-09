@@ -6,7 +6,7 @@
     android:id="@+id/main"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#c4e1ed"
-    tools:context=".ShopActivity">
+    tools:context=".main_game.ShopActivity">
 
     <ImageView
         android:id="@+id/imageBack"

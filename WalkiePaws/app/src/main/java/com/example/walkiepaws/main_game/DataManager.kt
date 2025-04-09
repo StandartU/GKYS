@@ -1,9 +1,10 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
+import com.example.walkiepaws.R
 import com.example.walkiepaws.games.CheetahRunnerStarter
 import com.example.walkiepaws.games.FruitTakerActivity
 import com.example.walkiepaws.backend.ApiService
@@ -72,10 +73,10 @@ object DataManager {
     )
 
     val games = listOf(
-        {appContext.startActivity(Intent(appContext, CheetahRunnerStarter::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
-        {appContext.startActivity(Intent(appContext, DoodleJumpStarter::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
-        {appContext.startActivity(Intent(appContext, FruitTakerActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
-        {appContext.startActivity(Intent(appContext, CheetahJumping::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })}
+        { appContext.startActivity(Intent(appContext, CheetahRunnerStarter::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
+        { appContext.startActivity(Intent(appContext, DoodleJumpStarter::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
+        { appContext.startActivity(Intent(appContext, FruitTakerActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })},
+        { appContext.startActivity(Intent(appContext, CheetahJumping::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })}
     )
 
     val rooms: MutableMap<String, List<Int>> = mutableMapOf(
@@ -136,12 +137,18 @@ object DataManager {
                 val items = response.body()?.
                 userItemModels?.forEach{ item ->
                     when (item.item.category) {
-                        "top" -> topsItems.add(Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
-                            appContext, item.item.name), item.item))
-                        "hat" -> hatsItems.add(Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
-                            appContext, item.item.name), item.item))
-                        "accs" -> accessoriesItems.add(Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
-                            appContext, item.item.name), item.item))
+                        "top" -> topsItems.add(
+                            Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
+                            appContext, item.item.name), item.item)
+                        )
+                        "hat" -> hatsItems.add(
+                            Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
+                            appContext, item.item.name), item.item)
+                        )
+                        "accs" -> accessoriesItems.add(
+                            Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
+                            appContext, item.item.name), item.item)
+                        )
                     }
                 }
             }
@@ -161,17 +168,23 @@ object DataManager {
                 val rooms = response.body()?.roomModels
                 val items = response.body()?.itemModels
                 markets?.forEach{market ->
-                    foodItems.add(Item(market.name, market.price.toString(), Utils().getDrawableIdByName(
-                        appContext, market.template), market))
+                    foodItems.add(
+                        Item(market.name, market.price.toString(), Utils().getDrawableIdByName(
+                        appContext, market.template), market)
+                    )
                 }
                 rooms?.forEach{room ->
-                    roomsItems.add(Item(room.room.surname, room.price.toString(), Utils().getDrawableIdByName(
+                    roomsItems.add(
+                        Item(room.room.surname, room.price.toString(), Utils().getDrawableIdByName(
                         appContext, room.templates[0]
-                    ), room))
+                    ), room)
+                    )
                 }
                 items?.forEach{item ->
-                    clothesItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(
-                        appContext, item.name), item))
+                    clothesItems.add(
+                        Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(
+                        appContext, item.name), item)
+                    )
                 }
             }
 

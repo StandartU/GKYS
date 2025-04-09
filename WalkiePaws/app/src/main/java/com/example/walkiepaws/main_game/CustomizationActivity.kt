@@ -1,7 +1,5 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
-import android.annotation.SuppressLint
-import com.example.walkiepaws.DataManager.Item
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -13,28 +11,36 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.R
+import com.example.walkiepaws.backend.ApiService
+import com.example.walkiepaws.backend.RetrofitClient
+import com.example.walkiepaws.main_game.DataManager.Item
 import com.example.walkiepaws.backend.model.ItemModel
 
-class ShopActivity : AppCompatActivity() {
+class CustomizationActivity : AppCompatActivity() {
 
     private lateinit var itemsContainer: LinearLayout
-    private lateinit var foodCategory: TextView
-    private lateinit var clothesCategory: TextView
-    private lateinit var roomsCategory: TextView
+    private lateinit var hatsCategory: TextView
+    private lateinit var topsCategory: TextView
+    private lateinit var accessoriesCategory: TextView
     private lateinit var imageBack: ImageView
+    private lateinit var apiService: ApiService
 
     private var currentCategory = 0
+    
+    private lateinit var hatsItems: MutableList<Item>
 
-    private lateinit var foodItems: MutableList<Item>
+    private lateinit var topsItems: MutableList<Item>
 
-    private lateinit var clothesItems: MutableList<Item>
-
-    private lateinit var roomsItems: MutableList<Item>
+    private lateinit var accessoriesItems: MutableList<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_shop)
-        initMarkets()
+        hatsItems = DataManager.hatsItems
+        topsItems = DataManager.topsItems
+        accessoriesItems = DataManager.accessoriesItems
+        apiService = RetrofitClient.getApiService()
+        setContentView(R.layout.activity_customization)
         initViews()
         setupClickListeners()
         loadCategory(currentCategory)
@@ -63,24 +69,20 @@ class ShopActivity : AppCompatActivity() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
+
+
     private fun initViews() {
         itemsContainer = findViewById(R.id.itemsContainer)
-        foodCategory = findViewById(R.id.foodCategory)
-        clothesCategory = findViewById(R.id.clothesCategory)
-        roomsCategory = findViewById(R.id.roomsCategory)
+        hatsCategory = findViewById(R.id.hatsCategory)
+        topsCategory = findViewById(R.id.topsCategory)
+        accessoriesCategory = findViewById(R.id.accessoriesCategory)
         imageBack = findViewById(R.id.imageBack)
     }
 
-    private fun initMarkets() {
-        foodItems = DataManager.foodItems
-        clothesItems = DataManager.clothesItems
-        roomsItems = DataManager.roomsItems
-    }
-
     private fun setupClickListeners() {
-        foodCategory.setOnClickListener { switchCategory(0) }
-        clothesCategory.setOnClickListener { switchCategory(1) }
-        roomsCategory.setOnClickListener { switchCategory(2) }
+        hatsCategory.setOnClickListener { switchCategory(0) }
+        topsCategory.setOnClickListener { switchCategory(1) }
+        accessoriesCategory.setOnClickListener { switchCategory(2) }
         imageBack.setOnClickListener { finish() }
     }
 
@@ -92,23 +94,23 @@ class ShopActivity : AppCompatActivity() {
     }
 
     private fun updateCategorySelection() {
-        listOf(foodCategory, clothesCategory, roomsCategory).forEach {
+        listOf(hatsCategory, topsCategory, accessoriesCategory).forEach {
             it.setBackgroundResource(R.drawable.category_button)
             it.setTextColor(ContextCompat.getColor(this, android.R.color.black))
         }
 
         when (currentCategory) {
             0 -> {
-                foodCategory.setBackgroundResource(R.drawable.category_button_selected)
-                foodCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+                hatsCategory.setBackgroundResource(R.drawable.category_button_selected)
+                hatsCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
             1 -> {
-                clothesCategory.setBackgroundResource(R.drawable.category_button_selected)
-                clothesCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+                topsCategory.setBackgroundResource(R.drawable.category_button_selected)
+                topsCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
             2 -> {
-                roomsCategory.setBackgroundResource(R.drawable.category_button_selected)
-                roomsCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+                accessoriesCategory.setBackgroundResource(R.drawable.category_button_selected)
+                accessoriesCategory.setTextColor(ContextCompat.getColor(this, android.R.color.white))
             }
         }
     }
@@ -117,9 +119,9 @@ class ShopActivity : AppCompatActivity() {
         itemsContainer.removeAllViews()
 
         when (categoryIndex) {
-            0 -> displayItems(foodItems)
-            1 -> displayItems(clothesItems)
-            2 -> displayItems(roomsItems)
+            0 -> displayItems(hatsItems)
+            1 -> displayItems(topsItems)
+            2 -> displayItems(accessoriesItems)
         }
     }
 
@@ -147,27 +149,27 @@ class ShopActivity : AppCompatActivity() {
     }
 
     private fun onItemClicked(item: Item) {
-        Toast.makeText(this, "Куплено: ${item.name}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
     }
 
-    fun addFoodItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        foodItems.add(Item(name, price, imageRes, dto))
+    fun addHatItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        hatsItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 0) {
-            addItemToContainer(foodItems.last())
+            addItemToContainer(hatsItems.last())
         }
     }
 
-    fun addClothesItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        clothesItems.add(Item(name, price, imageRes, dto))
+    fun addTopItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        topsItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 1) {
-            addItemToContainer(clothesItems.last())
+            addItemToContainer(topsItems.last())
         }
     }
 
-    fun addRoomItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        roomsItems.add(Item(name, price, imageRes, dto))
+    fun addAccessoryItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        accessoriesItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 2) {
-            addItemToContainer(roomsItems.last())
+            addItemToContainer(accessoriesItems.last())
         }
     }
 }

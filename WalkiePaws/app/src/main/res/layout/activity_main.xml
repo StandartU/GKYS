@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#c4e1ed"
-    tools:context=".MainActivity">
+    tools:context=".main_game.MainActivity">
 
     <TextView
         android:id="@+id/textNameGame"
