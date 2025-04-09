@@ -1,6 +1,7 @@
 package com.example.walkiepaws
 
 import android.annotation.SuppressLint
+import com.example.walkiepaws.DataManager.Item
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.backend.model.ItemModel
 
 class ShopActivity : AppCompatActivity() {
 
@@ -23,40 +25,16 @@ class ShopActivity : AppCompatActivity() {
 
     private var currentCategory = 0
 
-    private val foodItems = mutableListOf(
-        Item("Вишня", "50 монет", R.drawable.vish),
-        Item("Виноград", "100 монет", R.drawable.vin),
-        Item("Банан", "80 монет", R.drawable.banan)
-    )
+    private lateinit var foodItems: MutableList<Item>
 
-    private val clothesItems = mutableListOf(
-        Item("Шапка", "150 монет", R.drawable.cap),
-        Item("Шляпа", "250 монет", R.drawable.hat),
-        Item("Кепка", "300 монет", R.drawable.kepka),
-        Item("Бандана", "550 монет", R.drawable.bandana),
-        Item("Шлем", "450 монет", R.drawable.helmet),
-        Item("Футболка", "250 монет", R.drawable.tshirt),
-        Item("Рубашка", "150 монет", R.drawable.shirt),
-        Item("Жилетка", "5330 монет", R.drawable.vest),
-        Item("Очки", "450 монет", R.drawable.glasses),
-        Item("Шарф", "650 монет", R.drawable.scarf),
-        Item("Маска", "450 монет", R.drawable.mask),
-        Item("Наушники", "450 монет", R.drawable.headphones),
-        Item("Подвеска", "250 монет", R.drawable.pendant)
-    )
+    private lateinit var clothesItems: MutableList<Item>
 
-    private val roomsItems = mutableListOf(
-        Item("Спальня 2 lvl", "1000 монет", R.drawable.shop_bedroom_2),
-        Item("Кухня 2 lvl", "1000 монет", R.drawable.shop_kitchen_2),
-        Item("Гостинная 2 lvl", "1000 монет", R.drawable.shop_living_2),
-        Item("Спальня 3 lvl", "1200 монет", R.drawable.shop_bedroom_3),
-        Item("Кухня 3 lvl", "1200 монет", R.drawable.shop_kitchen_3),
-        Item("Гостнная 3 lvl", "1200 монет", R.drawable.shop_living_3)
-    )
+    private lateinit var roomsItems: MutableList<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop)
+        initMarkets()
         initViews()
         setupClickListeners()
         loadCategory(currentCategory)
@@ -74,6 +52,12 @@ class ShopActivity : AppCompatActivity() {
         clothesCategory = findViewById(R.id.clothesCategory)
         roomsCategory = findViewById(R.id.roomsCategory)
         imageBack = findViewById(R.id.imageBack)
+    }
+
+    private fun initMarkets() {
+        foodItems = DataManager.foodItems
+        clothesItems = DataManager.clothesItems
+        roomsItems = DataManager.roomsItems
     }
 
     private fun setupClickListeners() {
@@ -149,30 +133,24 @@ class ShopActivity : AppCompatActivity() {
         Toast.makeText(this, "Куплено: ${item.name}", Toast.LENGTH_SHORT).show()
     }
 
-    fun addFoodItem(name: String, price: String, imageRes: Int) {
-        foodItems.add(Item(name, price, imageRes))
+    fun addFoodItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        foodItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 0) {
             addItemToContainer(foodItems.last())
         }
     }
 
-    fun addClothesItem(name: String, price: String, imageRes: Int) {
-        clothesItems.add(Item(name, price, imageRes))
+    fun addClothesItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        clothesItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 1) {
             addItemToContainer(clothesItems.last())
         }
     }
 
-    fun addRoomItem(name: String, price: String, imageRes: Int) {
-        roomsItems.add(Item(name, price, imageRes))
+    fun addRoomItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
+        roomsItems.add(Item(name, price, imageRes, dto))
         if (currentCategory == 2) {
             addItemToContainer(roomsItems.last())
         }
     }
-
-    data class Item(
-        val name: String,
-        val price: String,
-        val imageRes: Int
-    )
 }

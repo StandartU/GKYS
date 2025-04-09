@@ -1,6 +1,6 @@
 package com.example.walkiepaws.backend.model;
 
-public class UserStateModel {
+public class UserStateModel extends Model {
     private Long id;
     private UserModel user;
     private StateModel state;

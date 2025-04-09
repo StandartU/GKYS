@@ -2,7 +2,7 @@ package com.example.walkiepaws.backend.model;
 
 import java.util.List;
 
-public class ItemModel {
+public class ItemModel extends Model {
 
     private int id;
     private String name;

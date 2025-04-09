@@ -27,7 +27,7 @@ class LivingRoomFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         DataManager.updateRoomsTemplates()
-        handler.post(updateRoom)
+        handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_living_game_screen, container, false)
 
         characterImage = view.findViewById(R.id.imageCharacter)

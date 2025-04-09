@@ -2,7 +2,7 @@ package com.example.walkiepaws.backend.model;
 
 import java.util.List;
 
-public class UserModel {
+public class UserModel extends Model {
     private Long id;
     private String login;
     private String password;

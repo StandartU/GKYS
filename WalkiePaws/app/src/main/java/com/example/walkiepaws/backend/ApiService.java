@@ -19,6 +19,7 @@ import com.example.walkiepaws.backend.model.dto.responce.PetDTO;
 import com.example.walkiepaws.backend.model.dto.responce.UserItemDTO;
 import com.example.walkiepaws.backend.model.dto.responce.UserRoomDTO;
 import com.example.walkiepaws.backend.model.dto.responce.UserStateDTO;
+import com.example.walkiepaws.backend.model.dto.responce.WeekStepsDTO;
 
 import java.util.List;
 
@@ -101,4 +102,6 @@ public interface ApiService {
     @GET(abs_path + "user/get_cash")
     Call<CashDTO> getCash (@Header("Authorization") String token);
 
+    @GET(abs_path + "user/get_week_steps")
+    Call<WeekStepsDTO> getWeekSteps(@Header("Authorization") String token);
 }

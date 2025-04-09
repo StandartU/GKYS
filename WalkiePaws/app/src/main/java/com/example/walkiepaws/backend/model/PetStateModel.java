@@ -2,7 +2,7 @@ package com.example.walkiepaws.backend.model;
 
 import java.util.List;
 
-public class PetStateModel {
+public class PetStateModel extends Model {
     private int id;
     private int lvl;
     private List<PetStateTemplatesModel> template;

@@ -1,6 +1,7 @@
 package com.example.walkiepaws
 
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -13,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
+import com.example.walkiepaws.DataManager.Item
 import com.example.walkiepaws.backend.Utils
 import com.example.walkiepaws.backend.model.ItemModel
 import com.example.walkiepaws.backend.model.dto.responce.ItemDTO
@@ -39,9 +41,11 @@ class CustomizationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hatsItems = DataManager.hatsItems
+        topsItems = DataManager.topsItems
+        accessoriesItems = DataManager.accessoriesItems
         apiService = RetrofitClient.getApiService()
         setContentView(R.layout.activity_customization)
-        initItems()
         initViews()
         setupClickListeners()
         loadCategory(currentCategory)
@@ -53,26 +57,6 @@ class CustomizationActivity : AppCompatActivity() {
         }
     }
 
-    private fun initItems() {
-        topsItems = emptyList<Item>().toMutableList()
-        hatsItems = emptyList<Item>().toMutableList()
-        accessoriesItems = emptyList<Item>().toMutableList()
-        apiService.getItems((applicationContext as App).token).enqueue(object : Callback<ItemDTO> {
-            override fun onResponse(call: Call<ItemDTO>, response: Response<ItemDTO>) {
-                val items = response.body()?.items
-                items?.forEach{ item ->
-                    when (item.category) {
-                        "top" -> topsItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(applicationContext, item.name), item))
-                        "hat" -> hatsItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(applicationContext, item.name), item))
-                        "accs" -> accessoriesItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(applicationContext, item.name), item))
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<ItemDTO>, t: Throwable) {}
-
-        })
-    }
 
     private fun initViews() {
         itemsContainer = findViewById(R.id.itemsContainer)
@@ -175,12 +159,4 @@ class CustomizationActivity : AppCompatActivity() {
             addItemToContainer(accessoriesItems.last())
         }
     }
-
-    // Обновленная модель товара с ID изображения вместо цвета
-    data class Item(
-        val name: String,
-        val price: String,
-        val imageRes: Int, // Теперь храним ID ресурса изображения
-        val dto: ItemModel
-    )
 }

@@ -1,6 +1,6 @@
 package com.example.walkiepaws.backend.model;
 
-public class PetItemModel {
+public class PetItemModel extends Model {
     private int id;
     private PetModel pet;
     private int lvl;

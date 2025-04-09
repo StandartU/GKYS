@@ -39,6 +39,7 @@ class MainGameScreen : AppCompatActivity() {
 
     private val updateBars = object : Runnable {
         override fun run() {
+            DataManager.initWeekSteps()
             textSteps = findViewById(R.id.number_of_steps)
             apiService.getState("${(applicationContext as App).token}")
                 .enqueue(object : Callback<UserStateDTO> {

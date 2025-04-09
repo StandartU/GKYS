@@ -80,8 +80,8 @@ class StatisticsActivity : AppCompatActivity() {
     }
 
     private fun loadTestStepData() {
-        val testTotalSteps = 12453
-        val testDailySteps = listOf(2500, 1800, 3200, 1500, 2100, 4300, 1000)
+        val testTotalSteps = DataManager.weekSteps.sum()
+        val testDailySteps = DataManager.weekSteps
 
         updateStepCount(testTotalSteps)
         updateChart(testDailySteps)

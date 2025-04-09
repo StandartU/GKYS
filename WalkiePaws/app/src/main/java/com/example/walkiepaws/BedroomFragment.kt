@@ -33,7 +33,7 @@ class BedroomFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         DataManager.updateRoomsTemplates()
-        handler.post(updateRoom)
+        handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_bedroom_game_screen, container, false)
         characterImage = view.findViewById(R.id.imageCharacter)
         shopButton = view.findViewById(R.id.button_shop)

@@ -1,10 +1,13 @@
 package com.example.walkiepaws.backend.model;
 
-public class MarketModel {
+public class MarketModel extends Model {
     private int id;
     private StateModel state;
     private String name;
     private int price;
+
+    private String template;
+
     private int value;
 
     // Пустой конструктор
@@ -58,5 +61,13 @@ public class MarketModel {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
     }
 }

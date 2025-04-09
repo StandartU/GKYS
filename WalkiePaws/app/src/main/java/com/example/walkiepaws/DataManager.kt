@@ -6,9 +6,15 @@ import android.util.Log
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.Utils
+import com.example.walkiepaws.backend.model.ItemModel
+import com.example.walkiepaws.backend.model.Model
 import com.example.walkiepaws.backend.model.dto.request.GetPetDTO
+import com.example.walkiepaws.backend.model.dto.responce.ItemDTO
+import com.example.walkiepaws.backend.model.dto.responce.MarketAllDTO
 import com.example.walkiepaws.backend.model.dto.responce.PetDTO
+import com.example.walkiepaws.backend.model.dto.responce.UserItemDTO
 import com.example.walkiepaws.backend.model.dto.responce.UserRoomDTO
+import com.example.walkiepaws.backend.model.dto.responce.WeekStepsDTO
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,6 +27,14 @@ object DataManager {
     private lateinit var prefs: SharedPreferences
     private lateinit var appContext: Context
     private lateinit var apiService: ApiService
+    lateinit var hatsItems: MutableList<Item>
+    lateinit var topsItems: MutableList<Item>
+    lateinit var accessoriesItems: MutableList<Item>
+    lateinit var foodItems: MutableList<Item>
+    lateinit var clothesItems: MutableList<Item>
+    lateinit var roomsItems: MutableList<Item>
+    lateinit var weekSteps: List<Int>
+
     private var charactersIds: List<Int> = listOf(
         R.drawable.gepard_norm,
         R.drawable.kangaroo_norm,
@@ -37,6 +51,9 @@ object DataManager {
     fun updateData() {
         updateCharList()
         updateRoomsTemplates()
+        initItems()
+        initMarkets()
+        initWeekSteps()
     }
 
     var currentCharacterIndex: Int
@@ -100,6 +117,68 @@ object DataManager {
         }.start()
     }
 
+    private fun initItems() {
+        topsItems = emptyList<Item>().toMutableList()
+        hatsItems = emptyList<Item>().toMutableList()
+        accessoriesItems = emptyList<Item>().toMutableList()
+        apiService.getUserItems((appContext as App).token).enqueue(object : Callback<UserItemDTO> {
+            override fun onResponse(call: Call<UserItemDTO>, response: Response<UserItemDTO>) {
+                val items = response.body()?.
+                userItemModels?.forEach{ item ->
+                    when (item.item.category) {
+                        "top" -> topsItems.add(Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
+                            appContext, item.item.name), item.item))
+                        "hat" -> hatsItems.add(Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
+                            appContext, item.item.name), item.item))
+                        "accs" -> accessoriesItems.add(Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
+                            appContext, item.item.name), item.item))
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<UserItemDTO>, t: Throwable) {}
+
+        })
+    }
+
+    private fun initMarkets() {
+        foodItems = emptyList<Item>().toMutableList()
+        clothesItems = emptyList<Item>().toMutableList()
+        roomsItems = emptyList<Item>().toMutableList()
+        apiService.getAllMarkets((appContext as App).token).enqueue(object : Callback<MarketAllDTO> {
+            override fun onResponse(call: Call<MarketAllDTO>, response: Response<MarketAllDTO>) {
+                val markets = response.body()?.marketModels
+                val rooms = response.body()?.roomModels
+                val items = response.body()?.itemModels
+                markets?.forEach{market ->
+                    foodItems.add(Item(market.name, market.price.toString(), Utils().getDrawableIdByName(
+                        appContext, market.template), market))
+                }
+                rooms?.forEach{room ->
+                    roomsItems.add(Item(room.room.surname, room.price.toString(), Utils().getDrawableIdByName(
+                        appContext, room.templates[0]
+                    ), room))
+                }
+                items?.forEach{item ->
+                    clothesItems.add(Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(
+                        appContext, item.name), item))
+                }
+            }
+
+            override fun onFailure(call: Call<MarketAllDTO>, t: Throwable) {}
+
+        })
+    }
+
+    fun initWeekSteps() {
+        apiService.getWeekSteps((appContext as App).token).enqueue(object : Callback<WeekStepsDTO> {
+            override fun onResponse(call: Call<WeekStepsDTO>, response: Response<WeekStepsDTO>) {
+                weekSteps = response.body()?.weekSteps ?: listOf(0, 0, 0, 0, 0, 0, 0)
+            }
+            override fun onFailure(call: Call<WeekStepsDTO>, t: Throwable) {}
+        })
+    }
+
     fun updateRoomsTemplates () {
         apiService.getRooms((appContext as App).token).enqueue(object : Callback<List<UserRoomDTO>> {
             override fun onResponse(
@@ -126,5 +205,12 @@ object DataManager {
 
         })
     }
+
+    data class Item(
+        val name: String,
+        val price: String,
+        val imageRes: Int,
+        val dto: Model
+    )
 }
 

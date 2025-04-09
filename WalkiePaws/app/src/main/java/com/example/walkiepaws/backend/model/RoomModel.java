@@ -2,9 +2,10 @@ package com.example.walkiepaws.backend.model;
 
 import java.util.List;
 
-public class RoomModel {
+public class RoomModel extends Model {
     private int id;
     private String name;
+    private String surname;
     private List<RoomLvlModel> roomLvls;
     private List<UserRoomModel> userRooms;
 
@@ -50,5 +51,13 @@ public class RoomModel {
 
     public void setUserRooms(List<UserRoomModel> userRooms) {
         this.userRooms = userRooms;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 }

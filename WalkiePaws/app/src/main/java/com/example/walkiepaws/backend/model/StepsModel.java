@@ -2,7 +2,7 @@ package com.example.walkiepaws.backend.model;
 
 import java.util.Date;
 
-public class StepsModel {
+public class StepsModel extends Model {
     private Long id;
     private UserModel user;
     private Date date;
