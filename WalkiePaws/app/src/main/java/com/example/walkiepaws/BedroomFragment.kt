@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,8 +23,8 @@ class BedroomFragment : Fragment() {
     private lateinit var mainLayout: RelativeLayout
 
     private val handler = Handler(Looper.getMainLooper())
-
     private var isSleeping = false
+    private var isVisibleToUser = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,16 +34,62 @@ class BedroomFragment : Fragment() {
         DataManager.updateRoomsTemplates()
         handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_bedroom_game_screen, container, false)
+
+        initViews(view)
+        setupClickListeners()
+        restoreState(savedInstanceState)
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Задержка для плавного появления персонажа
+        handler.postDelayed({
+            if (isVisibleToUser) {
+                showCharacterSmoothly()
+            }
+        }, 300)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        this.isVisibleToUser = isVisibleToUser
+        if (isVisibleToUser && isAdded) {
+            showCharacterSmoothly()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isVisibleToUser = true
+        showCharacterSmoothly()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isVisibleToUser = false
+        // Не скрываем персонажа, чтобы не мешать анимациям перехода
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.apply {
+            putBoolean("IS_SLEEPING", isSleeping)
+            putBoolean("IS_VISIBLE", characterImage.visibility == View.VISIBLE)
+        }
+    }
+
+    private fun initViews(view: View) {
         characterImage = view.findViewById(R.id.imageCharacter)
         shopButton = view.findViewById(R.id.button_shop)
         customizeButton = view.findViewById(R.id.button_customize)
         sleepButton = view.findViewById(R.id.button_sleep)
-
         mainLayout = view.findViewById(R.id.main)
         imageBlanket = view.findViewById(R.id.imageTable)
+    }
 
-        resetCharacterState()
-
+    private fun setupClickListeners() {
         shopButton.setOnClickListener {
             resetSleepState()
             openShop()
@@ -56,7 +101,19 @@ class BedroomFragment : Fragment() {
         }
 
         sleepButton.setOnClickListener { toggleSleepState() }
-        return view
+    }
+
+    private fun restoreState(savedInstanceState: Bundle?) {
+        if (savedInstanceState != null) {
+            isSleeping = savedInstanceState.getBoolean("IS_SLEEPING", false)
+            val isVisible = savedInstanceState.getBoolean("IS_VISIBLE", true)
+            if (!isVisible) {
+                characterImage.visibility = View.INVISIBLE
+                characterImage.alpha = 0f
+            }
+        } else {
+            resetCharacterState()
+        }
     }
 
     private fun resetSleepState() {
@@ -82,12 +139,6 @@ class BedroomFragment : Fragment() {
             .start()
     }
 
-    override fun onPause() {
-        super.onPause()
-        resetSleepState()
-        hideCharacterImmediately()
-    }
-
     private fun resetCharacterState() {
         if (::characterImage.isInitialized) {
             characterImage.visibility = View.INVISIBLE
@@ -107,15 +158,18 @@ class BedroomFragment : Fragment() {
     }
 
     fun showCharacterSmoothly() {
-        if (::characterImage.isInitialized && isVisible) {
+        if (::characterImage.isInitialized && isVisibleToUser && isAdded) {
             updateCharacterImage()
             characterImage.apply {
-                visibility = View.VISIBLE
-                animate()
-                    .alpha(1f)
-                    .setDuration(400)
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .start()
+                if (visibility != View.VISIBLE) {
+                    visibility = View.VISIBLE
+                    alpha = 0f
+                    animate()
+                        .alpha(1f)
+                        .setDuration(400)
+                        .setInterpolator(AccelerateDecelerateInterpolator())
+                        .start()
+                }
             }
         }
     }
@@ -129,34 +183,38 @@ class BedroomFragment : Fragment() {
                     DataManager.getChars()[DataManager.currentCharacterIndex]
                 }
 
-            if (characterImage.id != resId) {
-                Glide.with(this)
-                    .asDrawable()
-                    .load(resId)
-                    .into(characterImage)
-                Glide.with(this)
-                    .load(resId)
-                    .into(characterImage)
-            }
+                if (characterImage.tag != resId) {
+                    characterImage.tag = resId
+                    Glide.with(this)
+                        .load(resId)
+                        .into(characterImage)
+                }
             } catch (e: Exception) {
                 Log.e("BedroomFragment", "Error loading character image", e)
             }
         }
     }
 
-    val updateRoom = Runnable {
-        imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)
-        mainLayout.setBackgroundResource(DataManager.rooms["bedroom"]?.getOrNull(0) ?: 0)
+    private val updateRoom = Runnable {
+        if (isAdded) {
+            imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)
+            mainLayout.setBackgroundResource(DataManager.rooms["bedroom"]?.getOrNull(0) ?: 0)
+        }
     }
 
     private fun openShop() {
-        val intent = Intent(activity, ShopActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, ShopActivity::class.java))
+        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     private fun openCustomization() {
-        val intent = Intent(activity, CustomizationActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, CustomizationActivity::class.java))
+        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacks(updateRoom)
     }
 
     companion object {

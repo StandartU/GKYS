@@ -46,6 +46,23 @@ class ShopActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        MusicManager.getInstance(this).play()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isChangingConfigurations) {
+            MusicManager.getInstance(this).pause()
+        }
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
     private fun initViews() {
         itemsContainer = findViewById(R.id.itemsContainer)
         foodCategory = findViewById(R.id.foodCategory)

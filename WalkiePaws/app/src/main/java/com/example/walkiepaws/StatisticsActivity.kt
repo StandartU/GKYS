@@ -52,6 +52,24 @@ class StatisticsActivity : AppCompatActivity() {
         setupBackButton()
     }
 
+    override fun onResume() {
+        super.onResume()
+        MusicManager.getInstance(this).play()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isChangingConfigurations) {
+            MusicManager.getInstance(this).pause()
+        }
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+
     private fun initViews() {
         lineChartStatistics = findViewById(R.id.lineChartStatistics)
         textNumberOfSteps = findViewById(R.id.textNumberOfSteps)
