@@ -8,7 +8,7 @@
     android:background="@drawable/bedroom_1"
     android:scaleType="centerCrop"
     android:orientation="vertical"
-    tools:context=".BedroomFragment">
+    tools:context=".main_game.BedroomFragment">
 
     <ImageView
         android:id="@+id/imageCharacter"

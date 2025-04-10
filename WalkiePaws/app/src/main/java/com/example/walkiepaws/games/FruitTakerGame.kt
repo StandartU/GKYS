@@ -17,9 +17,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.random.Random
 import android.graphics.Movie
-import com.example.walkiepaws.App
-import com.example.walkiepaws.DataManager
-import com.example.walkiepaws.MainGameScreen
+import com.example.walkiepaws.main_game.App
+import com.example.walkiepaws.main_game.DataManager
+import com.example.walkiepaws.main_game.MainGameScreen
 import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient

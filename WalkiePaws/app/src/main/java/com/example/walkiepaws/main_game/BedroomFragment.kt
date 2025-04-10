@@ -1,12 +1,10 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +16,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.example.walkiepaws.R
 import java.util.concurrent.TimeUnit
 
 class BedroomFragment : Fragment() {

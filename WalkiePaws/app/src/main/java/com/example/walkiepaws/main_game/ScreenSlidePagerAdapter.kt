@@ -1,4 +1,4 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

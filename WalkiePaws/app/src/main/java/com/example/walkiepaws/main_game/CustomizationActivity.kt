@@ -1,7 +1,6 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -12,15 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
-import com.example.walkiepaws.DataManager.Item
-import com.example.walkiepaws.backend.Utils
+import com.example.walkiepaws.main_game.DataManager.Item
 import com.example.walkiepaws.backend.model.ItemModel
-import com.example.walkiepaws.backend.model.dto.responce.ItemDTO
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class CustomizationActivity : AppCompatActivity() {
 

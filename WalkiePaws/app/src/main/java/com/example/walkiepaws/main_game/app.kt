@@ -1,4 +1,4 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 import android.app.Application
 
 class App : Application() {

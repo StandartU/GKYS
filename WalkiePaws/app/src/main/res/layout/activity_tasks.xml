@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/main"
     android:background="#c4e1ed"
-    tools:context=".TasksActivity">
+    tools:context=".main_game.TasksActivity">
 
     <ImageView
         android:id="@+id/imageBack"

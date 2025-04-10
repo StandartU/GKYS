@@ -1,4 +1,4 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -19,14 +19,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
+import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.ApiService
-import com.example.walkiepaws.backend.model.dto.responce.LoginDTO
 import com.google.android.material.imageview.ShapeableImageView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.walkiepaws.backend.RetrofitClient
-import com.example.walkiepaws.backend.Utils
 import com.example.walkiepaws.backend.model.dto.responce.CashDTO
 import com.example.walkiepaws.backend.model.dto.responce.UserStateDTO
 

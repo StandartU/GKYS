@@ -1,7 +1,6 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
-import android.annotation.SuppressLint
-import com.example.walkiepaws.DataManager.Item
+import com.example.walkiepaws.main_game.DataManager.Item
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.model.ItemModel
 
 class ShopActivity : AppCompatActivity() {

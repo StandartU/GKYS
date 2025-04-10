@@ -1,4 +1,4 @@
-package com.example.walkiepaws
+package com.example.walkiepaws.main_game
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,8 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.model.dto.request.RegisterDTO
 
 import com.example.walkiepaws.backend.RetrofitClient

@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:background="#c4e1ed"
-    tools:context=".CustomizationActivity">
+    tools:context=".main_game.CustomizationActivity">
 
     <ImageView
         android:id="@+id/imageBack"

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#c4e1ed"
-    tools:context=".SettingsActivity">
+    tools:context=".main_game.SettingsActivity">
 
     <ImageView
         android:id="@+id/imageBack"

@@ -1,6 +1,5 @@
-package com.example.walkiepaws;
+package com.example.walkiepaws.main_game;
 
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -20,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager; // Для отправки данных в Activity
 
+import com.example.walkiepaws.R;
 import com.example.walkiepaws.backend.ApiService;
 import com.example.walkiepaws.backend.RetrofitClient;
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO;
