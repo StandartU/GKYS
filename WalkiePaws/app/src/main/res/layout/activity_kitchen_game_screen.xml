@@ -19,6 +19,27 @@
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/gepard_norm" />
 
+    <!-- Шапка -->
+    <ImageView
+        android:id="@+id/hatImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
+    <!-- Одежда -->
+    <ImageView
+        android:id="@+id/topImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <!-- Аксессуар -->
+    <ImageView
+        android:id="@+id/accessoryImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
     <ImageView
         android:id="@+id/imageTable"
         android:layout_width="wrap_content"
@@ -107,4 +128,5 @@
 
 
 </RelativeLayout>
+
 
