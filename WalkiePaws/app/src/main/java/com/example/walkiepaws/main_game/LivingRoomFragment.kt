@@ -16,6 +16,9 @@ import com.example.walkiepaws.R
 
 class LivingRoomFragment : Fragment() {
     private lateinit var characterImage: ImageView
+    private lateinit var hatImage: ImageView
+    private lateinit var topImage: ImageView
+    private lateinit var accessoryImage: ImageView
     private lateinit var shopButton: ImageView
     private lateinit var gameButton: ImageView
     private lateinit var customizeButton: ImageView
@@ -31,6 +34,9 @@ class LivingRoomFragment : Fragment() {
         val view = inflater.inflate(R.layout.activity_living_game_screen, container, false)
 
         characterImage = view.findViewById(R.id.imageCharacter)
+        hatImage = view.findViewById(R.id.hatImage)
+        topImage = view.findViewById(R.id.topImage)
+        accessoryImage = view.findViewById(R.id.accessoryImage)
         shopButton = view.findViewById(R.id.button_shop)
         gameButton = view.findViewById(R.id.button_game)
         customizeButton = view.findViewById(R.id.button_customize)
@@ -38,17 +44,9 @@ class LivingRoomFragment : Fragment() {
 
         resetCharacterState()
 
-        shopButton.setOnClickListener {
-            openShop()
-        }
-
-        gameButton.setOnClickListener {
-            startGame()
-        }
-
-        customizeButton.setOnClickListener {
-            openCustomization()
-        }
+        shopButton.setOnClickListener { openShop() }
+        gameButton.setOnClickListener { startGame() }
+        customizeButton.setOnClickListener { openCustomization() }
         return view
     }
 
@@ -66,6 +64,12 @@ class LivingRoomFragment : Fragment() {
         if (::characterImage.isInitialized) {
             characterImage.visibility = View.INVISIBLE
             characterImage.alpha = 0f
+            hatImage.visibility = View.INVISIBLE
+            hatImage.alpha = 0f
+            topImage.visibility = View.INVISIBLE
+            topImage.alpha = 0f
+            accessoryImage.visibility = View.INVISIBLE
+            accessoryImage.alpha = 0f
         }
     }
 
@@ -82,26 +86,45 @@ class LivingRoomFragment : Fragment() {
             updateCharacterImage()
             characterImage.apply {
                 visibility = View.VISIBLE
-                animate()
-                    .alpha(1f)
-                    .setDuration(400)
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .start()
+                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
+            }
+            hatImage.apply {
+                visibility = View.VISIBLE
+                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
+            }
+            topImage.apply {
+                visibility = View.VISIBLE
+                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
+            }
+            accessoryImage.apply {
+                visibility = View.VISIBLE
+                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
             }
         }
     }
 
     private fun updateCharacterImage() {
-        if (::characterImage.isInitialized &&
-            DataManager.currentCharacterIndex in DataManager.characters.indices) {
-            val resId: Int = DataManager.getChars()[DataManager.currentCharacterIndex]
+        val items = DataManager.getCharacterWithItems(DataManager.currentCharacterIndex)
 
-            if (characterImage.id != resId) {
-                Glide.with(this)
-                    .asDrawable()
-                    .load(resId)
-                    .into(characterImage)
-            }
+        // Загружаем базового персонажа (WebP)
+        Glide.with(this)
+            .load(items[0]) // Предполагается, что это WebP из res/raw
+            .into(characterImage)
+
+        // Сбрасываем предметы
+        hatImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        accessoryImage.setImageDrawable(null)
+
+        // Загружаем WebP для предметов
+        if (items.size > 1 && items[1] != 0) {
+            Glide.with(this).load(items[1]).into(hatImage)
+        }
+        if (items.size > 2 && items[2] != 0) {
+            Glide.with(this).load(items[2]).into(topImage)
+        }
+        if (items.size > 3 && items[3] != 0) {
+            Glide.with(this).load(items[3]).into(accessoryImage)
         }
     }
 
