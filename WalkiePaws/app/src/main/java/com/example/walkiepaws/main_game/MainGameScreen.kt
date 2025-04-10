@@ -98,6 +98,7 @@ class MainGameScreen : AppCompatActivity() {
                 is LivingRoomFragment -> currentFragment.showCharacterSmoothly()
                 is BedroomFragment -> currentFragment.showCharacterSmoothly()
             }
+            DataManager.updateTasks()
         }
     }
 

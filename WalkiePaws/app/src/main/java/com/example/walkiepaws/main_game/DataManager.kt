@@ -11,7 +11,9 @@ import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.Utils
 import com.example.walkiepaws.backend.model.Model
+import com.example.walkiepaws.backend.model.UserTaskModel
 import com.example.walkiepaws.backend.model.dto.request.GetPetDTO
+import com.example.walkiepaws.backend.model.dto.responce.GetTasksDTO
 import com.example.walkiepaws.backend.model.dto.responce.MarketAllDTO
 import com.example.walkiepaws.backend.model.dto.responce.PetDTO
 import com.example.walkiepaws.backend.model.dto.responce.UserItemDTO
@@ -28,6 +30,7 @@ object DataManager {
     private const val PREFS_NAME = "AppPrefs"
     private const val CHARACTER_INDEX_KEY = "character_index"
 
+    lateinit var tasks: MutableMap<String, UserTaskModel>
     private lateinit var prefs: SharedPreferences
     lateinit var appContext: Context
     private lateinit var apiService: ApiService
@@ -53,6 +56,7 @@ object DataManager {
     }
 
     fun updateData() {
+        updateTasks()
         updateCharList()
         updateRoomsTemplates()
         initItems()
@@ -128,7 +132,7 @@ object DataManager {
         }.start()
     }
 
-    private fun initItems() {
+    fun initItems() {
         topsItems = emptyList<Item>().toMutableList()
         hatsItems = emptyList<Item>().toMutableList()
         accessoriesItems = emptyList<Item>().toMutableList()
@@ -151,6 +155,9 @@ object DataManager {
                         )
                     }
                 }
+                Log.d("DATAMANAGER", topsItems.toString())
+                Log.d("DATAMANAGER", hatsItems.toString())
+                Log.d("DATAMANAGER", accessoriesItems.toString())
             }
 
             override fun onFailure(call: Call<UserItemDTO>, t: Throwable) {}
@@ -176,7 +183,7 @@ object DataManager {
                 rooms?.forEach{room ->
                     roomsItems.add(
                         Item(room.room.surname, room.price.toString(), Utils().getDrawableIdByName(
-                        appContext, room.templates[0]
+                        appContext, room.marketTemplate
                     ), room)
                     )
                 }
@@ -186,6 +193,7 @@ object DataManager {
                         appContext, item.name), item)
                     )
                 }
+                Log.d("DATAMANAGER", "ON MARKET CODE" + response.code().toString())
             }
 
             override fun onFailure(call: Call<MarketAllDTO>, t: Throwable) {}
@@ -199,6 +207,17 @@ object DataManager {
                 weekSteps = response.body()?.weekSteps ?: listOf(0, 0, 0, 0, 0, 0, 0)
             }
             override fun onFailure(call: Call<WeekStepsDTO>, t: Throwable) {}
+        })
+    }
+
+    fun updateTasks() {
+        apiService.getTasks((appContext as App).token).enqueue(object : Callback<GetTasksDTO> {
+            override fun onResponse(call: Call<GetTasksDTO>, response: Response<GetTasksDTO>) {
+                response.body()?.userTasks?.forEach { userTask -> tasks[userTask.task.name] = userTask }
+            }
+
+            override fun onFailure(call: Call<GetTasksDTO>, t: Throwable) {}
+
         })
     }
 

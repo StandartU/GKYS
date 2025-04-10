@@ -1,5 +1,6 @@
 package com.example.walkiepaws.main_game
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
+import androidx.work.OneTimeWorkRequest
 import com.bumptech.glide.Glide
 
 import androidx.work.PeriodicWorkRequest
@@ -57,13 +59,14 @@ class BedroomFragment : Fragment() {
     }
 
     private fun startSleepTracking() {
-        val workRequest = PeriodicWorkRequest.Builder(SleepDataUploadWorker::class.java, 15, TimeUnit.MINUTES)
-            .setInitialDelay(2, TimeUnit.MINUTES)
+        val workRequest = OneTimeWorkRequest.Builder(SleepDataUploadWorker::class.java)
+            .setInitialDelay(1, TimeUnit.MINUTES)
             .addTag("sleep_tracking")
             .build()
 
-        // Запускаем воркер с использованием WorkManager
+
         WorkManager.getInstance(requireContext()).enqueue(workRequest)
+        Log.d("SleepTracking", "Started one-time sleep tracking worker")
     }
 
     private fun stopSleepTracking() {

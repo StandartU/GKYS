@@ -13,7 +13,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.walkiepaws.R
+import com.example.walkiepaws.backend.ApiService
+import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.ItemModel
+import com.example.walkiepaws.backend.model.MarketModel
+import com.example.walkiepaws.backend.model.RoomLvlModel
+import com.example.walkiepaws.backend.model.RoomModel
+import com.example.walkiepaws.backend.model.dto.request.BuyItemDTO
+import com.example.walkiepaws.backend.model.dto.request.BuyRoomLvlDTO
+import com.example.walkiepaws.backend.model.dto.request.MarketBuyDTO
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ShopActivity : AppCompatActivity() {
 
@@ -22,6 +33,7 @@ class ShopActivity : AppCompatActivity() {
     private lateinit var clothesCategory: TextView
     private lateinit var roomsCategory: TextView
     private lateinit var imageBack: ImageView
+    private lateinit var apiService: ApiService
 
     private var currentCategory = 0
 
@@ -33,6 +45,7 @@ class ShopActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        apiService = RetrofitClient.getApiService()
         setContentView(R.layout.activity_shop)
         initMarkets()
         initViews()
@@ -147,7 +160,62 @@ class ShopActivity : AppCompatActivity() {
     }
 
     private fun onItemClicked(item: Item) {
-        Toast.makeText(this, "Куплено: ${item.name}", Toast.LENGTH_SHORT).show()
+        when (item.dto) {
+            is ItemModel -> {
+                DataManager.clothesItems.remove(item)
+                initMarkets()
+                apiService.buyItem((applicationContext as App).token, BuyItemDTO(item.dto.id))
+                    .enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                loadCategory(currentCategory)
+                            }
+                            else {
+                                Toast.makeText(applicationContext, "Недостаточно средств", Toast.LENGTH_SHORT).show()
+                                DataManager.clothesItems.add(item)
+                                initMarkets()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {}
+                    })
+            }
+            is MarketModel -> {
+                apiService.buyState((applicationContext as App).token, MarketBuyDTO(item.dto.id))
+                    .enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                loadCategory(currentCategory)
+                            }
+                            else {
+                                Toast.makeText(applicationContext, "Недостаточно средств", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {}
+                    })
+            }
+            is RoomLvlModel -> {
+                DataManager.roomsItems.remove(item)
+                initMarkets()
+                apiService.buyRoom((applicationContext as App).token, BuyRoomLvlDTO(item.dto.room.name, item.dto.lvl))
+                    .enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                loadCategory(currentCategory)
+                            }
+                            else {
+                                Toast.makeText(applicationContext, "Недостаточно средств", Toast.LENGTH_SHORT).show()
+                                DataManager.roomsItems.add(item)
+                                initMarkets()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {}
+                    })
+            }
+        }
+        Toast.makeText(this, "Выбранно: ${item.name}", Toast.LENGTH_SHORT).show()
     }
 
     fun addFoodItem(name: String, price: String, imageRes: Int, dto: ItemModel) {

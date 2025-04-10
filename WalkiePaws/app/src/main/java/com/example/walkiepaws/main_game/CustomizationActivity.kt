@@ -1,6 +1,7 @@
 package com.example.walkiepaws.main_game
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -50,6 +51,7 @@ class CustomizationActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        DataManager.initItems()
     }
 
     override fun onResume() {
@@ -91,6 +93,7 @@ class CustomizationActivity : AppCompatActivity() {
         currentCategory = categoryIndex
         updateCategorySelection()
         loadCategory(categoryIndex)
+        DataManager.initItems()
     }
 
     private fun updateCategorySelection() {

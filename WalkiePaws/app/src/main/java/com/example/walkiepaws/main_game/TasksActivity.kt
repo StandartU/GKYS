@@ -86,7 +86,6 @@ class TasksActivity : AppCompatActivity() {
         handler.postDelayed(updateProgress, 500)
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateTaskProgress() {
         if (task1Progress.progress < task1Progress.max) {
             task1Progress.progress += 1

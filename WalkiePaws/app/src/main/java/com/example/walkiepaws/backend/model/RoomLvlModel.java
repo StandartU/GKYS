@@ -7,6 +7,8 @@ public class RoomLvlModel extends Model {
     private RoomModel room;
     private int lvl;
     private List<String> templates;
+
+    private String marketTemplate;
     private int price;
 
     // Пустой конструктор
@@ -60,5 +62,13 @@ public class RoomLvlModel extends Model {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public String getMarketTemplate() {
+        return marketTemplate;
+    }
+
+    public void setMarketTemplate(String marketTemplate) {
+        this.marketTemplate = marketTemplate;
     }
 }
