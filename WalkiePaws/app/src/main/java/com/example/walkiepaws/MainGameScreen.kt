@@ -2,6 +2,7 @@ package com.example.walkiepaws
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -48,6 +49,7 @@ class MainGameScreen : AppCompatActivity() {
     private val updateBars = object : Runnable {
         override fun run() {
             DataManager.initWeekSteps()
+            handler.postDelayed(this, 10000)
             textSteps = findViewById(R.id.number_of_steps)
             apiService.getState("${(applicationContext as App).token}")
                 .enqueue(object : Callback<UserStateDTO> {
@@ -98,7 +100,6 @@ class MainGameScreen : AppCompatActivity() {
                 is LivingRoomFragment -> currentFragment.showCharacterSmoothly()
                 is BedroomFragment -> currentFragment.showCharacterSmoothly()
             }
-            handler.postDelayed(this, 10000)
         }
     }
 
@@ -123,7 +124,14 @@ class MainGameScreen : AppCompatActivity() {
 
         viewPager = findViewById(R.id.viewPager)
         viewPager.adapter = ScreenSlidePagerAdapter(this)
-        viewPager.setCurrentItem(1, false)
+        val sharedPreferences = applicationContext.getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
+        val isSleep = sharedPreferences.getBoolean("is_sleeping", false)
+        if (isSleep) {
+            viewPager.setCurrentItem(2, false)
+        }
+        else {
+            viewPager.setCurrentItem(1, false)
+        }
         viewPager.offscreenPageLimit = 1
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {

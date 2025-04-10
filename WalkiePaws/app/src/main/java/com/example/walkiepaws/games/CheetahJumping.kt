@@ -24,6 +24,7 @@ import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO
+import com.example.walkiepaws.backend.model.dto.request.UserSetStateDTO
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -362,6 +363,12 @@ class CheetahJumping : AppCompatActivity() {
         layout.addView(scoreText)
 
         apiService.addCash((DataManager.appContext as App).token, UserAddCashDTO(score, false)).enqueue(
+            object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {}
+                override fun onFailure(call: Call<Void>, t: Throwable) {}
+            }
+        )
+        apiService.setState((DataManager.appContext as App).token, UserSetStateDTO("happiness", 10)).enqueue(
             object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {}
                 override fun onFailure(call: Call<Void>, t: Throwable) {}

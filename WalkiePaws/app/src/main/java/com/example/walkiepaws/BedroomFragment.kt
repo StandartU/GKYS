@@ -1,5 +1,7 @@
 package com.example.walkiepaws
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +16,9 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
+import java.util.concurrent.TimeUnit
 
 class BedroomFragment : Fragment() {
     private lateinit var characterImage: ImageView
@@ -25,13 +30,51 @@ class BedroomFragment : Fragment() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var isSleeping = false
+    private var _isSleeping: Boolean = false
+
+    var isSleeping: Boolean
+        get() = _isSleeping
+        set(value) {
+            if (_isSleeping != value) {
+                _isSleeping = value
+                val sharedPreferences = requireContext().getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("is_sleeping", value)
+                editor.apply()
+                onSleepStatusChanged(value)
+            }
+        }
+
+    private fun onSleepStatusChanged(isSleeping: Boolean) {
+        if (isSleeping) {
+            startSleepTracking()
+        } else {
+            stopSleepTracking()
+        }
+    }
+
+    private fun startSleepTracking() {
+        val workRequest = PeriodicWorkRequest.Builder(SleepDataUploadWorker::class.java, 15, TimeUnit.MINUTES)
+            .setInitialDelay(2, TimeUnit.MINUTES)
+            .addTag("sleep_tracking")
+            .build()
+
+        // Запускаем воркер с использованием WorkManager
+        WorkManager.getInstance(requireContext()).enqueue(workRequest)
+    }
+
+    private fun stopSleepTracking() {
+        WorkManager.getInstance(requireContext()).cancelAllWorkByTag("sleep_tracking")
+        Log.d("SleepTracking", "Stopped sleep tracking worker")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val sharedPreferences = requireContext().getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
+        isSleeping = sharedPreferences.getBoolean("is_sleeping", false)
         DataManager.updateRoomsTemplates()
         handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_bedroom_game_screen, container, false)
@@ -56,6 +99,7 @@ class BedroomFragment : Fragment() {
         }
 
         sleepButton.setOnClickListener { toggleSleepState() }
+        updateCharacterImage()
         return view
     }
 
@@ -90,9 +134,7 @@ class BedroomFragment : Fragment() {
 
     private fun resetCharacterState() {
         if (::characterImage.isInitialized) {
-            characterImage.visibility = View.INVISIBLE
             characterImage.alpha = 0f
-            isSleeping = false
             characterImage.scaleX = 1f
             characterImage.scaleY = 1f
         }
