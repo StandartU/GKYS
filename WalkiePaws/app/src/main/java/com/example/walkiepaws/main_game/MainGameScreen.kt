@@ -89,7 +89,6 @@ class MainGameScreen : AppCompatActivity() {
                 override fun onFailure(call: Call<CashDTO>, t: Throwable) {
                     Log.e("DEBUG", "Failure: ${t.message}")
                 }
-
             })
 
             DataManager.updateCharList()
@@ -101,7 +100,6 @@ class MainGameScreen : AppCompatActivity() {
             }
         }
     }
-
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateProgressBarStyle(progressBar: ProgressBar, value: Int) {
@@ -116,6 +114,9 @@ class MainGameScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         tryStartStepService()
         super.onCreate(savedInstanceState)
+
+        // Инициализация музыки
+        MusicManager.getInstance(this).initialize(this)
 
         apiService = RetrofitClient.getApiService()
         enableEdgeToEdge()
@@ -138,8 +139,7 @@ class MainGameScreen : AppCompatActivity() {
                 when (state) {
                     ViewPager2.SCROLL_STATE_DRAGGING -> hideActiveCharacter()
                     ViewPager2.SCROLL_STATE_IDLE -> updateCurrentCharacter()
-                    ViewPager2.SCROLL_STATE_SETTLING -> {
-                    }
+                    ViewPager2.SCROLL_STATE_SETTLING -> {}
                 }
             }
         })
@@ -163,6 +163,25 @@ class MainGameScreen : AppCompatActivity() {
         handler.post(updateBars)
     }
 
+    override fun onResume() {
+        super.onResume()
+        MusicManager.getInstance(this).play()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isChangingConfigurations) {
+            MusicManager.getInstance(this).pause()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(updateBars)
+        if (isFinishing) {
+            MusicManager.getInstance(this).stop()
+        }
+    }
 
     private fun hideActiveCharacter() {
         supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")?.let { currentFragment ->
@@ -186,11 +205,6 @@ class MainGameScreen : AppCompatActivity() {
 
     fun onCustomizationItemSelected(itemName: String) {
         Toast.makeText(this, "Выбрано: $itemName", Toast.LENGTH_SHORT).show()
-        
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -199,9 +213,8 @@ class MainGameScreen : AppCompatActivity() {
             == PackageManager.PERMISSION_GRANTED
         ) {
             Log.d(TAG, "ACTIVITY_RECOGNITION permission already granted.")
-            startStepServiceActual()  // Запускаем сервис, если разрешение уже дано
+            startStepServiceActual()
         } else {
-            // Запрашиваем разрешение
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this,
                     Manifest.permission.ACTIVITY_RECOGNITION
@@ -221,11 +234,9 @@ class MainGameScreen : AppCompatActivity() {
         }
     }
 
-
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestActivityRecognitionPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Запрос разрешения
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
@@ -236,31 +247,23 @@ class MainGameScreen : AppCompatActivity() {
             onRequestPermissionsResult(
                 ACTIVITY_RECOGNITION_PERMISSION_CODE,
                 arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                intArrayOf(PackageManager.PERMISSION_GRANTED)  // Симулируем, что разрешение предоставлено
+                intArrayOf(PackageManager.PERMISSION_GRANTED)
             )
             startStepServiceActual()
         }
     }
 
     private fun startStepServiceActual() {
-
         Log.d(TAG, "Starting StepService...")
-        val serviceIntent = Intent(
-            this,
-            StepService::class.java
-        )
+        val serviceIntent = Intent(this, StepService::class.java)
         startForegroundService(serviceIntent)
     }
 
     private fun stopStepService() {
         Log.d(TAG, "Stopping StepService...")
-        val serviceIntent = Intent(
-            this,
-            StepService::class.java
-        )
+        val serviceIntent = Intent(this, StepService::class.java)
         stopService(serviceIntent)
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -269,11 +272,10 @@ class MainGameScreen : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        // Проверка, что мы получаем результат именно для разрешения ACTIVITY_RECOGNITION
         if (requestCode == ACTIVITY_RECOGNITION_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "ACTIVITY_RECOGNITION permission granted by user.")
-                startStepServiceActual()  // Запускаем сервис, если разрешение предоставлено
+                startStepServiceActual()
             } else {
                 Log.w(TAG, "ACTIVITY_RECOGNITION permission denied by user.")
                 Toast.makeText(
