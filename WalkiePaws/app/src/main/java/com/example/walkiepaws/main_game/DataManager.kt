@@ -13,6 +13,7 @@ import com.example.walkiepaws.backend.Utils
 import com.example.walkiepaws.backend.model.Model
 import com.example.walkiepaws.backend.model.UserTaskModel
 import com.example.walkiepaws.backend.model.dto.request.GetPetDTO
+import com.example.walkiepaws.backend.model.dto.responce.GetPetItemDTO
 import com.example.walkiepaws.backend.model.dto.responce.GetTasksDTO
 import com.example.walkiepaws.backend.model.dto.responce.MarketAllDTO
 import com.example.walkiepaws.backend.model.dto.responce.PetDTO
@@ -41,6 +42,7 @@ object DataManager {
     lateinit var clothesItems: MutableList<Item>
     lateinit var roomsItems: MutableList<Item>
     lateinit var weekSteps: List<Int>
+    lateinit var petItems: MutableList<Item>
 
     private var charactersIds: List<Int> = listOf(
         R.drawable.gepard_norm,
@@ -56,6 +58,7 @@ object DataManager {
     }
 
     fun updateData() {
+        initPetItems()
         updateTasks()
         updateCharList()
         updateRoomsTemplates()
@@ -74,6 +77,13 @@ object DataManager {
         R.drawable.kangaroo,
         R.drawable.hamster,
         R.drawable.rabbit
+    )
+
+    val charactersName = listOf(
+        "gepard",
+        "kangaroo",
+        "hamster",
+        "rabbit"
     )
 
     val games = listOf(
@@ -144,26 +154,45 @@ object DataManager {
                 markets?.forEach{market ->
                     foodItems.add(
                         Item(market.name, market.price.toString(), Utils().getDrawableIdByName(
-                        appContext, market.template), market)
+                            appContext, market.template), market)
                     )
                 }
                 rooms?.forEach{room ->
                     roomsItems.add(
                         Item(room.room.surname, room.price.toString(), Utils().getDrawableIdByName(
-                        appContext, room.marketTemplate
-                    ), room)
+                            appContext, room.marketTemplate
+                        ), room)
                     )
                 }
                 items?.forEach{item ->
                     clothesItems.add(
                         Item(item.surname, item.price.toString(), Utils().getDrawableIdByName(
-                        appContext, item.name), item)
+                            appContext, item.name), item)
                     )
                 }
                 Log.d("DATAMANAGER", "ON MARKET CODE" + response.code().toString())
             }
 
             override fun onFailure(call: Call<MarketAllDTO>, t: Throwable) {}
+
+        })
+    }
+
+    private fun initPetItems() {
+        petItems = mutableListOf()
+        apiService.getPetItems((appContext as App).token).enqueue(object : Callback<GetPetItemDTO> {
+            override fun onResponse(call: Call<GetPetItemDTO>, response: Response<GetPetItemDTO>) {
+                Log.d("WEAR", response.code().toString())
+                response.body()?.petItemModels?.forEach{
+                    petItem ->
+                    petItems.add(Item(petItem.item.name, petItem.item.price.toString(),
+                        Utils().getDrawableIdByName(appContext, petItem.template),
+                        petItem
+                    ))
+                }
+            }
+
+            override fun onFailure(call: Call<GetPetItemDTO>, t: Throwable) {}
 
         })
     }
@@ -234,20 +263,8 @@ object DataManager {
         val price: String,
         val imageRes: Int,
         val dto: Model,
-        val webpRes: Int? = null // Анимированный WebP для LivingRoomFragment
     )
 
-    // Метод для получения ресурсов персонажа с предметами (теперь возвращает WebP для предметов)
-    fun getCharacterWithItems(characterIndex: Int): List<Int> {
-        val characterRes = getChars()[characterIndex] // Предполагается, что это базовый WebP персонажа
-        val items = mutableListOf(characterRes)
-
-        currentHat?.webpRes?.let { items.add(it) }
-        currentTop?.webpRes?.let { items.add(it) }
-        currentAccessory?.webpRes?.let { items.add(it) }
-
-        return items
-    }
 
     fun initItems() {
         topsItems = emptyList<Item>().toMutableList()
@@ -257,11 +274,10 @@ object DataManager {
             override fun onResponse(call: Call<UserItemDTO>, response: Response<UserItemDTO>) {
                 response.body()?.userItemModels?.forEach { item ->
                     val iconRes = Utils().getDrawableIdByName(appContext, item.item.name)
-                    val webpRes = getWebpResourceForItem(item.item.name, item.item.category) // Логика для WebP
                     when (item.item.category) {
-                        "top" -> topsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item, webpRes))
-                        "hat" -> hatsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item, webpRes))
-                        "accs" -> accessoriesItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item, webpRes))
+                        "top" -> topsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item))
+                        "hat" -> hatsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item))
+                        "accs" -> accessoriesItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item))
                     }
                 }
             }
@@ -269,20 +285,15 @@ object DataManager {
         })
     }
 
-    // Вспомогательная функция для сопоставления имени предмета с WebP-ресурсом
-    private fun getWebpResourceForItem(itemName: String, category: String): Int {
-        return when (itemName) {
-            "bandana" -> R.drawable.bandana_gepard
-            "shirt" -> R.drawable.shirt_gepard
-            "glasses" -> R.drawable.glasses_gepard
-            // Дополните для других предметов и персонажей
-            else -> 0 // Если WebP не найден
-        }
+    fun getCharacterWithItems(characterIndex: Int): List<Int> {
+        val characterRes = getChars()[characterIndex] // Предполагается, что это базовый WebP персонажа
+        val items = mutableListOf(characterRes)
+
+        currentHat?.imageRes?.let { items.add(it) }
+        currentTop?.imageRes?.let { items.add(it) }
+        currentAccessory?.imageRes?.let { items.add(it) }
+
+        return items
     }
-
-
-
-
-
 }
 

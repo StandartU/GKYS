@@ -106,17 +106,15 @@ class LivingRoomFragment : Fragment() {
     private fun updateCharacterImage() {
         val items = DataManager.getCharacterWithItems(DataManager.currentCharacterIndex)
 
-        // Загружаем базового персонажа (WebP)
+
         Glide.with(this)
-            .load(items[0]) // Предполагается, что это WebP из res/raw
+            .load(items[0])
             .into(characterImage)
 
-        // Сбрасываем предметы
         hatImage.setImageDrawable(null)
         topImage.setImageDrawable(null)
         accessoryImage.setImageDrawable(null)
 
-        // Загружаем WebP для предметов
         if (items.size > 1 && items[1] != 0) {
             Glide.with(this).load(items[1]).into(hatImage)
         }

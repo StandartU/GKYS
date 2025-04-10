@@ -17,6 +17,7 @@ import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.main_game.DataManager.Item
 import com.example.walkiepaws.backend.model.ItemModel
+import com.example.walkiepaws.backend.model.PetItemModel
 
 class CustomizationActivity : AppCompatActivity() {
 
@@ -151,56 +152,48 @@ class CustomizationActivity : AppCompatActivity() {
         itemsContainer.addView(itemView)
     }
 
+    private fun getItemToChar(item: Item): Item? {
+        var ans: Item? = null
+        for (petItem in DataManager.petItems) {
+            if ((petItem.dto as  PetItemModel).pet.name == DataManager.charactersName[DataManager.currentCharacterIndex]
+                && petItem.dto.item.name == (item.dto as ItemModel).name) {
+                ans = petItem
+            }
+        }
+        Log.d("WEAR", DataManager.petItems.toString())
+        Log.d("WEAR", ans?.dto.toString())
+        return ans
+    }
+
     private fun onItemClicked(item: Item) {
         when (currentCategory) {
-            0 -> { // Шапки
+            0 -> {
                 if (DataManager.currentHat == item) {
                     DataManager.currentHat = null
                     Toast.makeText(this, "Шапка снята", Toast.LENGTH_SHORT).show()
                 } else {
-                    DataManager.currentHat = item
+                    DataManager.currentHat = getItemToChar(item)
                     Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
                 }
             }
-            1 -> { // Одежда
+            1 -> {
                 if (DataManager.currentTop == item) {
                     DataManager.currentTop = null
                     Toast.makeText(this, "Одежда снята", Toast.LENGTH_SHORT).show()
                 } else {
-                    DataManager.currentTop = item
+                    DataManager.currentTop = getItemToChar(item)
                     Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
                 }
             }
-            2 -> { // Аксессуары
+            2 -> {
                 if (DataManager.currentAccessory == item) {
                     DataManager.currentAccessory = null
                     Toast.makeText(this, "Аксессуар снят", Toast.LENGTH_SHORT).show()
                 } else {
-                    DataManager.currentAccessory = item
+                    DataManager.currentAccessory = getItemToChar(item)
                     Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-    }
-
-    fun addHatItem(name: String, price: String, imageRes: Int, dto: ItemModel, webpRes: Int? = null) {
-        hatsItems.add(Item(name, price, imageRes, dto, webpRes))
-        if (currentCategory == 0) {
-            addItemToContainer(hatsItems.last())
-        }
-    }
-
-    fun addTopItem(name: String, price: String, imageRes: Int, dto: ItemModel, webpRes: Int? = null) {
-        topsItems.add(Item(name, price, imageRes, dto, webpRes))
-        if (currentCategory == 1) {
-            addItemToContainer(topsItems.last())
-        }
-    }
-
-    fun addAccessoryItem(name: String, price: String, imageRes: Int, dto: ItemModel, webpRes: Int? = null) {
-        accessoriesItems.add(Item(name, price, imageRes, dto, webpRes))
-        if (currentCategory == 2) {
-            addItemToContainer(accessoriesItems.last())
         }
     }
 }

@@ -30,6 +30,9 @@ class KitchenFragment : Fragment() {
     private lateinit var foodButton: ShapeableImageView
     private lateinit var imageTable: ImageView
     private lateinit var mainLayout: RelativeLayout
+    private lateinit var hatImage: ImageView
+    private lateinit var topImage: ImageView
+    private lateinit var accessoryImage: ImageView
 
     // Элементы popup окна
     private lateinit var foodPopup: View
@@ -65,6 +68,10 @@ class KitchenFragment : Fragment() {
         handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_kitchen_game_screen, container, false)
         characterImage = view.findViewById(R.id.imageCharacter)
+
+        hatImage = view.findViewById(R.id.hatImage)
+        topImage = view.findViewById(R.id.topImage)
+        accessoryImage = view.findViewById(R.id.accessoryImage)
 
         mainLayout = view.findViewById(R.id.main)
 
@@ -241,11 +248,25 @@ class KitchenFragment : Fragment() {
     }
 
     private fun updateCharacterImage() {
-        if (DataManager.currentCharacterIndex in DataManager.characters.indices) {
-            val resId = DataManager.getChars()[DataManager.currentCharacterIndex]
-            Glide.with(this)
-                .load(resId)
-                .into(characterImage)
+        val items = DataManager.getCharacterWithItems(DataManager.currentCharacterIndex)
+
+
+        Glide.with(this)
+            .load(items[0])
+            .into(characterImage)
+
+        hatImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        accessoryImage.setImageDrawable(null)
+
+        if (items.size > 1 && items[1] != 0) {
+            Glide.with(this).load(items[1]).into(hatImage)
+        }
+        if (items.size > 2 && items[2] != 0) {
+            Glide.with(this).load(items[2]).into(topImage)
+        }
+        if (items.size > 3 && items[3] != 0) {
+            Glide.with(this).load(items[3]).into(accessoryImage)
         }
     }
 
