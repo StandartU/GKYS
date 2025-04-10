@@ -10,6 +10,7 @@ class MusicManager private constructor(context: Context) {
     private var currentVolume = 0.5f
     private var isMusicEnabled = true
     private val prefs: SharedPreferences = context.getSharedPreferences("music_prefs", Context.MODE_PRIVATE)
+    private val appContext: Context = context.applicationContext
 
     companion object {
         @Volatile
@@ -23,20 +24,28 @@ class MusicManager private constructor(context: Context) {
     }
 
     fun initialize(context: Context) {
-        if (mediaPlayer == null) {
-            loadSettings()
-            mediaPlayer = MediaPlayer.create(context, R.raw.song_main_game)
-            mediaPlayer?.apply {
-                isLooping = true
-                setVolume(currentVolume, currentVolume)
-                if (isMusicEnabled) start()
-            }
+        loadSettings()
+        if (isMusicEnabled && mediaPlayer == null) {
+            createMediaPlayer()
+        }
+    }
+
+    private fun createMediaPlayer() {
+        mediaPlayer?.release() // Освобождаем старый экземпляр, если он есть
+        mediaPlayer = MediaPlayer.create(appContext, R.raw.song_main_game)?.apply {
+            isLooping = true
+            setVolume(currentVolume, currentVolume)
+            if (isMusicEnabled) start()
         }
     }
 
     fun play() {
         if (isMusicEnabled) {
-            mediaPlayer?.start()
+            if (mediaPlayer == null) {
+                createMediaPlayer()
+            } else if (!mediaPlayer!!.isPlaying) {
+                mediaPlayer?.start()
+            }
         }
     }
 
