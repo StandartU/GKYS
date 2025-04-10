@@ -149,25 +149,53 @@ class CustomizationActivity : AppCompatActivity() {
     }
 
     private fun onItemClicked(item: Item) {
-        Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
+        when (currentCategory) {
+            0 -> { // Шапки
+                if (DataManager.currentHat == item) {
+                    DataManager.currentHat = null
+                    Toast.makeText(this, "Шапка снята", Toast.LENGTH_SHORT).show()
+                } else {
+                    DataManager.currentHat = item
+                    Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            1 -> { // Одежда
+                if (DataManager.currentTop == item) {
+                    DataManager.currentTop = null
+                    Toast.makeText(this, "Одежда снята", Toast.LENGTH_SHORT).show()
+                } else {
+                    DataManager.currentTop = item
+                    Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            2 -> { // Аксессуары
+                if (DataManager.currentAccessory == item) {
+                    DataManager.currentAccessory = null
+                    Toast.makeText(this, "Аксессуар снят", Toast.LENGTH_SHORT).show()
+                } else {
+                    DataManager.currentAccessory = item
+                    Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
-    fun addHatItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        hatsItems.add(Item(name, price, imageRes, dto))
+    fun addHatItem(name: String, price: String, imageRes: Int, dto: ItemModel, webpRes: Int? = null) {
+        hatsItems.add(Item(name, price, imageRes, dto, webpRes))
         if (currentCategory == 0) {
             addItemToContainer(hatsItems.last())
         }
     }
 
-    fun addTopItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        topsItems.add(Item(name, price, imageRes, dto))
+    fun addTopItem(name: String, price: String, imageRes: Int, dto: ItemModel, webpRes: Int? = null) {
+        topsItems.add(Item(name, price, imageRes, dto, webpRes))
         if (currentCategory == 1) {
             addItemToContainer(topsItems.last())
         }
     }
 
-    fun addAccessoryItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        accessoriesItems.add(Item(name, price, imageRes, dto))
+    fun addAccessoryItem(name: String, price: String, imageRes: Int, dto: ItemModel, webpRes: Int? = null) {
+        accessoriesItems.add(Item(name, price, imageRes, dto, webpRes))
         if (currentCategory == 2) {
             addItemToContainer(accessoriesItems.last())
         }

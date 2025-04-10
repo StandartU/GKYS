@@ -128,35 +128,7 @@ object DataManager {
         }.start()
     }
 
-    private fun initItems() {
-        topsItems = emptyList<Item>().toMutableList()
-        hatsItems = emptyList<Item>().toMutableList()
-        accessoriesItems = emptyList<Item>().toMutableList()
-        apiService.getUserItems((appContext as App).token).enqueue(object : Callback<UserItemDTO> {
-            override fun onResponse(call: Call<UserItemDTO>, response: Response<UserItemDTO>) {
-                val items = response.body()?.
-                userItemModels?.forEach{ item ->
-                    when (item.item.category) {
-                        "top" -> topsItems.add(
-                            Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
-                            appContext, item.item.name), item.item)
-                        )
-                        "hat" -> hatsItems.add(
-                            Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
-                            appContext, item.item.name), item.item)
-                        )
-                        "accs" -> accessoriesItems.add(
-                            Item(item.item.surname, item.item.price.toString(), Utils().getDrawableIdByName(
-                            appContext, item.item.name), item.item)
-                        )
-                    }
-                }
-            }
 
-            override fun onFailure(call: Call<UserItemDTO>, t: Throwable) {}
-
-        })
-    }
 
     private fun initMarkets() {
         foodItems = emptyList<Item>().toMutableList()
@@ -202,6 +174,8 @@ object DataManager {
         })
     }
 
+
+
     fun updateRoomsTemplates () {
         apiService.getRooms((appContext as App).token).enqueue(object : Callback<List<UserRoomDTO>> {
             override fun onResponse(
@@ -238,11 +212,66 @@ object DataManager {
 
     fun getCurrentEatingCharacter(): Int = eatingCharacters[currentCharacterIndex]
 
+    var currentHat: Item? = null
+    var currentTop: Item? = null
+    var currentAccessory: Item? = null
+
+    // Обновляем класс Item, добавляя поле для WebP-ресурса
     data class Item(
         val name: String,
         val price: String,
         val imageRes: Int,
-        val dto: Model
+        val dto: Model,
+        val webpRes: Int? = null // Анимированный WebP для LivingRoomFragment
     )
+
+    // Метод для получения ресурсов персонажа с предметами (теперь возвращает WebP для предметов)
+    fun getCharacterWithItems(characterIndex: Int): List<Int> {
+        val characterRes = getChars()[characterIndex] // Предполагается, что это базовый WebP персонажа
+        val items = mutableListOf(characterRes)
+
+        currentHat?.webpRes?.let { items.add(it) }
+        currentTop?.webpRes?.let { items.add(it) }
+        currentAccessory?.webpRes?.let { items.add(it) }
+
+        return items
+    }
+
+    // Пример инициализации предметов с WebP (дополните по вашим ресурсам)
+    private fun initItems() {
+        topsItems = emptyList<Item>().toMutableList()
+        hatsItems = emptyList<Item>().toMutableList()
+        accessoriesItems = emptyList<Item>().toMutableList()
+        apiService.getUserItems((appContext as App).token).enqueue(object : Callback<UserItemDTO> {
+            override fun onResponse(call: Call<UserItemDTO>, response: Response<UserItemDTO>) {
+                response.body()?.userItemModels?.forEach { item ->
+                    val iconRes = Utils().getDrawableIdByName(appContext, item.item.name)
+                    val webpRes = getWebpResourceForItem(item.item.name, item.item.category) // Логика для WebP
+                    when (item.item.category) {
+                        "top" -> topsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item, webpRes))
+                        "hat" -> hatsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item, webpRes))
+                        "accs" -> accessoriesItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item, webpRes))
+                    }
+                }
+            }
+            override fun onFailure(call: Call<UserItemDTO>, t: Throwable) {}
+        })
+    }
+
+    // Вспомогательная функция для сопоставления имени предмета с WebP-ресурсом
+    private fun getWebpResourceForItem(itemName: String, category: String): Int {
+        return when (itemName) {
+            "bandana" -> R.drawable.bandana_gepard
+            "shirt" -> R.drawable.shirt_gepard
+            "glasses" -> R.drawable.glasses_gepard
+            // Дополните для других предметов и персонажей
+            else -> 0 // Если WebP не найден
+        }
+    }
+
+
+
+
+
 }
 
