@@ -21,12 +21,6 @@ class TasksActivity : AppCompatActivity() {
     private lateinit var task2Checkbox: CheckBox
     private lateinit var task3Checkbox: CheckBox
     private lateinit var handler: Handler
-    private val updateProgress = object : Runnable {
-        override fun run() {
-            updateTaskProgress()
-            handler.postDelayed(this, 500)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +34,8 @@ class TasksActivity : AppCompatActivity() {
         }
 
         initViews()
+        updateTaskProgress()
         setupClickListeners()
-        startProgressUpdates()
     }
 
     override fun onResume() {
@@ -70,9 +64,9 @@ class TasksActivity : AppCompatActivity() {
         task2Checkbox = findViewById(R.id.task2Checkbox)
         task3Checkbox = findViewById(R.id.task3Checkbox)
 
-        task1Progress.max = 3
-        task2Progress.max = 5
-        task3Progress.max = 15
+        task1Progress.max = DataManager.tasks["feed"]!!.task.target
+        task2Progress.max = DataManager.tasks["game"]!!.task.target
+        task3Progress.max = DataManager.tasks["walk"]!!.task.target
     }
 
     private fun setupClickListeners() {
@@ -81,29 +75,24 @@ class TasksActivity : AppCompatActivity() {
         }
     }
 
-    private fun startProgressUpdates() {
-        handler = Handler(Looper.getMainLooper())
-        handler.postDelayed(updateProgress, 500)
-    }
-
     private fun updateTaskProgress() {
         if (task1Progress.progress < task1Progress.max) {
-            task1Progress.progress += 1
-            if (task1Progress.progress == task1Progress.max) {
+            task1Progress.progress = DataManager.tasks["feed"]?.value!!
+            if (task1Progress.progress >= task1Progress.max) {
                 task1Checkbox.isChecked = true
             }
         }
 
         if (task2Progress.progress < task2Progress.max) {
-            task2Progress.progress += 1
-            if (task2Progress.progress == task2Progress.max) {
+            task2Progress.progress = DataManager.tasks["game"]?.value!!
+            if (task2Progress.progress >= task2Progress.max) {
                 task2Checkbox.isChecked = true
             }
         }
 
         if (task3Progress.progress < task3Progress.max) {
-            task3Progress.progress += 1
-            if (task3Progress.progress == task3Progress.max) {
+            task3Progress.progress = DataManager.tasks["walk"]?.value!!
+            if (task3Progress.progress >= task3Progress.max) {
                 task3Checkbox.isChecked = true
             }
         }
@@ -111,6 +100,5 @@ class TasksActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(updateProgress)
     }
 }

@@ -10,7 +10,9 @@ import com.example.walkiepaws.games.FruitTakerActivity
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.Utils
+import com.example.walkiepaws.backend.model.ItemModel
 import com.example.walkiepaws.backend.model.Model
+import com.example.walkiepaws.backend.model.PetItemModel
 import com.example.walkiepaws.backend.model.UserTaskModel
 import com.example.walkiepaws.backend.model.dto.request.GetPetDTO
 import com.example.walkiepaws.backend.model.dto.responce.GetPetItemDTO
@@ -42,7 +44,8 @@ object DataManager {
     lateinit var clothesItems: MutableList<Item>
     lateinit var roomsItems: MutableList<Item>
     lateinit var weekSteps: List<Int>
-    lateinit var petItems: MutableList<Item>
+    lateinit var petItems: MutableList<PetItemModel>
+    lateinit var currentFoodItems: MutableList<FoodItem>
 
     private var charactersIds: List<Int> = listOf(
         R.drawable.gepard_norm,
@@ -65,11 +68,57 @@ object DataManager {
         initItems()
         initMarkets()
         initWeekSteps()
+        initFood()
+    }
+
+    fun initFood() {
+        currentFoodItems = mutableListOf()
     }
 
     var currentCharacterIndex: Int
         get() = prefs.getInt(CHARACTER_INDEX_KEY, 0)
-        set(value) = prefs.edit().putInt(CHARACTER_INDEX_KEY, value).apply()
+        set(value) {
+            prefs.edit().putInt(CHARACTER_INDEX_KEY, value).apply()
+            if (currentHat != null) {
+                getItemToChar(
+                    Item(
+                        (currentHat!!.dto as ItemModel).surname,
+                        (currentHat!!.dto  as ItemModel).price.toString(),
+                        Utils().getDrawableIdByName(
+                            appContext,
+                            (currentHat!!.dto  as ItemModel).name
+                        ),
+                        (currentHat!!.dto  as ItemModel)
+                    )
+                )
+            }
+            if (currentAccessory != null) {
+                getItemToChar(
+                    Item(
+                        (currentAccessory!!.dto  as ItemModel).surname,
+                        (currentAccessory!!.dto  as ItemModel).price.toString(),
+                        Utils().getDrawableIdByName(
+                            appContext,
+                            (currentAccessory!!.dto  as ItemModel).name
+                        ),
+                        (currentAccessory!!.dto  as ItemModel)
+                    )
+                )
+            }
+            if (currentTop != null) {
+                getItemToChar(
+                    Item(
+                        (currentTop!!.dto as ItemModel).surname,
+                        (currentTop!!.dto as ItemModel).price.toString(),
+                        Utils().getDrawableIdByName(
+                            appContext,
+                            (currentTop!!.dto  as ItemModel).name
+                        ),
+                        (currentTop!!.dto  as ItemModel)
+                    )
+                )
+            }
+        }
 
 
     val characters = listOf(
@@ -185,10 +234,7 @@ object DataManager {
                 Log.d("WEAR", response.code().toString())
                 response.body()?.petItemModels?.forEach{
                     petItem ->
-                    petItems.add(Item(petItem.item.name, petItem.item.price.toString(),
-                        Utils().getDrawableIdByName(appContext, petItem.template),
-                        petItem
-                    ))
+                    petItems.add(petItem)
                 }
             }
 
@@ -207,9 +253,11 @@ object DataManager {
     }
 
     fun updateTasks() {
+        tasks = mutableMapOf()
         apiService.getTasks((appContext as App).token).enqueue(object : Callback<GetTasksDTO> {
             override fun onResponse(call: Call<GetTasksDTO>, response: Response<GetTasksDTO>) {
                 response.body()?.userTasks?.forEach { userTask -> tasks[userTask.task.name] = userTask }
+                Log.d("MUNANA", tasks.toString())
             }
 
             override fun onFailure(call: Call<GetTasksDTO>, t: Throwable) {}
@@ -257,13 +305,30 @@ object DataManager {
     var currentTop: Item? = null
     var currentAccessory: Item? = null
 
-    // Обновляем класс Item, добавляя поле для WebP-ресурса
     data class Item(
         val name: String,
         val price: String,
         val imageRes: Int,
         val dto: Model,
     )
+
+    data class FoodItem(
+        val name: String,
+        val price: String,
+        val imageRes: Int,
+        val healthValue: Int
+    )
+
+     fun getItemToChar(item: Item): PetItemModel? {
+        var ans: PetItemModel? = null
+        for (petItem in petItems) {
+            if (petItem.pet.name == charactersName[currentCharacterIndex]
+                && petItem.item.name == (item.dto as ItemModel).name) {
+                ans = petItem
+            }
+        }
+        return ans
+    }
 
 
     fun initItems() {

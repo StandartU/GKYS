@@ -41,6 +41,7 @@ class LivingRoomFragment : Fragment() {
         gameButton = view.findViewById(R.id.button_game)
         customizeButton = view.findViewById(R.id.button_customize)
         mainLayout = view.findViewById(R.id.main)
+        showCharacterSmoothly()
 
         resetCharacterState()
 
