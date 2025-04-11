@@ -2,6 +2,7 @@ package com.example.walkiepaws.main_game
 
 import com.example.walkiepaws.main_game.DataManager.Item
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -181,19 +182,8 @@ class ShopActivity : AppCompatActivity() {
                     })
             }
             is MarketModel -> {
-                apiService.buyState((applicationContext as App).token, MarketBuyDTO(item.dto.id))
-                    .enqueue(object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            if (response.isSuccessful) {
-                                loadCategory(currentCategory)
-                            }
-                            else {
-                                Toast.makeText(applicationContext, "Недостаточно средств", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-
-                        override fun onFailure(call: Call<Void>, t: Throwable) {}
-                    })
+                DataManager.currentFoodItems.add(DataManager.FoodItem(item.name, item.price, item.imageRes, item.dto.id))
+                Log.d("MANANANA", DataManager.currentFoodItems.toString())
             }
             is RoomLvlModel -> {
                 DataManager.roomsItems.remove(item)
@@ -216,26 +206,5 @@ class ShopActivity : AppCompatActivity() {
             }
         }
         Toast.makeText(this, "Выбранно: ${item.name}", Toast.LENGTH_SHORT).show()
-    }
-
-    fun addFoodItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        foodItems.add(Item(name, price, imageRes, dto))
-        if (currentCategory == 0) {
-            addItemToContainer(foodItems.last())
-        }
-    }
-
-    fun addClothesItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        clothesItems.add(Item(name, price, imageRes, dto))
-        if (currentCategory == 1) {
-            addItemToContainer(clothesItems.last())
-        }
-    }
-
-    fun addRoomItem(name: String, price: String, imageRes: Int, dto: ItemModel) {
-        roomsItems.add(Item(name, price, imageRes, dto))
-        if (currentCategory == 2) {
-            addItemToContainer(roomsItems.last())
-        }
     }
 }

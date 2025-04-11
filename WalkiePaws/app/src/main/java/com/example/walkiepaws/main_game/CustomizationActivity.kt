@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
+import com.example.walkiepaws.backend.Utils
 import com.example.walkiepaws.main_game.DataManager.Item
 import com.example.walkiepaws.backend.model.ItemModel
 import com.example.walkiepaws.backend.model.PetItemModel
@@ -152,45 +153,42 @@ class CustomizationActivity : AppCompatActivity() {
         itemsContainer.addView(itemView)
     }
 
-    private fun getItemToChar(item: Item): Item? {
-        var ans: Item? = null
-        for (petItem in DataManager.petItems) {
-            if ((petItem.dto as  PetItemModel).pet.name == DataManager.charactersName[DataManager.currentCharacterIndex]
-                && petItem.dto.item.name == (item.dto as ItemModel).name) {
-                ans = petItem
-            }
-        }
-        Log.d("WEAR", DataManager.petItems.toString())
-        Log.d("WEAR", ans?.dto.toString())
-        return ans
-    }
 
     private fun onItemClicked(item: Item) {
         when (currentCategory) {
             0 -> {
-                if (DataManager.currentHat == item) {
+                if (DataManager.currentHat?.name == item.name) {
                     DataManager.currentHat = null
                     Toast.makeText(this, "Шапка снята", Toast.LENGTH_SHORT).show()
                 } else {
-                    DataManager.currentHat = getItemToChar(item)
+                    val res = DataManager.getItemToChar(item)
+                    if (res != null) {
+                        DataManager.currentHat = Item(res.item.surname, res.item.price.toString(), Utils().getDrawableIdByName(applicationContext, res.template), res.item)
+                    }
                     Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
                 }
             }
             1 -> {
-                if (DataManager.currentTop == item) {
+                if (DataManager.currentTop?.name == item.name) {
                     DataManager.currentTop = null
                     Toast.makeText(this, "Одежда снята", Toast.LENGTH_SHORT).show()
                 } else {
-                    DataManager.currentTop = getItemToChar(item)
+                    val res = DataManager.getItemToChar(item)
+                    if (res != null) {
+                        DataManager.currentTop = Item(res.item.surname, res.item.price.toString(), Utils().getDrawableIdByName(applicationContext, res.template), res.item)
+                    }
                     Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
                 }
             }
             2 -> {
-                if (DataManager.currentAccessory == item) {
+                if (DataManager.currentAccessory?.name == item.name) {
                     DataManager.currentAccessory = null
                     Toast.makeText(this, "Аксессуар снят", Toast.LENGTH_SHORT).show()
                 } else {
-                    DataManager.currentAccessory = getItemToChar(item)
+                    val res = DataManager.getItemToChar(item)
+                    if (res != null) {
+                        DataManager.currentAccessory = Item(res.item.surname, res.item.price.toString(), Utils().getDrawableIdByName(applicationContext, res.template), res.item)
+                    }
                     Toast.makeText(this, "Выбрано: ${item.name}", Toast.LENGTH_SHORT).show()
                 }
             }

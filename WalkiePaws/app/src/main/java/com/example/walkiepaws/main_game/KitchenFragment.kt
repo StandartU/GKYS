@@ -15,9 +15,15 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.example.walkiepaws.R
+import com.example.walkiepaws.backend.RetrofitClient
+import com.example.walkiepaws.backend.model.dto.request.MarketBuyDTO
 import com.google.android.material.imageview.ShapeableImageView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.random.Random
 
 
@@ -43,21 +49,8 @@ class KitchenFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private val random = Random.Default
 
-    // Список случайной еды с изображениями и описаниями
-    private val foodItems = listOf(
-        FoodItem("Пицца", "50 монет", R.drawable.pizza, 10),
-        FoodItem("Яблоко", "120 монет", R.drawable.apple, 30),
-        FoodItem("Салат", "30 монет", R.drawable.salad, 5),
-        FoodItem("Торт", "100 монет", R.drawable.cake, 20),
-        FoodItem("Бутер", "150 монет", R.drawable.sandwich, 25)
-    )
+    private lateinit var foodItems: List<DataManager.FoodItem>
 
-    data class FoodItem(
-        val name: String,
-        val price: String,
-        val imageRes: Int,
-        val healthValue: Int
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -121,6 +114,7 @@ class KitchenFragment : Fragment() {
     private fun setupFoodItems() {
         val inflater = LayoutInflater.from(context)
         foodItemsContainer.removeAllViews()
+        foodItems = DataManager.currentFoodItems
 
         foodItems.forEach { foodItem ->
             val foodView = inflater.inflate(R.layout.item_product, foodItemsContainer, false)
@@ -140,6 +134,7 @@ class KitchenFragment : Fragment() {
     private fun showFoodPopup() {
         // Получаем координаты кнопки
         val location = IntArray(2)
+        foodItems = DataManager.currentFoodItems
         foodButton.getLocationOnScreen(location)
 
 
@@ -163,7 +158,7 @@ class KitchenFragment : Fragment() {
 
     private var isEating = false
 
-    private fun useFoodItem(foodItem: FoodItem) {
+    private fun useFoodItem(foodItem: DataManager.FoodItem) {
         if (isEating) return
         isEating = true
 
@@ -196,9 +191,6 @@ class KitchenFragment : Fragment() {
                                     isEating = false
                                     hideFoodPopup()
 
-                                    // Здесь можно добавить логику:
-                                    // DataManager.spendMoney(foodItem.price.toInt())
-                                    // DataManager.increaseHealth(foodItem.healthValue)
                                 }
                                 .start()
                         }
@@ -209,12 +201,25 @@ class KitchenFragment : Fragment() {
                 }
             }
             .start()
+        RetrofitClient.getApiService().buyState((DataManager.appContext as App).token, MarketBuyDTO(foodItem.healthValue))
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (!response.isSuccessful) {
+                        Toast.makeText(requireContext(), "Недостаточно средств", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {}
+            })
+        DataManager.currentFoodItems.remove(foodItem)
+        setupFoodItems()
     }
 
     override fun onResume() {
         super.onResume()
         showCharacterSmoothly()
         DataManager.updateRoomsTemplates()
+        setupFoodItems()
         handler.postDelayed(updateRoom, 1000)
     }
 
@@ -271,6 +276,7 @@ class KitchenFragment : Fragment() {
     }
 
     private val updateRoom = Runnable {
+        foodItems = DataManager.currentFoodItems
         imageTable.setImageResource(DataManager.rooms["kitchen"]?.get(1) ?: 0)
         mainLayout.setBackgroundResource(DataManager.rooms["kitchen"]?.get(0) ?: 0)
     }
