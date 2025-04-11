@@ -49,6 +49,7 @@ class CheetahJumping : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
 
+
     // Sound effects
     private lateinit var backgroundMusic: MediaPlayer
     private lateinit var jumpSound: MediaPlayer
@@ -66,6 +67,7 @@ class CheetahJumping : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         apiService = RetrofitClient.getApiService()
         setContentView(R.layout.cheetah_jumper_main)
+
 
         // Initialize sounds
         backgroundMusic = MediaPlayer.create(this, R.raw.fon_music_cj)

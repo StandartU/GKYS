@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.sensor.gyroscope"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".main_game.App"
@@ -23,7 +29,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WalkiePaws"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31" >
+        tools:targetApi="31">
+        <activity
+            android:name=".main_game.MiniGameActivity"
+            android:exported="false" />
         <activity
             android:name=".main_game.TasksActivity"
             android:exported="false" />
@@ -47,26 +56,34 @@
             android:exported="false" />
         <activity
             android:name=".main_game.MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".games.CheetahJumping" android:exported="true" android:label="@string/app_name" android:theme="@style/Theme.CheetahJumpGame">
-        </activity>
-        <activity android:name=".games.DoodleJumpStarter" android:exported="true" android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".games.FruitTakerActivity" android:exported="true">
-        </activity>
-        <activity android:name=".games.CheetahRunnerStarter" android:exported="true">
-        </activity>
+        <activity
+            android:name=".games.CheetahJumping"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.CheetahJumpGame"></activity>
+        <activity
+            android:name=".games.DoodleJumpStarter"
+            android:exported="true"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".games.FruitTakerActivity"
+            android:exported="true"></activity>
+        <activity
+            android:name=".games.CheetahRunnerStarter"
+            android:exported="true"></activity>
+
         <service
             android:name=".main_game.StepService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="health"/>
+            android:foregroundServiceType="health" />
     </application>
 
 </manifest>

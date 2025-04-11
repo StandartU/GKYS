@@ -141,7 +141,8 @@ class LivingRoomFragment : Fragment() {
     }
 
     private fun startGame() {
-        DataManager.games[DataManager.currentCharacterIndex]()
+        val intent = Intent(activity, MiniGameActivity::class.java)
+        startActivity(intent)
     }
 
     companion object {
