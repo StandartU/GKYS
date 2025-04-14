@@ -2,19 +2,22 @@ package com.example.gkys.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.gkys.model.RoomModel;
 import com.example.gkys.model.StateModel;
+import com.example.gkys.model.StepsModel;
 import com.example.gkys.model.UserModel;
 import com.example.gkys.model.UserRoomModel;
 import com.example.gkys.model.UserStateModel;
 import com.example.gkys.repository.RoomRepository;
 import com.example.gkys.repository.StateRepository;
+import com.example.gkys.repository.StepsRepository;
 import com.example.gkys.repository.UserRepository;
 import com.example.gkys.repository.UserRoomRepository;
 import com.example.gkys.repository.UserStateRepository;
 
-import jakarta.transaction.Transactional;
+
 
 @Service
 @Transactional

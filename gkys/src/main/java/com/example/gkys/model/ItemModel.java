@@ -24,6 +24,10 @@ public class ItemModel {
 
     private int price;
 
+    private String surname;
+
+    private String category;
+
     @JsonIgnore
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<PetItemModel> petItems;

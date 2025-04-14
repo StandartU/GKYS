@@ -21,6 +21,8 @@ import com.example.gkys.model.dto.request.MarketBuyDTO;
 import com.example.gkys.model.dto.responce.MarketAllDTO;
 import com.example.gkys.security.TokenService;
 import com.example.gkys.service.MarketService;
+import com.example.gkys.service.TaskService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -34,11 +36,15 @@ public class MarketController {
     @Autowired
     private MarketService marketService;
 
+    @Autowired
+    private TaskService taskService;
+
     @PostMapping(value = "/buy_state", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> buyState (@RequestBody MarketBuyDTO marketBuyDTO, @RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
         int marketId = marketBuyDTO.marketId();
         marketService.buyState(marketId, userModel.getId());
+        taskService.updateTask("feed", userModel);
         return ResponseEntity.ok().body("Покупка выполнена успешно!");
     }
     

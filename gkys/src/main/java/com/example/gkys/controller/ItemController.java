@@ -12,9 +12,13 @@ import org.springframework.http.MediaType;
 
 import com.example.gkys.model.UserModel;
 import com.example.gkys.model.dto.request.ItemActive;
+import com.example.gkys.model.dto.responce.GetPetItemDTO;
+import com.example.gkys.model.dto.responce.ItemDTO;
 import com.example.gkys.model.dto.responce.UserItemDTO;
 import com.example.gkys.security.TokenService;
 import com.example.gkys.service.ItemService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping(value = "/gkys/item", produces = {"application/json"})
@@ -26,15 +30,25 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
-    @GetMapping(value = "/get_items")
+    @GetMapping(value = "/get_user_items")
     public ResponseEntity<UserItemDTO> getUserItems(@RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
         return ResponseEntity.ok(new UserItemDTO(itemService.getUserItems(userModel)));
+    }
+
+    @GetMapping(value = "/get_items")
+    public ResponseEntity<ItemDTO> getItems() {
+        return ResponseEntity.ok(new ItemDTO(itemService.getItems()));
     }
     
     @PostMapping(value = "/set_item_active", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postMethodName(@RequestBody ItemActive dto) {
         itemService.setItemActive(dto.id(), dto.active());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/get_pet_items")
+    public ResponseEntity<GetPetItemDTO> getPetItems() {
+        return ResponseEntity.ok(new GetPetItemDTO(itemService.getPetItems()));
     }
 }

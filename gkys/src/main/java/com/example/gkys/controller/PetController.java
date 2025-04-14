@@ -10,8 +10,9 @@ import com.example.gkys.security.TokenService;
 import com.example.gkys.service.PetService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -25,7 +26,7 @@ public class PetController {
     @Autowired
     private PetService petService;
 
-    @GetMapping(value = "/get_pet")
+    @PostMapping(value = "/get_pet", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPet(@RequestBody GetPetDTO dto, @RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
         return ResponseEntity.ok(new PetDTO(petService.getPet(dto.name(), userModel)));

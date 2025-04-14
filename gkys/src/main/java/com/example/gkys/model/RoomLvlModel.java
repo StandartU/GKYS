@@ -14,6 +14,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RoomLvlModel {
 
+    public RoomLvlModel(RoomModel room, int lvl, List<String> templates, int price) {
+        this.room = room;
+        this.lvl = lvl;
+        this.templates = templates;
+        this.price = price;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -25,6 +32,8 @@ public class RoomLvlModel {
     private int lvl;
 
     private List<String> templates;
+
+    private String marketTemplate;
 
     private int price;
 }

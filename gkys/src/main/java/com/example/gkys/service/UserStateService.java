@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.gkys.model.MarketModel;
 import com.example.gkys.model.StateModel;
@@ -14,7 +15,6 @@ import com.example.gkys.model.UserStateModel;
 import com.example.gkys.repository.StateRepository;
 import com.example.gkys.repository.UserStateRepository;
 
-import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -24,6 +24,9 @@ public class UserStateService {
 
     @Autowired
     private StateRepository stateRepository;
+
+    @Autowired
+    private TaskService taskService;
 
     public void setStateUserByMarket(UserModel userModel, StateModel stateModel, MarketModel marketModel) {
         Optional<UserStateModel> userStateOptional = userStateRepository.findByUserAndState(userModel, stateModel);
@@ -55,13 +58,17 @@ public class UserStateService {
         value /= 3;
         if (value > 70) value = 1;
         else if (value > 30) value = 2;
-        else if (value > 0) value = 3; 
+        else if (value >= 0) value = 3; 
         return value;
     }
 
-    public void setState(UserStateModel userStateModel, int value) {
-        userStateModel.setValue(userStateModel.getValue() + value);
+    public void setState(UserModel userModel, String stateName, int value) {
+        UserStateModel userStateModel = userStateRepository.findByUserAndState(userModel, stateRepository.findByName(stateName).get()).get();
+        userStateModel.setValue(userStateModel.getValue() + value <= 101 ? userStateModel.getValue() + value : 100 );
         userStateRepository.save(userStateModel);
+        if (userStateModel.getState().getName() == "happiness") {
+            taskService.updateTask("game", userModel);
+        }
     }
 
     public void decreaseState(String stateName) {

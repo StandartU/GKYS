@@ -10,6 +10,14 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class PetItemModel {
+
+    public PetItemModel(int lvl, PetModel pet, ItemModel item, String template) {
+        this.template = template;
+        this.lvl = lvl;
+        this.pet = pet;
+        this.item = item;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

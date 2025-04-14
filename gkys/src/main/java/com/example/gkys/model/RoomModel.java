@@ -20,6 +20,8 @@ public class RoomModel {
 
     private String name;
 
+    private String surname;
+
     @JsonIgnore
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<RoomLvlModel> roomLvls;

@@ -9,9 +9,9 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.gkys.repository.*;
-import jakarta.transaction.Transactional;
 import com.example.gkys.model.ItemModel;
 import com.example.gkys.model.MarketModel;
 import com.example.gkys.model.RoomLvlModel;
@@ -59,11 +59,10 @@ public class MarketService {
         List<RoomLvlModel> roomLvlModelsList = new ArrayList<RoomLvlModel>();
         for (UserRoomModel userRoomModel : userRoomModels) {
             Optional<RoomLvlModel> roomLvlOptional = roomLvlRepository.findByRoomAndLvl(userRoomModel.getRoom(), userRoomModel.getLvl() + 1);
-            if (!roomLvlOptional.isPresent()) {
-                throw new RuntimeException("Не найдена комната по лвлу");
+            if (roomLvlOptional.isPresent()) {
+                RoomLvlModel roomLvlModel = roomLvlOptional.get();
+                roomLvlModelsList.add(roomLvlModel);
             }
-            RoomLvlModel roomLvlModel = roomLvlOptional.get();
-            roomLvlModelsList.add(roomLvlModel);
         }
 
         Iterable<ItemModel> itemModels = itemRepository.findAll();
@@ -93,7 +92,7 @@ public class MarketService {
         }
 
         userStateService.setStateUserByMarket(user, market.getState(), market);
-        userService.setUserCash(-market.getValue(), user);
+        userService.setUserCash(-market.getPrice(), user);
     }
 
     public void buyItem(int id, UserModel userModel) {
@@ -134,7 +133,9 @@ public class MarketService {
         }
         UserRoomModel userRoomModel = userRoomOptional.get();
         if (userModel.getCash() - roomLvlModel.getPrice() > 0) {
-            userRoomModel.setLvl(lvl);
+            userRoomModel.setLvl(lvl + 1);
+            userModel.setCash(userModel.getCash() - roomLvlModel.getPrice());
+            userRepository.save(userModel);
             userRoomRepository.save(userRoomModel);
         }
         else {

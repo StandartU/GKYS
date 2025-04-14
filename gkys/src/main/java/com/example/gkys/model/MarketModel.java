@@ -24,4 +24,6 @@ public class MarketModel {
     private int price;
 
     private int value;
+
+    private String template;
 }

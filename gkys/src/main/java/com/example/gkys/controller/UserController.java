@@ -12,14 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.gkys.model.UserModel;
 import com.example.gkys.model.UserStateModel;
 import com.example.gkys.model.dto.request.RoomLvlDTO;
-import com.example.gkys.model.dto.request.StepCountDTO;
 import com.example.gkys.model.dto.request.UserAddCashDTO;
 import com.example.gkys.model.dto.request.UserSetStateDTO;
 import com.example.gkys.model.dto.responce.CashDTO;
+import com.example.gkys.model.dto.responce.GetTasksDTO;
 import com.example.gkys.model.dto.responce.UserRoomDTO;
 import com.example.gkys.model.dto.responce.UserStateDTO;
+import com.example.gkys.model.dto.responce.WeekStepsDTO;
 import com.example.gkys.security.TokenService;
 import com.example.gkys.service.StepsService;
+import com.example.gkys.service.TaskService;
 import com.example.gkys.service.UserRoomService;
 import com.example.gkys.service.UserService;
 
@@ -27,6 +29,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 
 
 @RestController
@@ -43,18 +48,17 @@ public class UserController {
     private StepsService stepsService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private TaskService taskService;
 
     @PostMapping(value = "/add_cash", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addCash(@RequestBody UserAddCashDTO dto, @RequestHeader("Authorization") String authHeader) {
         UserModel userModel = tokenService.getUserByJWT(authHeader);
         userService.setUserCash(dto.cash(), userModel);
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping(value = "/insert_steps", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> insertSteps(@RequestBody StepCountDTO dto, @RequestHeader("Authorization") String authHeader) {
-        UserModel userModel = tokenService.getUserByJWT(authHeader);
-        stepsService.insertSteps(dto.steps(), userModel);
+        if (dto.isStep()) {
+            stepsService.insertSteps(dto.cash(), userModel);
+            taskService.updateTask("walk", userModel);
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -80,8 +84,12 @@ public class UserController {
     }
 
     @PostMapping(value = "/set_state", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> setState(@RequestBody UserSetStateDTO dto) {
-        userStateService.setState(dto.userStateModel(), dto.value());
+    public ResponseEntity<?> setState(@RequestBody UserSetStateDTO dto, @RequestHeader("Authorization") String authHeader) {
+        UserModel userModel = tokenService.getUserByJWT(authHeader);
+        userStateService.setState(userModel, dto.stateName(), dto.value());
+        if ("happiness".equals(dto.stateName())) {
+            taskService.updateTask("game", userModel);
+        }
         return ResponseEntity.ok().build();
     }
     
@@ -91,5 +99,16 @@ public class UserController {
         return ResponseEntity.ok(new CashDTO(userService.getCash(userModel)));
     }
 
+    @GetMapping(value = "/get_week_steps")
+    public ResponseEntity<WeekStepsDTO> getWeekSteps(@RequestHeader("Authorization") String authHeader) {
+        UserModel userModel = tokenService.getUserByJWT(authHeader);
+        return ResponseEntity.ok(new WeekStepsDTO(stepsService.getStepsPerDayForCurrentWeek(userModel.getId())));
+    }
 
+    @GetMapping(value = "/get_tasks")
+    public ResponseEntity<GetTasksDTO> getTasks(@RequestHeader("Authorization") String authHeader) {
+        UserModel userModel = tokenService.getUserByJWT(authHeader);
+        taskService.initTasksForUser(userModel);
+        return ResponseEntity.ok(new GetTasksDTO(taskService.getTasks(userModel)));
+    }
 }

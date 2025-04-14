@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.gkys.model.RoomLvlModel;
 import com.example.gkys.model.RoomModel;
 import com.example.gkys.model.UserModel;
@@ -14,8 +16,6 @@ import com.example.gkys.model.dto.responce.UserRoomDTO;
 import com.example.gkys.repository.RoomLvlRepository;
 import com.example.gkys.repository.RoomRepository;
 import com.example.gkys.repository.UserRoomRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -30,6 +30,7 @@ public class UserRoomService {
     @Autowired
     private RoomRepository roomRepository;
 
+
     public List<UserRoomDTO> getRooms(UserModel userModel) {
         Iterable<UserRoomModel> userRooms = userRoomRepository.findAllByUser(userModel);
         List<UserRoomDTO> userRoomsDTO = new ArrayList<UserRoomDTO>();
@@ -42,6 +43,7 @@ public class UserRoomService {
             RoomLvlModel roomData = roomOptional.get();
             userRoomsDTO.add(new UserRoomDTO(roomData.getRoom(), roomData.getTemplates()));
         }
+
         return userRoomsDTO;
     }
 
