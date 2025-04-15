@@ -8,7 +8,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.walkiepaws.R
@@ -21,7 +20,7 @@ class MiniGameActivity : AppCompatActivity() {
     private lateinit var imageBack: ImageView
     private lateinit var apiService: ApiService
 
-    data class Game(val name: String, val price: String, val characterIndex: Int)
+    data class Game(val name: String, val price: String, val characterIndex: Int, val imageResId: Int)
 
     private lateinit var games: MutableList<Game>
 
@@ -69,9 +68,11 @@ class MiniGameActivity : AppCompatActivity() {
 
     private fun initializeGames() {
         games = mutableListOf()
-        DataManager.charactersName.forEachIndexed { index, characterName ->
-            games.add(Game("Игра для $characterName", "Крутая игра", index))
-        }
+        // Add games with their corresponding image resources
+        games.add(Game("Прыгающий кролик", "Развивает реакцию", 3, R.drawable.ico_jumprabbit))
+        games.add(Game("Ловец фруктов", "Тренирует ловкость", 2, R.drawable.ico_fruitcatcher))
+        games.add(Game("Прыжки по платформам", "Улучшает координацию", 1, R.drawable.ico_jumping_on_platforms))
+        games.add(Game("Прыжки через предметы", "Развивает внимательность", 0, R.drawable.ico_jumping_over_items))
     }
 
     private fun loadGames() {
@@ -79,6 +80,8 @@ class MiniGameActivity : AppCompatActivity() {
         val currentGame = games.find { it.characterIndex == DataManager.currentCharacterIndex }
         if (currentGame != null) {
             displayGame(currentGame)
+        } else {
+            games.forEach { displayGame(it) }
         }
     }
 
@@ -89,7 +92,7 @@ class MiniGameActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.itemName).text = game.name
             findViewById<TextView>(R.id.itemPrice).text = game.price
             findViewById<ImageView>(R.id.itemImage).apply {
-                setBackgroundColor(ContextCompat.getColor(this@MiniGameActivity, android.R.color.white))
+                setImageResource(game.imageResId)
                 scaleType = ImageView.ScaleType.CENTER_CROP
             }
 
@@ -101,11 +104,6 @@ class MiniGameActivity : AppCompatActivity() {
 
     private fun onGameClicked(game: Game) {
         Toast.makeText(this, "Выбрана: ${game.name}", Toast.LENGTH_SHORT).show()
-        DataManager.games[DataManager.currentCharacterIndex]()
+        DataManager.games[game.characterIndex]()
     }
 }
-
-
-
-
-
