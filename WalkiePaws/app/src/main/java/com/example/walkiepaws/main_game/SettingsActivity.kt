@@ -2,16 +2,13 @@ package com.example.walkiepaws.main_game
 
 import android.os.Bundle
 import android.widget.ImageView
-
 import android.widget.SeekBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.walkiepaws.R
-
 import com.google.android.material.materialswitch.MaterialSwitch
-
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,13 +16,11 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        // Инициализация музыки
         MusicManager.getInstance(this).initialize(this)
 
         val imageCharacter = findViewById<ImageView>(R.id.imageCharacter)
         updateCharacter(imageCharacter)
 
-        // Обработчики для кнопок персонажа
         findViewById<ImageView>(R.id.imageViewLeftButton).setOnClickListener {
             changeCharacter(-1, imageCharacter)
         }
@@ -34,12 +29,12 @@ class SettingsActivity : AppCompatActivity() {
             changeCharacter(1, imageCharacter)
         }
 
+        findViewById<ImageView>(R.id.imageBack).setOnClickListener {
+            finish()
+        }
 
-        // Кнопка назад
-        findViewById<ImageView>(R.id.imageBack).setOnClickListener { finish() }
-
-        // Настройка управления музыкой
         setupMusicControls()
+        setupSoundControls()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -48,17 +43,12 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setupMusicControls() {
         val musicManager = MusicManager.getInstance(this)
         val seekBarMusic = findViewById<SeekBar>(R.id.seekBarMusic)
-        val switchSound = findViewById<MaterialSwitch>(R.id.material_switchSound)
 
-        // Установка начальных значений
         seekBarMusic.progress = (musicManager.getCurrentVolume() * 10).toInt()
-        switchSound.isChecked = musicManager.isMusicEnabled()
 
-        // Обработчик изменения громкости
         seekBarMusic.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val volume = progress / 10f
@@ -67,10 +57,16 @@ class SettingsActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+    }
 
-        // Обработчик включения/выключения музыки
-        switchSound.setOnCheckedChangeListener { _, isChecked ->
-            musicManager.setMusicEnabled(isChecked)
+    private fun setupSoundControls() {
+        val musicManager = MusicManager.getInstance(this)
+        val switchSounds = findViewById<MaterialSwitch>(R.id.material_switchSound)
+
+        switchSounds.isChecked = musicManager.areSoundsEnabled()
+
+        switchSounds.setOnCheckedChangeListener { _, isChecked ->
+            musicManager.setSoundsEnabled(isChecked)
         }
     }
 
@@ -100,4 +96,3 @@ class SettingsActivity : AppCompatActivity() {
         MusicManager.getInstance(this).pause()
     }
 }
-

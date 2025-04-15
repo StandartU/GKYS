@@ -7,8 +7,10 @@ import com.example.walkiepaws.R
 
 class MusicManager private constructor(context: Context) {
     private var mediaPlayer: MediaPlayer? = null
+    private var soundPlayer: MediaPlayer? = null
     private var currentVolume = 0.5f
     private var isMusicEnabled = true
+    private var areSoundsEnabled = true
     private val prefs: SharedPreferences = context.getSharedPreferences("music_prefs", Context.MODE_PRIVATE)
     private val appContext: Context = context.applicationContext
 
@@ -31,7 +33,7 @@ class MusicManager private constructor(context: Context) {
     }
 
     private fun createMediaPlayer() {
-        mediaPlayer?.release() // Освобождаем старый экземпляр, если он есть
+        mediaPlayer?.release()
         mediaPlayer = MediaPlayer.create(appContext, R.raw.song_main_game)?.apply {
             isLooping = true
             setVolume(currentVolume, currentVolume)
@@ -39,6 +41,26 @@ class MusicManager private constructor(context: Context) {
         }
     }
 
+    // Звуковые эффекты
+    fun playSleepSound() = playSoundEffect(R.raw.sleep)
+    fun playEatSound() = playSoundEffect(R.raw.eat)
+    fun playHappySound() = playSoundEffect(R.raw.happy)
+    fun playThanksSound() = playSoundEffect(R.raw.thanks)
+    fun playGapeSound() = playSoundEffect(R.raw.gape)
+    fun playSadnessSound() = playSoundEffect(R.raw.sadness)
+
+    private fun playSoundEffect(resId: Int) {
+        if (!areSoundsEnabled) return
+
+        soundPlayer?.release()
+        soundPlayer = MediaPlayer.create(appContext, resId).apply {
+            setVolume(1f, 1f) // Полная громкость для звуков
+            setOnCompletionListener { it.release() }
+            start()
+        }
+    }
+
+    // Музыка
     fun play() {
         if (isMusicEnabled) {
             if (mediaPlayer == null) {
@@ -75,6 +97,12 @@ class MusicManager private constructor(context: Context) {
         saveSettings()
     }
 
+    fun setSoundsEnabled(enabled: Boolean) {
+        areSoundsEnabled = enabled
+        saveSettings()
+    }
+
+    fun areSoundsEnabled(): Boolean = areSoundsEnabled
     fun getCurrentVolume(): Float = currentVolume
     fun isMusicEnabled(): Boolean = isMusicEnabled
 
@@ -82,11 +110,13 @@ class MusicManager private constructor(context: Context) {
         prefs.edit()
             .putFloat("volume", currentVolume)
             .putBoolean("music_enabled", isMusicEnabled)
+            .putBoolean("sounds_enabled", areSoundsEnabled)
             .apply()
     }
 
     private fun loadSettings() {
         currentVolume = prefs.getFloat("volume", 0.5f)
         isMusicEnabled = prefs.getBoolean("music_enabled", true)
+        areSoundsEnabled = prefs.getBoolean("sounds_enabled", true)
     }
 }

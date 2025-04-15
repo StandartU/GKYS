@@ -47,6 +47,9 @@ class BedroomFragment : Fragment() {
                 editor.putBoolean("is_sleeping", value)
                 editor.apply()
                 onSleepStatusChanged(value)
+                if (value) {
+                    MusicManager.getInstance(requireContext()).playSleepSound()
+                }
             }
         }
 

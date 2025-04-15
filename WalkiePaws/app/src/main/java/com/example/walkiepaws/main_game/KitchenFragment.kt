@@ -161,6 +161,7 @@ class KitchenFragment : Fragment() {
     private fun useFoodItem(foodItem: DataManager.FoodItem) {
         if (isEating) return
         isEating = true
+        MusicManager.getInstance(requireContext()).playEatSound()
 
         val message = when (random.nextInt(3)) {
             0 -> "${foodItem.name} съедено! +${foodItem.healthValue} HP"
