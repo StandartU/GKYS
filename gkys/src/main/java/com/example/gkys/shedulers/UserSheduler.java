@@ -12,10 +12,10 @@ public class UserSheduler {
     @Autowired
     private UserStateService userStateService;
 
-    @Scheduled(fixedRate = 180_000)
+    @Scheduled(fixedRate = 360_000)
     public void decreaseHunger() {userStateService.decreaseState("hunger");}
-    @Scheduled(fixedRate = 300_000)
+    @Scheduled(fixedRate = 360_000)
     public void decreaseSleep() {userStateService.decreaseState("sleep");}
-    @Scheduled(fixedRate = 240_000)
+    @Scheduled(fixedRate = 360_000)
     public void decreaseHappiness() {userStateService.decreaseState("happiness");}
 }
