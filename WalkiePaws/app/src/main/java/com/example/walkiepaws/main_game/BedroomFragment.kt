@@ -139,7 +139,7 @@ class BedroomFragment : Fragment() {
         customizeButton = view.findViewById(R.id.button_customize)
         sleepButton = view.findViewById(R.id.button_sleep)
         mainLayout = view.findViewById(R.id.main)
-        imageBlanket = view.findViewById(R.id.imageTable)
+        imageBlanket = view.findViewById(R.id.imageBlanket)
     }
 
     private fun setupClickListeners() {

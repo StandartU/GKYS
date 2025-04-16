@@ -22,7 +22,7 @@
 
 
     <ImageView
-        android:id="@+id/imageTable"
+        android:id="@+id/imageBlanket"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@null"
