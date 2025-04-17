@@ -41,10 +41,10 @@ class LivingRoomFragment : Fragment() {
     }
 
     private fun initViews(view: View) {
-        characterImage = view.findViewById(R.id.imageCharacter)
-        hatImage = view.findViewById(R.id.hatImage)
-        topImage = view.findViewById(R.id.topImage)
-        accessoryImage = view.findViewById(R.id.accessoryImage)
+        characterImage = view.findViewById(R.id.imageCharacterLiving)
+        hatImage = view.findViewById(R.id.hatImageLiving)
+        topImage = view.findViewById(R.id.topImageLiving)
+        accessoryImage = view.findViewById(R.id.accessoryImageLiving)
 
         mainLayout = view.findViewById(R.id.main)
         shopButton = view.findViewById(R.id.button_shop)
@@ -96,6 +96,7 @@ class LivingRoomFragment : Fragment() {
     }
 
     fun showCharacterSmoothly() {
+        hideCharacterImmediately()
         Log.d("КОМНАТА ЛИВИНГ", "ПОКАЗ")
         val items = DataManager.getCharacterWithItems()
 

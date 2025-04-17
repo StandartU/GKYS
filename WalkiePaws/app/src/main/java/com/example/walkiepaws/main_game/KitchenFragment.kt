@@ -28,8 +28,6 @@ import kotlin.random.Random
 
 
 class KitchenFragment : Fragment() {
-
-
     private lateinit var characterImage: ImageView
     private lateinit var shopButton: ShapeableImageView
     private lateinit var customizeButton: ShapeableImageView
@@ -68,16 +66,16 @@ class KitchenFragment : Fragment() {
     }
 
     private fun initViews(view: View) {
-        characterImage = view.findViewById(R.id.imageCharacter)
+        characterImage = view.findViewById(R.id.imageCharacterKitchen)
         mainLayout = view.findViewById(R.id.main)
         imageTable = view.findViewById(R.id.imageTable)
         shopButton = view.findViewById(R.id.button_shop)
         customizeButton = view.findViewById(R.id.button_customize)
         foodButton = view.findViewById(R.id.button_food)
 
-        hatImage = view.findViewById(R.id.hatImage)
-        topImage = view.findViewById(R.id.topImage)
-        accessoryImage = view.findViewById(R.id.accessoryImage)
+        hatImage = view.findViewById(R.id.hatImageKitchen)
+        topImage = view.findViewById(R.id.topImageKitchen)
+        accessoryImage = view.findViewById(R.id.accessoryImageKitchen)
 
         foodPopup = view.findViewById(R.id.foodPopup)
         foodPopup = view.findViewById(R.id.foodPopup)
@@ -201,15 +199,14 @@ class KitchenFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        showCharacterSmoothly()
-        setupFoodItems()
         DataManager.updateRoomsTemplates()
+        showCharacterSmoothly()
     }
 
     override fun onPause() {
+        super.onPause()
         resetCharacterState()
         hideCharacterImmediately()
-        super.onPause()
     }
 
     private fun resetCharacterState() {
@@ -238,7 +235,7 @@ class KitchenFragment : Fragment() {
     }
 
     fun showCharacterSmoothly() {
-        Log.d("КОМНАТА КУХНЯ", "ПОКАЗ")
+        hideCharacterImmediately()
         val items = DataManager.getCharacterWithItems()
 
         fun animateAppearance(view: ImageView, resId: Int) {

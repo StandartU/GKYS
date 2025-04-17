@@ -30,6 +30,10 @@ class BedroomFragment : Fragment() {
     private lateinit var sleepButton: ImageView
     private lateinit var imageBlanket: ImageView
     private lateinit var mainLayout: RelativeLayout
+    private lateinit var hatImage: ImageView
+    private lateinit var topImage: ImageView
+    private lateinit var accessoryImage: ImageView
+
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -98,7 +102,6 @@ class BedroomFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         isVisibleToUser = true
-        resetCharacterState()
         showCharacterSmoothly()
     }
 
@@ -117,12 +120,16 @@ class BedroomFragment : Fragment() {
     }
 
     private fun initViews(view: View) {
-        characterImage = view.findViewById(R.id.imageCharacter)
+        characterImage = view.findViewById(R.id.imageCharacterBedroom)
         shopButton = view.findViewById(R.id.button_shop)
         customizeButton = view.findViewById(R.id.button_customize)
         sleepButton = view.findViewById(R.id.button_sleep)
         mainLayout = view.findViewById(R.id.main)
         imageBlanket = view.findViewById(R.id.imageBlanket)
+
+        hatImage = view.findViewById(R.id.hatImageBedroom)
+        topImage = view.findViewById(R.id.topImageBedroom)
+        accessoryImage = view.findViewById(R.id.accessoryImageBedroom)
     }
 
     private fun setupClickListeners() {
@@ -158,23 +165,34 @@ class BedroomFragment : Fragment() {
     }
 
     private fun resetCharacterState() {
-        characterImage.visibility = View.INVISIBLE
-        characterImage.alpha = 0f
+        resetView(characterImage)
+        resetView(hatImage)
+        resetView(topImage)
+        resetView(accessoryImage)
     }
 
-    fun hideCharacterImmediately() {
-        characterImage.animate().cancel()
-        characterImage.visibility = View.INVISIBLE
-        characterImage.alpha = 0f
+    private fun resetView(view: ImageView) {
+        view.visibility = View.INVISIBLE
+        view.alpha = 0f
+    }
+
+    internal fun hideCharacterImmediately() {
+        hideViewImmediately(characterImage)
+        hideViewImmediately(hatImage)
+        hideViewImmediately(topImage)
+        hideViewImmediately(accessoryImage)
+    }
+
+    private fun hideViewImmediately(view: ImageView) {
+        view.animate().cancel()
+        view.visibility = View.INVISIBLE
+        view.alpha = 0f
     }
 
     fun showCharacterSmoothly() {
-        Log.d("КОМНАТА СЛИП", "ПОКАЗ")
-        val resId = if (isSleeping) {
-            DataManager.getCurrentSleepingCharacter()
-        } else {
-            DataManager.getChars()[DataManager.currentCharacterIndex]
-        }
+        hideCharacterImmediately()
+        Log.d("КОМНАТА ЛИВИНГ", "ПОКАЗ")
+        val items = DataManager.getCharacterWithItems()
 
         fun animateAppearance(view: ImageView, resId: Int) {
             if (resId != 0) {
@@ -194,9 +212,12 @@ class BedroomFragment : Fragment() {
                 view.visibility = View.INVISIBLE
             }
         }
-
-        animateAppearance(characterImage, resId)
+        if (items.isNotEmpty()) animateAppearance(characterImage, items[0])
+        if (items.size > 1) animateAppearance(hatImage, items[1])
+        if (items.size > 2) animateAppearance(topImage, items[2])
+        if (items.size > 3) animateAppearance(accessoryImage, items[3])
     }
+
 
     private val updateRoom = Runnable {
         imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)

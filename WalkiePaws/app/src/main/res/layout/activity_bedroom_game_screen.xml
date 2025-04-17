@@ -11,22 +11,50 @@
     tools:context=".main_game.BedroomFragment">
 
     <ImageView
-        android:id="@+id/imageCharacter"
+        android:id="@+id/imageCharacterBedroom"
         android:layout_width="match_parent"
         android:layout_height="600dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="250dp"
         android:contentDescription="@null"
+        android:scaleType="fitCenter" />
+
+    <!-- Шапка -->
+    <ImageView
+        android:id="@+id/hatImageBedroom"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacterBedroom"
+        android:layout_alignStart="@id/imageCharacterBedroom"
         android:scaleType="fitCenter"
-        app:srcCompat="@drawable/gepard_norm" />
+        android:contentDescription="@null" />
+
+    <!-- Одежда -->
+    <ImageView
+        android:id="@+id/topImageBedroom"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacterBedroom"
+        android:layout_alignStart="@id/imageCharacterBedroom"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
+
+    <!-- Аксессуар -->
+    <ImageView
+        android:id="@+id/accessoryImageBedroom"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacterBedroom"
+        android:layout_alignStart="@id/imageCharacterBedroom"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
 
 
     <ImageView
         android:id="@+id/imageBlanket"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/blanket_1" />
+        android:contentDescription="@null" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_sleep"

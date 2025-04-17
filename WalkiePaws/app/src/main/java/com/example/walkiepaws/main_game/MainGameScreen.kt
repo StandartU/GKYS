@@ -47,8 +47,8 @@ class MainGameScreen : AppCompatActivity() {
 
     private val updateBars = object : Runnable {
         override fun run() {
+            DataManager.updateCharList()
             DataManager.initWeekSteps()
-            handler.postDelayed(this, 10000)
             textSteps = findViewById(R.id.number_of_steps)
             apiService.getState("${(applicationContext as App).token}")
                 .enqueue(object : Callback<UserStateDTO> {
@@ -98,6 +98,8 @@ class MainGameScreen : AppCompatActivity() {
                 is BedroomFragment -> currentFragment.showCharacterSmoothly()
             }
             DataManager.updateTasks()
+
+            handler.postDelayed(this, 10000)
         }
     }
 
