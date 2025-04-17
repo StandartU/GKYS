@@ -90,38 +90,21 @@ class BedroomFragment : Fragment() {
 
         initViews(view)
         setupClickListeners()
-        restoreState(savedInstanceState, isSleeping)
+        restoreState(savedInstanceState)
 
         return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // Задержка для плавного появления персонажа
-        handler.postDelayed({
-            if (isVisibleToUser) {
-                showCharacterSmoothly()
-            }
-        }, 300)
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        this.isVisibleToUser = isVisibleToUser
-        if (isVisibleToUser && isAdded) {
-            showCharacterSmoothly()
-        }
     }
 
     override fun onResume() {
         super.onResume()
         isVisibleToUser = true
+        resetCharacterState()
         showCharacterSmoothly()
     }
 
     override fun onPause() {
         super.onPause()
-        resetCharacterState(false)
+        hideCharacterImmediately()
         isVisibleToUser = false
     }
 
@@ -156,115 +139,76 @@ class BedroomFragment : Fragment() {
         sleepButton.setOnClickListener { toggleSleepState() }
     }
 
-    private fun restoreState(savedInstanceState: Bundle?, isOpen: Boolean) {
+    private fun restoreState(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
             isSleeping = savedInstanceState.getBoolean("IS_SLEEPING", false)
             val isVisible = savedInstanceState.getBoolean("IS_VISIBLE", true)
-            if (!isVisible) {
-                characterImage.visibility = View.INVISIBLE
-                characterImage.alpha = 0f
-            }
-        } else {
-            resetCharacterState(isOpen)
         }
     }
 
     private fun resetSleepState() {
         if (isSleeping) {
             isSleeping = false
-            updateCharacterImage()
-            characterImage.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(200)
-                .start()
         }
     }
 
     private fun toggleSleepState() {
         isSleeping = !isSleeping
-        updateCharacterImage()
-
-        characterImage.animate()
-            .scaleX(if (isSleeping) 0.9f else 1f)
-            .scaleY(if (isSleeping) 0.9f else 1f)
-            .setDuration(300)
-            .start()
+        showCharacterSmoothly()
     }
 
-    private fun resetCharacterState(isOpen: Boolean) {
-        if (::characterImage.isInitialized) {
-            characterImage.visibility = View.INVISIBLE
-            characterImage.alpha = 0f
-            if (!isOpen){
-                isSleeping = false
-            }
-            characterImage.scaleX = 1f
-            characterImage.scaleY = 1f
-        }
+    private fun resetCharacterState() {
+        characterImage.visibility = View.INVISIBLE
+        characterImage.alpha = 0f
     }
 
     fun hideCharacterImmediately() {
-        if (::characterImage.isInitialized) {
-            characterImage.animate().cancel()
-            characterImage.visibility = View.INVISIBLE
-            characterImage.alpha = 0f
-        }
+        characterImage.animate().cancel()
+        characterImage.visibility = View.INVISIBLE
+        characterImage.alpha = 0f
     }
 
     fun showCharacterSmoothly() {
-        if (::characterImage.isInitialized && isVisibleToUser && isAdded) {
-            updateCharacterImage()
-            characterImage.apply {
-                if (visibility != View.VISIBLE) {
-                    visibility = View.VISIBLE
-                    alpha = 0f
-                    animate()
-                        .alpha(1f)
-                        .setDuration(400)
-                        .setInterpolator(AccelerateDecelerateInterpolator())
-                        .start()
-                }
+        Log.d("КОМНАТА СЛИП", "ПОКАЗ")
+        val resId = if (isSleeping) {
+            DataManager.getCurrentSleepingCharacter()
+        } else {
+            DataManager.getChars()[DataManager.currentCharacterIndex]
+        }
+
+        fun animateAppearance(view: ImageView, resId: Int) {
+            if (resId != 0) {
+                view.alpha = 0f
+                view.visibility = View.VISIBLE
+
+                Glide.with(this)
+                    .load(resId)
+                    .into(view)
+
+                view.animate()
+                    .alpha(1f)
+                    .setDuration(400)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .start()
+            } else {
+                view.visibility = View.INVISIBLE
             }
         }
-    }
 
-    private fun updateCharacterImage() {
-        if (::characterImage.isInitialized) {
-            try {
-                val resId = if (isSleeping) {
-                    DataManager.getCurrentSleepingCharacter()
-                } else {
-                    DataManager.getChars()[DataManager.currentCharacterIndex]
-                }
-
-                if (characterImage.tag != resId) {
-                    characterImage.tag = resId
-                    Glide.with(this)
-                        .load(resId)
-                        .into(characterImage)
-                }
-            } catch (e: Exception) {
-                Log.e("BedroomFragment", "Error loading character image", e)
-            }
-        }
+        animateAppearance(characterImage, resId)
     }
 
     private val updateRoom = Runnable {
-        if (isAdded) {
-            imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)
-            mainLayout.setBackgroundResource(DataManager.rooms["bedroom"]?.getOrNull(0) ?: 0)
-        }
+        imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)
+        mainLayout.setBackgroundResource(DataManager.rooms["bedroom"]?.getOrNull(0) ?: 0)
     }
 
     private fun openShop() {
         startActivity(Intent(activity, ShopActivity::class.java))
-        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     private fun openCustomization() {
         startActivity(Intent(activity, CustomizationActivity::class.java))
-        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     override fun onDestroyView() {

@@ -91,7 +91,6 @@ class MainGameScreen : AppCompatActivity() {
                 }
             })
 
-            DataManager.updateCharList()
             val currentFragment = supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
             when (currentFragment) {
                 is KitchenFragment -> currentFragment.showCharacterSmoothly()
@@ -114,6 +113,7 @@ class MainGameScreen : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         tryStartStepService()
+        DataManager.updateCharList()
         super.onCreate(savedInstanceState)
 
         // Инициализация музыки

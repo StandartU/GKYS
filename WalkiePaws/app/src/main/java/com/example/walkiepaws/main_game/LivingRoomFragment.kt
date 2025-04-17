@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,26 +34,34 @@ class LivingRoomFragment : Fragment() {
         handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_living_game_screen, container, false)
 
+        initViews(view)
+        setupClickListeners()
+
+        return view
+    }
+
+    private fun initViews(view: View) {
         characterImage = view.findViewById(R.id.imageCharacter)
         hatImage = view.findViewById(R.id.hatImage)
         topImage = view.findViewById(R.id.topImage)
         accessoryImage = view.findViewById(R.id.accessoryImage)
+
+        mainLayout = view.findViewById(R.id.main)
         shopButton = view.findViewById(R.id.button_shop)
         gameButton = view.findViewById(R.id.button_game)
         customizeButton = view.findViewById(R.id.button_customize)
-        mainLayout = view.findViewById(R.id.main)
-        showCharacterSmoothly()
+    }
 
-        resetCharacterState()
-
+    private fun setupClickListeners() {
         shopButton.setOnClickListener { openShop() }
         gameButton.setOnClickListener { startGame() }
         customizeButton.setOnClickListener { openCustomization() }
-        return view
     }
 
     override fun onResume() {
         super.onResume()
+        DataManager.updateRoomsTemplates()
+        resetCharacterState()
         showCharacterSmoothly()
     }
 
@@ -62,69 +71,56 @@ class LivingRoomFragment : Fragment() {
     }
 
     private fun resetCharacterState() {
-        if (::characterImage.isInitialized) {
-            characterImage.visibility = View.INVISIBLE
-            characterImage.alpha = 0f
-            hatImage.visibility = View.INVISIBLE
-            hatImage.alpha = 0f
-            topImage.visibility = View.INVISIBLE
-            topImage.alpha = 0f
-            accessoryImage.visibility = View.INVISIBLE
-            accessoryImage.alpha = 0f
-        }
+        resetView(characterImage)
+        resetView(hatImage)
+        resetView(topImage)
+        resetView(accessoryImage)
     }
 
-    fun hideCharacterImmediately() {
-        if (::characterImage.isInitialized) {
-            characterImage.animate().cancel()
-            characterImage.visibility = View.INVISIBLE
-            characterImage.alpha = 0f
-        }
+    private fun resetView(view: ImageView) {
+        view.visibility = View.INVISIBLE
+        view.alpha = 0f
+    }
+
+    internal fun hideCharacterImmediately() {
+        hideViewImmediately(characterImage)
+        hideViewImmediately(hatImage)
+        hideViewImmediately(topImage)
+        hideViewImmediately(accessoryImage)
+    }
+
+    private fun hideViewImmediately(view: ImageView) {
+        view.animate().cancel()
+        view.visibility = View.INVISIBLE
+        view.alpha = 0f
     }
 
     fun showCharacterSmoothly() {
-        if (::characterImage.isInitialized && isVisible) {
-            updateCharacterImage()
-            characterImage.apply {
-                visibility = View.VISIBLE
-                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
-            }
-            hatImage.apply {
-                visibility = View.VISIBLE
-                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
-            }
-            topImage.apply {
-                visibility = View.VISIBLE
-                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
-            }
-            accessoryImage.apply {
-                visibility = View.VISIBLE
-                animate().alpha(1f).setDuration(400).setInterpolator(AccelerateDecelerateInterpolator()).start()
+        Log.d("КОМНАТА ЛИВИНГ", "ПОКАЗ")
+        val items = DataManager.getCharacterWithItems()
+
+        fun animateAppearance(view: ImageView, resId: Int) {
+            if (resId != 0) {
+                view.alpha = 0f
+                view.visibility = View.VISIBLE
+
+                Glide.with(this)
+                    .load(resId)
+                    .into(view)
+
+                view.animate()
+                    .alpha(1f)
+                    .setDuration(400)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .start()
+            } else {
+                view.visibility = View.INVISIBLE
             }
         }
-    }
-
-    private fun updateCharacterImage() {
-        val items = DataManager.getCharacterWithItems(DataManager.currentCharacterIndex)
-
-
-        Glide.with(this)
-            .load(items[0])
-            .into(characterImage)
-
-        hatImage.setImageDrawable(null)
-        topImage.setImageDrawable(null)
-        accessoryImage.setImageDrawable(null)
-
-        if (items.size > 1 && items[1] != 0) {
-            Glide.with(this).load(items[1]).into(hatImage)
-        }
-        if (items.size > 2 && items[2] != 0) {
-            Glide.with(this).load(items[2]).into(topImage)
-        }
-        if (items.size > 3 && items[3] != 0) {
-            Glide.with(this).load(items[3]).into(accessoryImage)
-        }
+        if (items.isNotEmpty()) animateAppearance(characterImage, items[0])
+        if (items.size > 1) animateAppearance(hatImage, items[1])
+        if (items.size > 2) animateAppearance(topImage, items[2])
+        if (items.size > 3) animateAppearance(accessoryImage, items[3])
     }
 
     val updateRoom = Runnable {
@@ -144,6 +140,11 @@ class LivingRoomFragment : Fragment() {
     private fun startGame() {
         val intent = Intent(activity, MiniGameActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacks(updateRoom)
     }
 
     companion object {

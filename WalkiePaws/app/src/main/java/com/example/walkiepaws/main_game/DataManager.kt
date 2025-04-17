@@ -79,45 +79,7 @@ object DataManager {
         get() = prefs.getInt(CHARACTER_INDEX_KEY, 0)
         set(value) {
             prefs.edit().putInt(CHARACTER_INDEX_KEY, value).apply()
-            if (currentHat != null) {
-                getItemToChar(
-                    Item(
-                        (currentHat!!.dto as ItemModel).surname,
-                        (currentHat!!.dto  as ItemModel).price.toString(),
-                        Utils().getDrawableIdByName(
-                            appContext,
-                            (currentHat!!.dto  as ItemModel).name
-                        ),
-                        (currentHat!!.dto  as ItemModel)
-                    )
-                )
-            }
-            if (currentAccessory != null) {
-                getItemToChar(
-                    Item(
-                        (currentAccessory!!.dto  as ItemModel).surname,
-                        (currentAccessory!!.dto  as ItemModel).price.toString(),
-                        Utils().getDrawableIdByName(
-                            appContext,
-                            (currentAccessory!!.dto  as ItemModel).name
-                        ),
-                        (currentAccessory!!.dto  as ItemModel)
-                    )
-                )
-            }
-            if (currentTop != null) {
-                getItemToChar(
-                    Item(
-                        (currentTop!!.dto as ItemModel).surname,
-                        (currentTop!!.dto as ItemModel).price.toString(),
-                        Utils().getDrawableIdByName(
-                            appContext,
-                            (currentTop!!.dto  as ItemModel).name
-                        ),
-                        (currentTop!!.dto  as ItemModel)
-                    )
-                )
-            }
+            updateCurrentItems()
         }
 
 
@@ -142,11 +104,7 @@ object DataManager {
         { appContext.startActivity(Intent(appContext, CheetahJumping::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })}
     )
 
-    val rooms: MutableMap<String, List<Int>> = mutableMapOf(
-        "living" to listOf(R.drawable.living_1),
-        "kitchen" to listOf(R.drawable.kitchen_1, R.drawable.kitchen_table_1),
-        "bedroom" to listOf(R.drawable.bedroom_1, R.drawable.blanket_1)
-    )
+    val rooms: MutableMap<String, List<Int>> = mutableMapOf()
 
     private val sleepingCharacters = listOf(
         R.drawable.gepard_sleep,
@@ -241,6 +199,60 @@ object DataManager {
             override fun onFailure(call: Call<GetPetItemDTO>, t: Throwable) {}
 
         })
+    }
+
+    fun updateCurrentItems() {
+        if (currentHat != null) {
+            val petItemModel = getItemToChar(
+                Item(
+                    (currentHat!!.dto as ItemModel).surname,
+                    (currentHat!!.dto  as ItemModel).price.toString(),
+                    Utils().getDrawableIdByName(
+                        appContext,
+                        (currentHat!!.dto  as ItemModel).name
+                    ),
+                    (currentHat!!.dto  as ItemModel)
+                )
+            )
+            currentHat = Item(petItemModel?.item?.name ?: "",
+                petItemModel?.item?.price.toString(),
+                Utils().getDrawableIdByName(appContext, petItemModel?.template),
+                petItemModel?.item!!)
+        }
+        if (currentAccessory != null) {
+            val petItemModel = getItemToChar(
+                Item(
+                    (currentAccessory!!.dto  as ItemModel).surname,
+                    (currentAccessory!!.dto  as ItemModel).price.toString(),
+                    Utils().getDrawableIdByName(
+                        appContext,
+                        (currentAccessory!!.dto  as ItemModel).name
+                    ),
+                    (currentAccessory!!.dto  as ItemModel)
+                )
+            )
+            currentAccessory = Item(petItemModel?.item?.name ?: "",
+                petItemModel?.item?.price.toString(),
+                Utils().getDrawableIdByName(appContext, petItemModel?.template),
+                petItemModel?.item!!)
+        }
+        if (currentTop != null) {
+            val petItemModel = getItemToChar(
+                Item(
+                    (currentTop!!.dto as ItemModel).surname,
+                    (currentTop!!.dto as ItemModel).price.toString(),
+                    Utils().getDrawableIdByName(
+                        appContext,
+                        (currentTop!!.dto  as ItemModel).name
+                    ),
+                    (currentTop!!.dto  as ItemModel)
+                )
+            )
+            currentTop = Item(petItemModel?.item?.name ?: "",
+                petItemModel?.item?.price.toString(),
+                Utils().getDrawableIdByName(appContext, petItemModel?.template),
+                petItemModel?.item!!)
+        }
     }
 
     fun initWeekSteps() {
@@ -350,8 +362,8 @@ object DataManager {
         })
     }
 
-    fun getCharacterWithItems(characterIndex: Int): List<Int> {
-        val characterRes = getChars()[characterIndex] // Предполагается, что это базовый WebP персонажа
+    fun getCharacterWithItems(): List<Int> {
+        val characterRes = getChars()[currentCharacterIndex]
         val items = mutableListOf(characterRes)
 
         currentHat?.imageRes?.let { items.add(it) }

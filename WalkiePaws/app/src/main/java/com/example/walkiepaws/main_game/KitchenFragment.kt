@@ -40,7 +40,6 @@ class KitchenFragment : Fragment() {
     private lateinit var topImage: ImageView
     private lateinit var accessoryImage: ImageView
 
-    // Элементы popup окна
     private lateinit var foodPopup: View
     private lateinit var foodItemsContainer: LinearLayout
     private lateinit var closeFoodPopup: ImageView
@@ -60,33 +59,11 @@ class KitchenFragment : Fragment() {
         DataManager.updateRoomsTemplates()
         handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_kitchen_game_screen, container, false)
-        characterImage = view.findViewById(R.id.imageCharacter)
-
-        hatImage = view.findViewById(R.id.hatImage)
-        topImage = view.findViewById(R.id.topImage)
-        accessoryImage = view.findViewById(R.id.accessoryImage)
-
-        mainLayout = view.findViewById(R.id.main)
-
-        imageTable = view.findViewById(R.id.imageTable)
-
-        shopButton = view.findViewById(R.id.button_shop)
-        customizeButton = view.findViewById(R.id.button_customize)
-
-        resetCharacterState()
-
-        shopButton.setOnClickListener {
-            openShop()
-        }
-
-        customizeButton.setOnClickListener {
-            openCustomization()
-        }
 
         initViews(view)
         setupClickListeners()
+
         setupFoodItems()
-        resetCharacterState()
         return view
     }
 
@@ -97,6 +74,10 @@ class KitchenFragment : Fragment() {
         shopButton = view.findViewById(R.id.button_shop)
         customizeButton = view.findViewById(R.id.button_customize)
         foodButton = view.findViewById(R.id.button_food)
+
+        hatImage = view.findViewById(R.id.hatImage)
+        topImage = view.findViewById(R.id.topImage)
+        accessoryImage = view.findViewById(R.id.accessoryImage)
 
         foodPopup = view.findViewById(R.id.foodPopup)
         foodPopup = view.findViewById(R.id.foodPopup)
@@ -202,6 +183,8 @@ class KitchenFragment : Fragment() {
                 }
             }
             .start()
+        resetCharacterState()
+        showCharacterSmoothly()
         RetrofitClient.getApiService().buyState((DataManager.appContext as App).token, MarketBuyDTO(foodItem.healthValue))
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -219,61 +202,67 @@ class KitchenFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         showCharacterSmoothly()
-        DataManager.updateRoomsTemplates()
         setupFoodItems()
-        handler.postDelayed(updateRoom, 1000)
+        DataManager.updateRoomsTemplates()
     }
 
     override fun onPause() {
-        super.onPause()
+        resetCharacterState()
         hideCharacterImmediately()
-        handler.removeCallbacks(updateRoom)
+        super.onPause()
     }
 
     private fun resetCharacterState() {
-        characterImage.visibility = View.INVISIBLE
-        characterImage.alpha = 0f
+        resetView(characterImage)
+        resetView(hatImage)
+        resetView(topImage)
+        resetView(accessoryImage)
+    }
+
+    private fun resetView(view: ImageView) {
+        view.visibility = View.INVISIBLE
+        view.alpha = 0f
     }
 
     internal fun hideCharacterImmediately() {
-        characterImage.animate().cancel()
-        characterImage.visibility = View.INVISIBLE
-        characterImage.alpha = 0f
+        hideViewImmediately(characterImage)
+        hideViewImmediately(hatImage)
+        hideViewImmediately(topImage)
+        hideViewImmediately(accessoryImage)
     }
 
-    internal fun showCharacterSmoothly() {
-        characterImage.visibility = View.VISIBLE
-        characterImage.alpha = 0f
-        characterImage.animate()
-            .alpha(1f)
-            .setDuration(400)
-            .setInterpolator(AccelerateDecelerateInterpolator())
-            .start()
-
-        updateCharacterImage()
+    private fun hideViewImmediately(view: ImageView) {
+        view.animate().cancel()
+        view.visibility = View.INVISIBLE
+        view.alpha = 0f
     }
 
-    private fun updateCharacterImage() {
-        val items = DataManager.getCharacterWithItems(DataManager.currentCharacterIndex)
+    fun showCharacterSmoothly() {
+        Log.d("КОМНАТА КУХНЯ", "ПОКАЗ")
+        val items = DataManager.getCharacterWithItems()
 
+        fun animateAppearance(view: ImageView, resId: Int) {
+            if (resId != 0) {
+                view.alpha = 0f
+                view.visibility = View.VISIBLE
 
-        Glide.with(this)
-            .load(items[0])
-            .into(characterImage)
+                Glide.with(this)
+                    .load(resId)
+                    .into(view)
 
-        hatImage.setImageDrawable(null)
-        topImage.setImageDrawable(null)
-        accessoryImage.setImageDrawable(null)
-
-        if (items.size > 1 && items[1] != 0) {
-            Glide.with(this).load(items[1]).into(hatImage)
+                view.animate()
+                    .alpha(1f)
+                    .setDuration(400)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .start()
+            } else {
+                view.visibility = View.INVISIBLE
+            }
         }
-        if (items.size > 2 && items[2] != 0) {
-            Glide.with(this).load(items[2]).into(topImage)
-        }
-        if (items.size > 3 && items[3] != 0) {
-            Glide.with(this).load(items[3]).into(accessoryImage)
-        }
+        if (items.isNotEmpty()) animateAppearance(characterImage, items[0])
+        if (items.size > 1) animateAppearance(hatImage, items[1])
+        if (items.size > 2) animateAppearance(topImage, items[2])
+        if (items.size > 3) animateAppearance(accessoryImage, items[3])
     }
 
     private val updateRoom = Runnable {
@@ -284,12 +273,15 @@ class KitchenFragment : Fragment() {
 
     private fun openShop() {
         startActivity(Intent(activity, ShopActivity::class.java))
-        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     private fun openCustomization() {
         startActivity(Intent(activity, CustomizationActivity::class.java))
-        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacks(updateRoom)
     }
 
     companion object {

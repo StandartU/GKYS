@@ -6,48 +6,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/kitchen_1"
-    android:orientation="vertical"
     tools:context=".main_game.KitchenFragment">
 
+    <!-- Персонаж -->
     <ImageView
         android:id="@+id/imageCharacter"
         android:layout_width="match_parent"
         android:layout_height="600dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="200dp"
-        android:contentDescription="@null"
         android:scaleType="fitCenter"
+        android:contentDescription="@null"
         app:srcCompat="@drawable/gepard_norm" />
 
     <!-- Шапка -->
     <ImageView
         android:id="@+id/hatImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacter"
+        android:layout_alignStart="@id/imageCharacter"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
 
     <!-- Одежда -->
     <ImageView
         android:id="@+id/topImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacter"
+        android:layout_alignStart="@id/imageCharacter"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
 
     <!-- Аксессуар -->
     <ImageView
         android:id="@+id/accessoryImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacter"
+        android:layout_alignStart="@id/imageCharacter"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
 
+    <!-- Стол -->
     <ImageView
         android:id="@+id/imageTable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/kitchen_table_1"
-        android:contentDescription="@null"/>
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/kitchen_table_1" />
 
-
+    <!-- Кнопка: Еда -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_food"
         android:layout_width="100dp"
@@ -55,7 +65,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="45dp"
         android:layout_marginBottom="50dp"
-        android:layout_toEndOf="@+id/button_shop"
+        android:layout_toEndOf="@id/button_shop"
         android:background="@drawable/bg_icon"
         android:scaleType="centerInside"
         android:src="@drawable/icon_food"
@@ -66,13 +76,12 @@
         android:id="@+id/foodPopup"
         android:layout_width="280dp"
         android:layout_height="280dp"
-        android:layout_above="@+id/button_food"
-        android:layout_alignEnd="@+id/button_food"
+        android:layout_above="@id/button_food"
+        android:layout_alignEnd="@id/button_food"
         android:layout_marginBottom="30dp"
         android:background="@drawable/style_shop_tovar"
         android:visibility="gone"
         android:elevation="8dp">
-
 
         <ImageView
             android:id="@+id/closeFoodPopup"
@@ -82,7 +91,7 @@
             android:layout_marginStart="220dp"
             android:layout_marginTop="20dp"
             app:srcCompat="@drawable/block_exit"
-            android:contentDescription="@null"/>
+            android:contentDescription="@null" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -95,11 +104,11 @@
                 android:id="@+id/foodItemsScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
         </ScrollView>
     </RelativeLayout>
 
-
+    <!-- Кнопка: Магазин -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_shop"
         android:layout_width="100dp"
@@ -112,7 +121,7 @@
         android:src="@drawable/icon_shop"
         app:shapeAppearanceOverlay="@style/Circular" />
 
-
+    <!-- Кнопка: Кастомизация -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/button_customize"
         android:layout_width="100dp"
@@ -120,13 +129,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="45dp"
         android:layout_marginBottom="50dp"
-        android:layout_toStartOf="@+id/button_shop"
+        android:layout_toStartOf="@id/button_shop"
         android:background="@drawable/bg_icon"
         android:scaleType="centerInside"
         android:src="@drawable/icon_customization"
         app:shapeAppearanceOverlay="@style/Circular" />
 
-
 </RelativeLayout>
-
-
