@@ -12,7 +12,7 @@
     <string name="music">Музыка</string>
     <string name="sound">Звук</string>
     <string name="current_character">Текущий персонаж</string>
-    <string name="steps_count_template">Количество шагов за сегодня: %s</string>
+    <string name="steps_count_template">Количество шагов за неделю: %s</string>
     <string name="steps_label">Шаги</string>
     <string name="food">Еда</string>
     <string name="cloths">Одежда</string>

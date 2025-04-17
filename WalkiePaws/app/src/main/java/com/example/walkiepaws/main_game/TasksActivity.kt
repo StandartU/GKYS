@@ -6,6 +6,7 @@ import android.os.Looper
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -20,6 +21,12 @@ class TasksActivity : AppCompatActivity() {
     private lateinit var task1Checkbox: CheckBox
     private lateinit var task2Checkbox: CheckBox
     private lateinit var task3Checkbox: CheckBox
+    private lateinit var task1text: TextView
+    private lateinit var task2text: TextView
+    private lateinit var task3text: TextView
+    private lateinit var task1Reward: TextView
+    private lateinit var task2Reward: TextView
+    private lateinit var task3Reward: TextView
     private lateinit var handler: Handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +63,7 @@ class TasksActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun initViews() {
         task1Progress = findViewById(R.id.task1Progress)
         task2Progress = findViewById(R.id.task2Progress)
@@ -63,6 +71,19 @@ class TasksActivity : AppCompatActivity() {
         task1Checkbox = findViewById(R.id.task1Checkbox)
         task2Checkbox = findViewById(R.id.task2Checkbox)
         task3Checkbox = findViewById(R.id.task3Checkbox)
+        task1text = findViewById(R.id.task1Text)
+        task2text = findViewById(R.id.task2Text)
+        task3text = findViewById(R.id.task3Text)
+        task1Reward = findViewById(R.id.task1Reward)
+        task2Reward = findViewById(R.id.task2Reward)
+        task3Reward = findViewById(R.id.task3Reward)
+
+        task1text.text = DataManager.tasks["feed"]!!.task.description
+        task2text.text = DataManager.tasks["game"]!!.task.description
+        task3text.text = DataManager.tasks["walk"]!!.task.description
+        task1Reward.text = "Приз: " + DataManager.tasks["feed"]!!.task.revard.toString() + " монет"
+        task2Reward.text = "Приз: " + DataManager.tasks["game"]!!.task.revard.toString() + " монет"
+        task3Reward.text = "Приз: " + DataManager.tasks["walk"]!!.task.revard.toString() + " монет"
 
         task1Progress.max = DataManager.tasks["feed"]!!.task.target
         task2Progress.max = DataManager.tasks["game"]!!.task.target

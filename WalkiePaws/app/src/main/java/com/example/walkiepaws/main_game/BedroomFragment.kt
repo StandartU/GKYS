@@ -14,6 +14,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import androidx.work.OneTimeWorkRequest
 import com.bumptech.glide.Glide
 
@@ -33,36 +34,31 @@ class BedroomFragment : Fragment() {
     private lateinit var hatImage: ImageView
     private lateinit var topImage: ImageView
     private lateinit var accessoryImage: ImageView
+    private lateinit var characterSleeping: ImageView
 
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var _isSleeping: Boolean = false
+    var isSleeping: Boolean = false
 
-    private var isVisibleToUser: Boolean = true
-
-    var isSleeping: Boolean
-        get() = _isSleeping
-        set(value) {
-            if (_isSleeping != value) {
-                _isSleeping = value
-                val sharedPreferences = requireContext().getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
-                editor.putBoolean("is_sleeping", value)
-                editor.apply()
-                onSleepStatusChanged(value)
-                if (value) {
-                    MusicManager.getInstance(requireContext()).playSleepSound()
-                }
-            }
-        }
-
-    private fun onSleepStatusChanged(isSleeping: Boolean) {
+    private fun onSleepStatusChanged() {
         if (isSleeping) {
             startSleepTracking()
         } else {
             stopSleepTracking()
         }
+    }
+
+    private fun getSleepState(): Boolean {
+        val sharedPreferences = requireContext().getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("is_sleeping", false)
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    private fun setSleepState(bool: Boolean) {
+        val editor = requireContext().getSharedPreferences("game_preferences", Context.MODE_PRIVATE).edit()
+        editor.putBoolean("is_sleeping", bool).apply()
+        Log.d("PUTEDDD", bool.toString())
     }
 
     private fun startSleepTracking() {
@@ -89,34 +85,26 @@ class BedroomFragment : Fragment() {
         DataManager.updateRoomsTemplates()
         val sharedPreferences = requireContext().getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
         isSleeping = sharedPreferences.getBoolean("is_sleeping", false)
+        Log.d("PUTEDDD IN", isSleeping.toString())
         handler.postDelayed(updateRoom, 1000)
         val view = inflater.inflate(R.layout.activity_bedroom_game_screen, container, false)
 
         initViews(view)
         setupClickListeners()
-        restoreState(savedInstanceState)
+        restoreState()
 
         return view
     }
 
     override fun onResume() {
         super.onResume()
-        isVisibleToUser = true
         showCharacterSmoothly()
     }
 
     override fun onPause() {
         super.onPause()
+        isSleeping = false
         hideCharacterImmediately()
-        isVisibleToUser = false
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.apply {
-            putBoolean("IS_SLEEPING", isSleeping)
-            putBoolean("IS_VISIBLE", characterImage.visibility == View.VISIBLE)
-        }
     }
 
     private fun initViews(view: View) {
@@ -130,6 +118,8 @@ class BedroomFragment : Fragment() {
         hatImage = view.findViewById(R.id.hatImageBedroom)
         topImage = view.findViewById(R.id.topImageBedroom)
         accessoryImage = view.findViewById(R.id.accessoryImageBedroom)
+
+        characterSleeping = view.findViewById(R.id.imageCharacterSleep)
     }
 
     private fun setupClickListeners() {
@@ -146,21 +136,23 @@ class BedroomFragment : Fragment() {
         sleepButton.setOnClickListener { toggleSleepState() }
     }
 
-    private fun restoreState(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            isSleeping = savedInstanceState.getBoolean("IS_SLEEPING", false)
-            val isVisible = savedInstanceState.getBoolean("IS_VISIBLE", true)
-        }
+    private fun restoreState() {
+        isSleeping = getSleepState()
     }
 
     private fun resetSleepState() {
         if (isSleeping) {
             isSleeping = false
+            setSleepState(false)
+            onSleepStatusChanged()
+            showCharacterSmoothly()
         }
     }
 
     private fun toggleSleepState() {
         isSleeping = !isSleeping
+        setSleepState(isSleeping)
+        onSleepStatusChanged()
         showCharacterSmoothly()
     }
 
@@ -189,29 +181,50 @@ class BedroomFragment : Fragment() {
         view.alpha = 0f
     }
 
+    private fun animateAppearance(view: ImageView, resId: Int) {
+        if (resId != 0) {
+            view.alpha = 0f
+            view.visibility = View.VISIBLE
+
+            Glide.with(this)
+                .load(resId)
+                .into(view)
+
+            view.animate()
+                .alpha(1f)
+                .setDuration(400)
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .start()
+        } else {
+            view.visibility = View.INVISIBLE
+        }
+    }
+
     fun showCharacterSmoothly() {
-        hideCharacterImmediately()
-        Log.d("КОМНАТА ЛИВИНГ", "ПОКАЗ")
+        animateAppearance(characterSleeping, DataManager.getCurrentSleepingCharacter())
         val items = DataManager.getCharacterWithItems()
 
-        fun animateAppearance(view: ImageView, resId: Int) {
-            if (resId != 0) {
-                view.alpha = 0f
-                view.visibility = View.VISIBLE
-
-                Glide.with(this)
-                    .load(resId)
-                    .into(view)
-
-                view.animate()
-                    .alpha(1f)
-                    .setDuration(400)
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .start()
-            } else {
-                view.visibility = View.INVISIBLE
-            }
+        if (!isSleeping) {
+            startSleep(items)
+        } else {
+            hideSleep()
         }
+    }
+
+    private fun hideSleep() {
+        characterSleeping.translationX = 0f
+        hatImage.translationX = -1000f
+        topImage.translationX = -1000f
+        accessoryImage.translationX = -1000f
+        characterImage.translationX = -1000f
+    }
+
+    private fun startSleep(items: List<Int>) {
+        hatImage.translationX = 0f
+        topImage.translationX = 0f
+        accessoryImage.translationX = 0f
+        characterImage.translationX = 0f
+        characterSleeping.translationX = -1000f
         if (items.isNotEmpty()) animateAppearance(characterImage, items[0])
         if (items.size > 1) animateAppearance(hatImage, items[1])
         if (items.size > 2) animateAppearance(topImage, items[2])

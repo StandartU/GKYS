@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.RetrofitClient
@@ -111,11 +112,9 @@ class KitchenFragment : Fragment() {
     }
 
     private fun showFoodPopup() {
-        // Получаем координаты кнопки
         val location = IntArray(2)
         foodItems = DataManager.currentFoodItems
         foodButton.getLocationOnScreen(location)
-
 
         foodPopup.visibility = View.VISIBLE
         foodPopup.alpha = 0f
@@ -135,11 +134,8 @@ class KitchenFragment : Fragment() {
             .start()
     }
 
-    private var isEating = false
 
     private fun useFoodItem(foodItem: DataManager.FoodItem) {
-        if (isEating) return
-        isEating = true
         MusicManager.getInstance(requireContext()).playEatSound()
 
         val message = when (random.nextInt(3)) {
@@ -147,42 +143,6 @@ class KitchenFragment : Fragment() {
             else -> "Ням-ням! +${foodItem.healthValue} HP"
         }
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        characterImage.animate()
-            .withEndAction {
-                try {
-                    val eatingResId = DataManager.getCurrentEatingCharacter()
-                    if (eatingResId != 0) {
-                        Glide.with(this)
-                            .load(eatingResId)
-                            .into(characterImage)
-                    }
-                    characterImage.animate()
-                        .setDuration(1000)
-                        .withEndAction {
-                            characterImage.animate()
-                                .scaleX(1f)
-                                .scaleY(1f)
-                                .setDuration(500)
-                                .withEndAction {
-                                    Glide.with(this)
-                                        .load(DataManager.getChars()[DataManager.currentCharacterIndex])
-                                        .into(characterImage)
-
-                                    isEating = false
-                                    hideFoodPopup()
-
-                                }
-                                .start()
-                        }
-                        .start()
-                } catch (e: Exception) {
-                    Log.e("FoodFragment", "Error during eating animation", e)
-                    isEating = false
-                }
-            }
-            .start()
-        resetCharacterState()
-        showCharacterSmoothly()
         RetrofitClient.getApiService().buyState((DataManager.appContext as App).token, MarketBuyDTO(foodItem.healthValue))
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -199,6 +159,7 @@ class KitchenFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        setupFoodItems()
         DataManager.updateRoomsTemplates()
         showCharacterSmoothly()
     }
@@ -235,7 +196,6 @@ class KitchenFragment : Fragment() {
     }
 
     fun showCharacterSmoothly() {
-        hideCharacterImmediately()
         val items = DataManager.getCharacterWithItems()
 
         fun animateAppearance(view: ImageView, resId: Int) {

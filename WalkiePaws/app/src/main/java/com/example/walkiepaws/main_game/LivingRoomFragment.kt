@@ -12,6 +12,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.walkiepaws.R
 
@@ -66,8 +67,8 @@ class LivingRoomFragment : Fragment() {
     }
 
     override fun onPause() {
-        hideCharacterImmediately()
         super.onPause()
+        hideCharacterImmediately()
     }
 
     private fun resetCharacterState() {
@@ -96,7 +97,6 @@ class LivingRoomFragment : Fragment() {
     }
 
     fun showCharacterSmoothly() {
-        hideCharacterImmediately()
         Log.d("КОМНАТА ЛИВИНГ", "ПОКАЗ")
         val items = DataManager.getCharacterWithItems()
 

@@ -184,7 +184,6 @@ class ShopActivity : AppCompatActivity() {
             is MarketModel -> {
                 DataManager.currentFoodItems.add(DataManager.FoodItem(item.name, item.price, item.imageRes, item.dto.id))
                 MusicManager.getInstance(this).playThanksSound()
-                Log.d("MANANANA", DataManager.currentFoodItems.toString())
             }
             is RoomLvlModel -> {
                 DataManager.roomsItems.remove(item)

@@ -19,6 +19,15 @@
         android:contentDescription="@null"
         android:scaleType="fitCenter" />
 
+    <ImageView
+        android:id="@+id/imageCharacterSleep"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="250dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter" />
+
     <!-- Шапка -->
     <ImageView
         android:id="@+id/hatImageBedroom"
