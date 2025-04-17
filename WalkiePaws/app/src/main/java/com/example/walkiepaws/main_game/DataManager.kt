@@ -340,9 +340,9 @@ object DataManager {
                 response.body()?.userItemModels?.forEach { item ->
                     val iconRes = Utils().getDrawableIdByName(appContext, item.item.name)
                     when (item.item.category) {
-                        "top" -> topsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item))
-                        "hat" -> hatsItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item))
-                        "accs" -> accessoriesItems.add(Item(item.item.surname, item.item.price.toString(), iconRes, item.item))
+                        "top" -> topsItems.add(Item(item.item.surname, "", iconRes, item.item))
+                        "hat" -> hatsItems.add(Item(item.item.surname, "", iconRes, item.item))
+                        "accs" -> accessoriesItems.add(Item(item.item.surname, "", iconRes, item.item))
                     }
                 }
             }

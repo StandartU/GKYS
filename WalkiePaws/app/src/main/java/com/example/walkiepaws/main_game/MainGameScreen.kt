@@ -79,7 +79,7 @@ class MainGameScreen : AppCompatActivity() {
                         Log.e("DEBUG", "Failure: ${t.message}")
                     }
                 })
-
+            //
             apiService.getCash((applicationContext as App).token).enqueue(object: Callback<CashDTO> {
                 @SuppressLint("SetTextI18n")
                 override fun onResponse(call: Call<CashDTO>, response: Response<CashDTO>) {
