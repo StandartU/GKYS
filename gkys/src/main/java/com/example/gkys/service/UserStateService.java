@@ -80,4 +80,14 @@ public class UserStateService {
         });
     }
 
+    public boolean isStateIsZero(UserModel userModel) {
+        Iterable<UserStateModel> userStates = userStateRepository.findAllByUser(userModel);
+        for (UserStateModel userState: userStates) {
+            if (userState.getValue() != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

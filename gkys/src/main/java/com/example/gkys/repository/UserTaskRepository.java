@@ -13,5 +13,7 @@ import com.example.gkys.model.UserTaskModel;
 public interface UserTaskRepository extends CrudRepository<UserTaskModel, Long>{
     Iterable<UserTaskModel> findAllByUser(UserModel user);
 
+    Iterable<UserTaskModel> findAllByTask(TasksModel task);
+
     Optional<UserTaskModel> findByUserAndTask(UserModel user, TasksModel task);
 }
