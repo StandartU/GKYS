@@ -2,6 +2,7 @@ package com.example.walkiepaws.games
 
 import android.os.Bundle
 import android.view.MotionEvent
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.walkiepaws.games.GameViewCR
 
@@ -13,6 +14,11 @@ class CheetahRunnerStarter : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         gameViewCR = GameViewCR(this)
         setContentView(gameViewCR)
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

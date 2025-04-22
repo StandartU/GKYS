@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.random.Random
 import android.graphics.Movie
+import androidx.activity.OnBackPressedCallback
 import com.example.walkiepaws.main_game.App
 import com.example.walkiepaws.main_game.DataManager
 import com.example.walkiepaws.main_game.MainGameScreen
@@ -43,6 +44,11 @@ class FruitTakerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(GameViewFT(this))
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
     }
 }
 
