@@ -2,7 +2,6 @@ package com.example.walkiepaws.games
 
 import android.content.Intent
 import android.graphics.Color
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,6 +24,7 @@ import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO
 import com.example.walkiepaws.backend.model.dto.request.UserSetStateDTO
+import com.example.walkiepaws.main_game.MusicManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,18 +48,13 @@ class CheetahJumping : AppCompatActivity() {
     private lateinit var pauseButton: Button
 
     private lateinit var apiService: ApiService
-
-
-    // Sound effects
-    private lateinit var backgroundMusic: MediaPlayer
-    private lateinit var jumpSound: MediaPlayer
-    private lateinit var loseSound: MediaPlayer
+    private val musicManager = MusicManager.getInstance(this)
 
     private val obstacles = mutableListOf<Pair<ImageView, ImageView>>()
     private var nextObstacleX = 0f
-    private var gapBetweenObstacles = 2500f // Increased gap between obstacles
+    private var gapBetweenObstacles = 2500f
     private val obstacleWidth = 150
-    private val minGapHeight = 800 // Increased gap height
+    private val minGapHeight = 800
     private var lastObstaclePair: Pair<ImageView, ImageView>? = null
     private var passedObstacle = false
 
@@ -67,13 +62,6 @@ class CheetahJumping : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         apiService = RetrofitClient.getApiService()
         setContentView(R.layout.cheetah_jumper_main)
-
-
-        // Initialize sounds
-        backgroundMusic = MediaPlayer.create(this, R.raw.fon_music_cj)
-        jumpSound = MediaPlayer.create(this, R.raw.jump_cj)
-        loseSound = MediaPlayer.create(this, R.raw.lose_cj)
-        backgroundMusic.isLooping = true
 
         scoreText = findViewById(R.id.scoreText)
         rootLayout = findViewById(R.id.rootLayout)
@@ -99,7 +87,7 @@ class CheetahJumping : AppCompatActivity() {
         // Player (increased size)
         player = ImageView(this).apply {
             setImageResource(R.drawable.rabbit_cj)
-            layoutParams = RelativeLayout.LayoutParams(200, 200) // Increased size
+            layoutParams = RelativeLayout.LayoutParams(200, 200)
         }
         rootLayout.addView(player)
 
@@ -117,11 +105,13 @@ class CheetahJumping : AppCompatActivity() {
         isPaused = !isPaused
         if (isPaused) {
             handler.removeCallbacks(gameLoop)
-            backgroundMusic.pause()
+            musicManager.pauseGameMusic()
             showPauseMenu()
         } else {
-            backgroundMusic.start()
-            handler.postDelayed(gameLoop, 2000) // 2 seconds delay before resuming
+            if (musicManager.isMusicEnabled()) {
+                musicManager.playGameMusic(R.raw.fon_music_cj)
+            }
+            handler.postDelayed(gameLoop, 2000)
         }
     }
 
@@ -183,7 +173,9 @@ class CheetahJumping : AppCompatActivity() {
         obstacleSpeed = 10f
         passedObstacle = false
 
-        backgroundMusic.start()
+        if (musicManager.isMusicEnabled()) {
+            musicManager.playGameMusic(R.raw.fon_music_cj)
+        }
 
         player.x = rootLayout.width * 0.2f
         player.y = rootLayout.height / 2f
@@ -338,8 +330,8 @@ class CheetahJumping : AppCompatActivity() {
         isGameOver = true
         consecutivePasses = 0
         handler.removeCallbacks(gameLoop)
-        backgroundMusic.pause()
-        loseSound.start()
+        musicManager.pauseGameMusic()
+        musicManager.playLoseSound()
 
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -408,7 +400,7 @@ class CheetahJumping : AppCompatActivity() {
                 if (!isGameOver && !isPaused) {
                     velocityY = jumpForce
                     player.rotation = -30f
-                    jumpSound.start()
+                    musicManager.playJumpSound()
                 }
             }
         }
@@ -418,21 +410,19 @@ class CheetahJumping : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         if (!isGameOver && !isPaused) {
-            backgroundMusic.pause()
+            musicManager.pauseGameMusic()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (!isGameOver && !isPaused) {
-            backgroundMusic.start()
+        if (!isGameOver && !isPaused && musicManager.isMusicEnabled()) {
+            musicManager.playGameMusic(R.raw.fon_music_cj)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        backgroundMusic.release()
-        jumpSound.release()
-        loseSound.release()
+        musicManager.stopGameMusic()
     }
 }

@@ -1,19 +1,19 @@
 package com.example.walkiepaws.games
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.media.SoundPool
-import android.os.Build
+import android.os.Bundle
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import kotlin.random.Random
+import android.graphics.Movie
 import com.example.walkiepaws.main_game.App
 import com.example.walkiepaws.main_game.DataManager
 import com.example.walkiepaws.main_game.MainGameScreen
@@ -22,12 +22,16 @@ import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO
 import com.example.walkiepaws.backend.model.dto.request.UserSetStateDTO
+import com.example.walkiepaws.main_game.MusicManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.random.Random
+import java.io.IOException
+import java.io.InputStream
 
 class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
+    private val musicManager = MusicManager.getInstance(context)
+
     private val holder: SurfaceHolder = getHolder()
     private var gameThread: Thread? = null
     private var isRunning = false
@@ -51,13 +55,6 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         strokeWidth = 5f
         isAntiAlias = true
     }
-
-    // Audio
-    private lateinit var soundPool: SoundPool
-    private var jumpSoundId = 0
-    private var loseSoundId = 0
-    private lateinit var backgroundMusic: MediaPlayer
-    private var isMusicPrepared = false
 
     // Player
     private var playerX = 0f
@@ -94,7 +91,6 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         holder.addCallback(this)
         isFocusable = true
         loadGraphics()
-        initSounds()
     }
 
     private fun loadGraphics() {
@@ -104,26 +100,6 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.fon_dd)
         platformBitmap = BitmapFactory.decodeResource(resources, R.drawable.obstacle_dd)
             .let { Bitmap.createScaledBitmap(it, platformWidth.toInt(), platformHeight.toInt(), true) }
-    }
-
-    private fun initSounds() {
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_GAME)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build()
-
-        soundPool = SoundPool.Builder()
-            .setMaxStreams(3)
-            .setAudioAttributes(audioAttributes)
-            .build()
-
-        jumpSoundId = soundPool.load(context, R.raw.jump_dd, 1)
-        loseSoundId = soundPool.load(context, R.raw.lose_dd, 1)
-
-        backgroundMusic = MediaPlayer.create(context, R.raw.fon_dd)
-        backgroundMusic.isLooping = true
-        backgroundMusic.setVolume(0.5f, 0.5f)
-        isMusicPrepared = true
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -155,9 +131,8 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
             currentY -= Random.nextFloat() * (maxPlatformDistance - minPlatformDistance) + minPlatformDistance
         }
 
-        if (isMusicPrepared) {
-            backgroundMusic.seekTo(0)
-            backgroundMusic.start()
+        if (musicManager.isMusicEnabled()) {
+            musicManager.playGameMusic(R.raw.fon_dd)
         }
     }
 
@@ -194,21 +169,11 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         isRunning = false
         gameThread?.join()
-        releaseSounds()
-    }
-
-    private fun releaseSounds() {
-        soundPool.release()
-        if (isMusicPrepared) {
-            backgroundMusic.stop()
-            backgroundMusic.release()
-            isMusicPrepared = false
-        }
+        musicManager.stopGameMusic()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun run() {
         while (isRunning) {
             if (!holder.surface.isValid) continue
@@ -226,7 +191,7 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+    @SuppressLint("NewApi")
     private fun update() {
         if (isPaused) return
 
@@ -252,14 +217,14 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                             if (platform.id != lastPlatformId) {
                                 score += 15
                             }
-                            soundPool.play(jumpSoundId, 1.0f, 1.0f, 0, 0, 1.5f)
+                            musicManager.playJumpSound()
                         }
                         else -> {
                             playerVelocityY = jumpForce
                             if (platform.id != lastPlatformId) {
                                 score += 5
                             }
-                            soundPool.play(jumpSoundId, 1.0f, 1.0f, 0, 0, 1.0f)
+                            musicManager.playJumpSound()
                         }
                     }
                     lastPlatformId = platform.id
@@ -275,10 +240,8 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
 
         if (playerY > cameraY + height) {
             isGameOver = true
-            soundPool.play(loseSoundId, 1.0f, 1.0f, 0, 0, 1.0f)
-            if (isMusicPrepared) {
-                backgroundMusic.pause()
-            }
+            musicManager.playLoseSound()
+            musicManager.pauseGameMusic()
             showGameOver()
             return
         }
@@ -373,7 +336,6 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                 canvas.restore()
             }
 
-            // Кнопка паузы (увеличенный размер)
             pauseButtonRect = RectF(30f, 30f, 150f, 150f)
             paint.color = Color.argb(150, 100, 100, 100)
             canvas.drawRoundRect(pauseButtonRect, 20f, 20f, paint)
@@ -381,7 +343,6 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
             paint.textSize = 80f
             canvas.drawText("II", pauseButtonRect.left + 45f, pauseButtonRect.top + 100f, paint)
 
-            // Счёт под кнопкой паузы
             paint.color = Color.BLACK
             paint.textSize = 50f
             canvas.drawText("Очки: $score", 30f, 200f, paint)
@@ -429,6 +390,13 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                     resumeAfterDelay()
                 }
                 .setNegativeButton("В меню") { _, _ ->
+                    apiService = RetrofitClient.getApiService()
+                    apiService.addCash((DataManager.appContext as App).token, UserAddCashDTO(score, false)).enqueue(
+                        object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {}
+                            override fun onFailure(call: Call<Void>, t: Throwable) {}
+                        }
+                    )
                     context.startActivity(Intent(DataManager.appContext, MainGameScreen::class.java))
                 }
                 .setCancelable(false)
@@ -453,12 +421,11 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         isPaused = true
         pauseStartTime = System.currentTimeMillis()
 
-        // Просто 2-секундная задержка без обратного отсчёта
         postDelayed({
             isPaused = false
             pausedBackground = null
-            if (isMusicPrepared) {
-                backgroundMusic.start()
+            if (musicManager.isMusicEnabled()) {
+                musicManager.playGameMusic(R.raw.fon_dd)
             }
         }, 2000)
     }
@@ -505,8 +472,8 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                 .setView(layout)
                 .setPositiveButton("Заново") { _, _ ->
                     resetGame()
-                    if (isMusicPrepared) {
-                        backgroundMusic.start()
+                    if (musicManager.isMusicEnabled()) {
+                        musicManager.playGameMusic(R.raw.fon_dd)
                     }
                 }
                 .setNegativeButton("В меню") { _, _ ->
@@ -539,9 +506,7 @@ class GameViewDD(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                 if (pauseButtonRect.contains(event.x, event.y)) {
                     if (!isPaused) {
                         isPaused = true
-                        if (isMusicPrepared) {
-                            backgroundMusic.pause()
-                        }
+                        musicManager.pauseGameMusic()
                         showPauseMenu()
                     }
                     return true
