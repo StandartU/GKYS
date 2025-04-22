@@ -91,12 +91,6 @@ class MainGameScreen : AppCompatActivity() {
                 }
             })
 
-            val currentFragment = supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
-            when (currentFragment) {
-                is KitchenFragment -> currentFragment.showCharacterSmoothly()
-                is LivingRoomFragment -> currentFragment.showCharacterSmoothly()
-                is BedroomFragment -> currentFragment.showCharacterSmoothly()
-            }
             DataManager.updateTasks()
 
             handler.postDelayed(this, 10000)
@@ -135,13 +129,13 @@ class MainGameScreen : AppCompatActivity() {
         else {
             viewPager.setCurrentItem(1, false)
         }
-        viewPager.offscreenPageLimit = 1
+        viewPager.offscreenPageLimit = 3
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
                 when (state) {
-                    ViewPager2.SCROLL_STATE_DRAGGING -> hideActiveCharacter()
-                    ViewPager2.SCROLL_STATE_IDLE -> updateCurrentCharacter()
+//                    ViewPager2.SCROLL_STATE_DRAGGING -> hideActiveCharacter()
+//                    ViewPager2.SCROLL_STATE_IDLE -> updateCurrentCharacter()
                     ViewPager2.SCROLL_STATE_SETTLING -> {}
                 }
             }
@@ -186,22 +180,12 @@ class MainGameScreen : AppCompatActivity() {
         }
     }
 
-    private fun hideActiveCharacter() {
-        supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")?.let { currentFragment ->
-            when (currentFragment) {
-                is KitchenFragment -> currentFragment.hideCharacterImmediately()
-                is LivingRoomFragment -> currentFragment.hideCharacterImmediately()
-                is BedroomFragment -> currentFragment.hideCharacterImmediately()
-            }
-        }
-    }
-
     private fun updateCurrentCharacter() {
         supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")?.let { currentFragment ->
             when (currentFragment) {
                 is KitchenFragment -> currentFragment.showCharacterSmoothly()
                 is LivingRoomFragment -> currentFragment.showCharacterSmoothly()
-                is BedroomFragment -> currentFragment.showCharacterSmoothly()
+                is BedroomFragment -> currentFragment.onStart()
             }
         }
     }

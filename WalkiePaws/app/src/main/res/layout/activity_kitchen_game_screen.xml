@@ -18,6 +18,15 @@
         android:scaleType="fitCenter"
         android:contentDescription="@null" />
 
+    <ImageView
+        android:id="@+id/imageCharacterEatingKitchen"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="200dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
+
     <!-- Шапка -->
     <ImageView
         android:id="@+id/hatImageKitchen"
@@ -41,6 +50,36 @@
     <!-- Аксессуар -->
     <ImageView
         android:id="@+id/accessoryImageKitchen"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacterKitchen"
+        android:layout_alignStart="@id/imageCharacterKitchen"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
+
+    <!-- Шапка -->
+    <ImageView
+        android:id="@+id/hatImageKitchenEating"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacterKitchen"
+        android:layout_alignStart="@id/imageCharacterKitchen"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
+
+    <!-- Одежда -->
+    <ImageView
+        android:id="@+id/topImageKitchenEating"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBottom="@id/imageCharacterKitchen"
+        android:layout_alignStart="@id/imageCharacterKitchen"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null" />
+
+    <!-- Аксессуар -->
+    <ImageView
+        android:id="@+id/accessoryImageKitchenEating"
         android:layout_width="match_parent"
         android:layout_height="600dp"
         android:layout_alignBottom="@id/imageCharacterKitchen"

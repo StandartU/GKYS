@@ -3,6 +3,9 @@ package com.example.walkiepaws.main_game
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.ImageDecoder
+import android.graphics.drawable.AnimatedImageDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,15 +13,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
 import androidx.work.OneTimeWorkRequest
-import com.bumptech.glide.Glide
-
-import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.walkiepaws.R
 import java.util.concurrent.TimeUnit
@@ -34,7 +33,6 @@ class BedroomFragment : Fragment() {
     private lateinit var hatImage: ImageView
     private lateinit var topImage: ImageView
     private lateinit var accessoryImage: ImageView
-    private lateinit var characterSleeping: ImageView
 
 
     private val handler = Handler(Looper.getMainLooper())
@@ -77,6 +75,8 @@ class BedroomFragment : Fragment() {
         Log.d("SleepTracking", "Stopped sleep tracking worker")
     }
 
+    // from main-dialog -> game-screen-activity
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -96,15 +96,71 @@ class BedroomFragment : Fragment() {
         return view
     }
 
+    // from fragment -> fragment
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onResume() {
         super.onResume()
-        showCharacterSmoothly()
+        initCharsAnimations()
+        startShowChar()
     }
 
+    // from fragment -> fragment
     override fun onPause() {
         super.onPause()
         isSleeping = false
-        hideCharacterImmediately()
+
+    }
+
+    // from move through non-fragment-activity -> fragment
+    @RequiresApi(Build.VERSION_CODES.P)
+    override fun onStart() {
+        super.onStart()
+        initCharsAnimations()
+        startShowChar()
+    }
+    
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun startShowChar() {
+        if (isSleeping) {
+            startSleep()
+        } else {
+            hideSleep()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun initCharsAnimations() {
+
+        val items = DataManager.getCharacterWithItems()
+        animateCharNotSleep(items)
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun animateCharNotSleep(items: List<Int>) {
+
+        val drawables = listOfNotNull(
+            items.getOrNull(0)?.let { animateAppearance(characterImage, it) },
+            items.getOrNull(1)?.let { animateAppearance(hatImage, it) },
+            items.getOrNull(2)?.let { animateAppearance(topImage, it) },
+            items.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
+        )
+
+        drawables.forEach { it.start() }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun startSleep() {
+        val resId = DataManager.getCurrentSleepingCharacter()
+        animateAppearance(characterImage, resId)?.start()
+        accessoryImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        hatImage.setImageDrawable(null)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun hideSleep() {
+        initCharsAnimations()
     }
 
     private fun initViews(view: View) {
@@ -119,9 +175,9 @@ class BedroomFragment : Fragment() {
         topImage = view.findViewById(R.id.topImageBedroom)
         accessoryImage = view.findViewById(R.id.accessoryImageBedroom)
 
-        characterSleeping = view.findViewById(R.id.imageCharacterSleep)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun setupClickListeners() {
         shopButton.setOnClickListener {
             resetSleepState()
@@ -145,90 +201,30 @@ class BedroomFragment : Fragment() {
             isSleeping = false
             setSleepState(false)
             onSleepStatusChanged()
-            showCharacterSmoothly()
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun toggleSleepState() {
         isSleeping = !isSleeping
         setSleepState(isSleeping)
         onSleepStatusChanged()
-        showCharacterSmoothly()
+        startShowChar()
     }
 
-    private fun resetCharacterState() {
-        resetView(characterImage)
-        resetView(hatImage)
-        resetView(topImage)
-        resetView(accessoryImage)
-    }
-
-    private fun resetView(view: ImageView) {
-        view.visibility = View.INVISIBLE
-        view.alpha = 0f
-    }
-
-    internal fun hideCharacterImmediately() {
-        hideViewImmediately(characterImage)
-        hideViewImmediately(hatImage)
-        hideViewImmediately(topImage)
-        hideViewImmediately(accessoryImage)
-    }
-
-    private fun hideViewImmediately(view: ImageView) {
-        view.animate().cancel()
-        view.visibility = View.INVISIBLE
-        view.alpha = 0f
-    }
-
-    private fun animateAppearance(view: ImageView, resId: Int) {
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun animateAppearance(view: ImageView, resId: Int): AnimatedImageDrawable? {
         if (resId != 0) {
-            view.alpha = 0f
-            view.visibility = View.VISIBLE
-
-            Glide.with(this)
-                .load(resId)
-                .into(view)
-
-            view.animate()
-                .alpha(1f)
-                .setDuration(400)
-                .setInterpolator(AccelerateDecelerateInterpolator())
-                .start()
-        } else {
-            view.visibility = View.INVISIBLE
+            val drawable = ImageDecoder.decodeDrawable(
+                ImageDecoder.createSource(
+                    requireContext().resources,
+                    resId
+                )
+            ) as AnimatedImageDrawable
+            view.setImageDrawable(drawable)
+            return drawable
         }
-    }
-
-    fun showCharacterSmoothly() {
-        animateAppearance(characterSleeping, DataManager.getCurrentSleepingCharacter())
-        val items = DataManager.getCharacterWithItems()
-
-        if (!isSleeping) {
-            startSleep(items)
-        } else {
-            hideSleep()
-        }
-    }
-
-    private fun hideSleep() {
-        characterSleeping.translationX = 0f
-        hatImage.translationX = -1000f
-        topImage.translationX = -1000f
-        accessoryImage.translationX = -1000f
-        characterImage.translationX = -1000f
-    }
-
-    private fun startSleep(items: List<Int>) {
-        hatImage.translationX = 0f
-        topImage.translationX = 0f
-        accessoryImage.translationX = 0f
-        characterImage.translationX = 0f
-        characterSleeping.translationX = -1000f
-        if (items.isNotEmpty()) animateAppearance(characterImage, items[0])
-        if (items.size > 1) animateAppearance(hatImage, items[1])
-        if (items.size > 2) animateAppearance(topImage, items[2])
-        if (items.size > 3) animateAppearance(accessoryImage, items[3])
+        else return null
     }
 
 

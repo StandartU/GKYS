@@ -1,19 +1,19 @@
 package com.example.walkiepaws.main_game
 
 import android.content.Intent
+import android.graphics.ImageDecoder
+import android.graphics.drawable.AnimatedImageDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
 import com.example.walkiepaws.R
 
 class LivingRoomFragment : Fragment() {
@@ -59,69 +59,51 @@ class LivingRoomFragment : Fragment() {
         customizeButton.setOnClickListener { openCustomization() }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onResume() {
         super.onResume()
         DataManager.updateRoomsTemplates()
-        resetCharacterState()
+        showCharacterSmoothly()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    override fun onStart() {
+        super.onStart()
+        DataManager.updateRoomsTemplates()
         showCharacterSmoothly()
     }
 
     override fun onPause() {
         super.onPause()
-        hideCharacterImmediately()
     }
 
-    private fun resetCharacterState() {
-        resetView(characterImage)
-        resetView(hatImage)
-        resetView(topImage)
-        resetView(accessoryImage)
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun animateAppearance(view: ImageView, resId: Int): AnimatedImageDrawable? {
+        if (resId != 0) {
+            val drawable = ImageDecoder.decodeDrawable(
+                ImageDecoder.createSource(
+                    requireContext().resources,
+                    resId
+                )
+            ) as AnimatedImageDrawable
+            view.setImageDrawable(drawable)
+            return drawable
+        }
+        else return null
     }
 
-    private fun resetView(view: ImageView) {
-        view.visibility = View.INVISIBLE
-        view.alpha = 0f
-    }
-
-    internal fun hideCharacterImmediately() {
-        hideViewImmediately(characterImage)
-        hideViewImmediately(hatImage)
-        hideViewImmediately(topImage)
-        hideViewImmediately(accessoryImage)
-    }
-
-    private fun hideViewImmediately(view: ImageView) {
-        view.animate().cancel()
-        view.visibility = View.INVISIBLE
-        view.alpha = 0f
-    }
-
+    @RequiresApi(Build.VERSION_CODES.P)
     fun showCharacterSmoothly() {
-        Log.d("КОМНАТА ЛИВИНГ", "ПОКАЗ")
         val items = DataManager.getCharacterWithItems()
 
-        fun animateAppearance(view: ImageView, resId: Int) {
-            if (resId != 0) {
-                view.alpha = 0f
-                view.visibility = View.VISIBLE
+        val drawables = listOfNotNull(
+            items.getOrNull(0)?.let { animateAppearance(characterImage, it) },
+            items.getOrNull(1)?.let { animateAppearance(hatImage, it) },
+            items.getOrNull(2)?.let { animateAppearance(topImage, it) },
+            items.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
+        )
 
-                Glide.with(this)
-                    .load(resId)
-                    .into(view)
-
-                view.animate()
-                    .alpha(1f)
-                    .setDuration(400)
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .start()
-            } else {
-                view.visibility = View.INVISIBLE
-            }
-        }
-        if (items.isNotEmpty()) animateAppearance(characterImage, items[0])
-        if (items.size > 1) animateAppearance(hatImage, items[1])
-        if (items.size > 2) animateAppearance(topImage, items[2])
-        if (items.size > 3) animateAppearance(accessoryImage, items[3])
+        drawables.forEach { it.start() }
     }
 
     val updateRoom = Runnable {

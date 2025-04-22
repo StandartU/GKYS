@@ -1,27 +1,29 @@
 package com.example.walkiepaws.main_game
 
 import android.content.Intent
+import android.graphics.ImageDecoder
+import android.graphics.drawable.AnimatedImageDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
+import androidx.lifecycle.lifecycleScope
 import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.dto.request.MarketBuyDTO
 import com.google.android.material.imageview.ShapeableImageView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,6 +52,7 @@ class KitchenFragment : Fragment() {
     private lateinit var foodItems: List<DataManager.FoodItem>
 
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,6 +85,7 @@ class KitchenFragment : Fragment() {
         foodPopup = view.findViewById(R.id.foodPopup)
         foodItemsContainer = view.findViewById(R.id.foodItemsScrollView)
         closeFoodPopup = view.findViewById(R.id.closeFoodPopup)
+
     }
 
     private fun setupClickListeners() {
@@ -91,6 +95,7 @@ class KitchenFragment : Fragment() {
         closeFoodPopup.setOnClickListener { hideFoodPopup() }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun setupFoodItems() {
         val inflater = LayoutInflater.from(context)
         foodItemsContainer.removeAllViews()
@@ -135,12 +140,18 @@ class KitchenFragment : Fragment() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun useFoodItem(foodItem: DataManager.FoodItem) {
         MusicManager.getInstance(requireContext()).playEatSound()
 
         val message = when (random.nextInt(3)) {
             0 -> "${foodItem.name} съедено! +${foodItem.healthValue} HP"
             else -> "Ням-ням! +${foodItem.healthValue} HP"
+        }
+        lifecycleScope.launch {
+            showEatingChar()
+            delay(3000)
+            showCharacterSmoothly()
         }
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         RetrofitClient.getApiService().buyState((DataManager.appContext as App).token, MarketBuyDTO(foodItem.healthValue))
@@ -153,10 +164,12 @@ class KitchenFragment : Fragment() {
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {}
             })
+
         DataManager.currentFoodItems.remove(foodItem)
         setupFoodItems()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onResume() {
         super.onResume()
         setupFoodItems()
@@ -164,62 +177,62 @@ class KitchenFragment : Fragment() {
         showCharacterSmoothly()
     }
 
+    // from move through non-fragment-activity -> fragment
+    @RequiresApi(Build.VERSION_CODES.P)
+    override fun onStart() {
+        super.onStart()
+        setupFoodItems()
+        DataManager.updateRoomsTemplates()
+        showCharacterSmoothly()
+    }
+
     override fun onPause() {
         super.onPause()
-        resetCharacterState()
-        hideCharacterImmediately()
+
     }
 
-    private fun resetCharacterState() {
-        resetView(characterImage)
-        resetView(hatImage)
-        resetView(topImage)
-        resetView(accessoryImage)
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun animateAppearance(view: ImageView, resId: Int): AnimatedImageDrawable? {
+        if (resId != 0) {
+            val drawable = ImageDecoder.decodeDrawable(
+                ImageDecoder.createSource(
+                    requireContext().resources,
+                    resId
+                )
+            ) as AnimatedImageDrawable
+            view.setImageDrawable(drawable)
+            return drawable
+        }
+        else return null
     }
 
-    private fun resetView(view: ImageView) {
-        view.visibility = View.INVISIBLE
-        view.alpha = 0f
-    }
-
-    internal fun hideCharacterImmediately() {
-        hideViewImmediately(characterImage)
-        hideViewImmediately(hatImage)
-        hideViewImmediately(topImage)
-        hideViewImmediately(accessoryImage)
-    }
-
-    private fun hideViewImmediately(view: ImageView) {
-        view.animate().cancel()
-        view.visibility = View.INVISIBLE
-        view.alpha = 0f
-    }
-
+    @RequiresApi(Build.VERSION_CODES.P)
     fun showCharacterSmoothly() {
         val items = DataManager.getCharacterWithItems()
 
-        fun animateAppearance(view: ImageView, resId: Int) {
-            if (resId != 0) {
-                view.alpha = 0f
-                view.visibility = View.VISIBLE
+        val drawables = listOfNotNull(
+            items.getOrNull(0)?.let { animateAppearance(characterImage, it) },
+            items.getOrNull(1)?.let { animateAppearance(hatImage, it) },
+            items.getOrNull(2)?.let { animateAppearance(topImage, it) },
+            items.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
+        )
 
-                Glide.with(this)
-                    .load(resId)
-                    .into(view)
+        drawables.forEach { it.start() }
+    }
 
-                view.animate()
-                    .alpha(1f)
-                    .setDuration(400)
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .start()
-            } else {
-                view.visibility = View.INVISIBLE
-            }
-        }
-        if (items.isNotEmpty()) animateAppearance(characterImage, items[0])
-        if (items.size > 1) animateAppearance(hatImage, items[1])
-        if (items.size > 2) animateAppearance(topImage, items[2])
-        if (items.size > 3) animateAppearance(accessoryImage, items[3])
+    @RequiresApi(Build.VERSION_CODES.P)
+    fun showEatingChar() {
+        val eatItems = DataManager.getCharacterEating()
+
+        val drawables = listOfNotNull(
+            eatItems.getOrNull(0)?.let { animateAppearance(characterImage, it) },
+            eatItems.getOrNull(1)?.let { animateAppearance(hatImage, it) },
+            eatItems.getOrNull(2)?.let { animateAppearance(topImage, it) },
+            eatItems.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
+        )
+
+        drawables.forEach { it.start() }
     }
 
     private val updateRoom = Runnable {

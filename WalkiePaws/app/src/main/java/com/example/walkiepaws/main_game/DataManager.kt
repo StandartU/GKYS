@@ -201,6 +201,19 @@ object DataManager {
         })
     }
 
+    fun getCharacterEating(): List<Int> {
+        val char = charactersName[currentCharacterIndex]
+        val hat = (currentHat?.dto as? ItemModel)?.name ?: "0"
+        val top = (currentTop?.dto as? ItemModel)?.name ?: "0"
+        val accessory = (currentAccessory?.dto as? ItemModel)?.name ?: "0"
+        return listOf(
+            getCurrentEatingCharacter(),
+            Utils().getDrawableIdByName(appContext, char + "_" + hat + "_eat"),
+            Utils().getDrawableIdByName(appContext, char + "_" + top + "_eat"),
+            Utils().getDrawableIdByName(appContext, char + "_" + accessory + "_eat"),
+        )
+    }
+
     fun updateCurrentItems() {
         if (currentHat != null) {
             val petItemModel = getItemToChar(
