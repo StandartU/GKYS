@@ -112,4 +112,7 @@ public interface ApiService {
 
     @GET(abs_path + "item/get_pet_items")
     Call<GetPetItemDTO> getPetItems(@Header("Authorization") String token);
+
+    @POST(abs_path + "user/update_return_pet")
+    Call<Void> updateReturnPet(@Header("Authorization") String token);
 }

@@ -180,6 +180,7 @@ class MainGameScreen : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun updateCurrentCharacter() {
         supportFragmentManager.findFragmentByTag("f${viewPager.currentItem}")?.let { currentFragment ->
             when (currentFragment) {

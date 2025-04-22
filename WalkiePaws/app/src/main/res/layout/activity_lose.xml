@@ -9,6 +9,19 @@
     tools:context=".main_game.RegistrationActivity">
 
     <TextView
+        android:id="@+id/number_of_steps"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="220dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/style_bg_for_coins"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="@color/main_color_auth"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/textLose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,6 +42,7 @@
         android:text="@string/textlose"
         android:textColor="@color/main_color_auth"
         android:textSize="30sp" />
+
 
 
     <Button

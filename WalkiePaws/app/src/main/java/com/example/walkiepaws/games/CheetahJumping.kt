@@ -104,7 +104,7 @@ class CheetahJumping : AppCompatActivity() {
             startGame()
         }
     }
-    
+
 
     private fun togglePause() {
         if (isGameOver) return

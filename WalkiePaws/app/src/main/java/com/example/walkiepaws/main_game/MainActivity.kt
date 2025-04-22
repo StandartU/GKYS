@@ -14,6 +14,7 @@ import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.dto.request.AuthenticationDTO
+import com.example.walkiepaws.backend.model.dto.responce.GetTasksDTO
 import com.example.walkiepaws.backend.model.dto.responce.LoginDTO
 import retrofit2.Call
 import retrofit2.Callback
@@ -82,7 +83,27 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun navigateToMainGameScreen() {
         DataManager.updateData()
-        startActivity(Intent(this, MainGameScreen::class.java))
+        RetrofitClient.getApiService().getTasks((applicationContext as App).token).enqueue(
+            object : Callback<GetTasksDTO> {
+                override fun onResponse(call: Call<GetTasksDTO>, response: Response<GetTasksDTO>) {
+                    response.body()?.userTasks?.forEach{
+                        task ->
+                        if (task.task.name == "return") {
+                            if (task.value >= 72) {
+                                startActivity(Intent(applicationContext, LoseActivity::class.java))
+                            }
+                            else {
+                                startActivity(Intent(applicationContext, MainGameScreen::class.java))
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<GetTasksDTO>, t: Throwable) {
+                }
+
+            }
+        )
     }
 
     private fun showToast(message: String) {

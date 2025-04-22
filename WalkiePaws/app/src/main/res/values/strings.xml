@@ -3,8 +3,8 @@
     <string name="login">Войти</string>
     <string name="registration">Зарегистрироваться</string>
     <string name="lose">Вы проиграли</string>
-    <string name="textlose">К сожалению вы проиграли, для продолжения начните игру заново.</string>
-    <string name="newgame">Новая игра</string>
+    <string name="textlose">К сожалению ваш тамагочи обиделся и ушёл, пройдите 1500 шагов чтобы вернуть его.</string>
+    <string name="newgame">Вернуть тамагочи</string>
     <string name="auth">Авторизация</string>
     <string name="reg">Регистрация</string>
     <string name="write_login">Введите логин</string>
