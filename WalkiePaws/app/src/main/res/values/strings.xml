@@ -2,6 +2,9 @@
     <string name="app_name">WalkiePaws</string>
     <string name="login">Войти</string>
     <string name="registration">Зарегистрироваться</string>
+    <string name="lose">Вы проиграли</string>
+    <string name="textlose">К сожалению вы проиграли, для продолжения начните игру заново.</string>
+    <string name="newgame">Новая игра</string>
     <string name="auth">Авторизация</string>
     <string name="reg">Регистрация</string>
     <string name="write_login">Введите логин</string>

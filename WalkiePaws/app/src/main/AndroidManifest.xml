@@ -31,6 +31,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".main_game.LoseActivity"
+            android:exported="false" />
+        <activity
             android:name=".main_game.MiniGameActivity"
             android:exported="false" />
         <activity
@@ -67,17 +70,17 @@
             android:name=".games.CheetahJumping"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.CheetahJumpGame"></activity>
+            android:theme="@style/Theme.CheetahJumpGame" />
         <activity
             android:name=".games.DoodleJumpStarter"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".games.FruitTakerActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".games.CheetahRunnerStarter"
-            android:exported="true"></activity>
+            android:exported="true" />
 
         <service
             android:name=".main_game.StepService"
