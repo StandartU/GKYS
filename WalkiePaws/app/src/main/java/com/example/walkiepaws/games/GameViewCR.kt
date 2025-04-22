@@ -20,30 +20,14 @@ import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO
 import com.example.walkiepaws.backend.model.dto.request.UserSetStateDTO
+import com.example.walkiepaws.main_game.MusicManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 @SuppressLint("ResourceType")
 class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
-
-    // Звуковые эффекты
-    private val backgroundPlayer: MediaPlayer by lazy {
-        MediaPlayer.create(context, R.raw.fon_music_cr).apply {
-            isLooping = true
-            setVolume(0.7f, 0.7f)
-        }
-    }
-    private val jumpPlayer: MediaPlayer by lazy {
-        MediaPlayer.create(context, R.raw.jump_cr).apply {
-            setVolume(1.0f, 1.0f)
-        }
-    }
-    private val losePlayer: MediaPlayer by lazy {
-        MediaPlayer.create(context, R.raw.lose_cr).apply {
-            setVolume(1.0f, 1.0f)
-        }
-    }
+    private val musicManager = MusicManager.getInstance(context)
 
     // Графика
     private val backgroundBitmap: Bitmap? by lazy {
@@ -70,24 +54,24 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
     private var lastUpdateTime = System.currentTimeMillis()
     private var lastObstacleGroupPassed = -1
 
-    // Персонаж (увеличенные размеры)
+    // Персонаж
     private var cheetahY = 0f
     private var isJumping = false
     private var jumpVelocity = 0f
     private val gravity = 1.4f
     private val initialJumpVelocity = -55f
-    private val cheetahWidth = 250f  // Увеличено с 150f
-    private val cheetahHeight = 250f // Увеличено с 150f
+    private val cheetahWidth = 250f
+    private val cheetahHeight = 250f
     private val cheetahX = 200f
     private val groundLevel: Float get() = height.toFloat() - 100f
 
-    // Препятствия (увеличенные размеры)
+    // Препятствия
     private val obstacles = mutableListOf<Obstacle>()
     private var obstacleSpawnTimer = 0L
     private val obstacleSpawnDelay = 1800L
     private var obstacleCount = 1
-    private val obstacleWidth = 150f  // Увеличено с 90f
-    private val obstacleHeight = 220f // Увеличено с 140f
+    private val obstacleWidth = 150f
+    private val obstacleHeight = 220f
     private val minDistanceInGroup = width.toFloat() * 0.25f
     private var nextObstacleIncreaseScore = 50
     private var currentObstacleGroup = 0
@@ -126,7 +110,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
             setRunning(true)
             start()
         }
-        backgroundPlayer.start()
+        musicManager.playGameMusic(R.raw.fon_music_cr)
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -136,9 +120,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
     private fun stopGame() {
         gameThread?.setRunning(false)
         gameThread = null
-        backgroundPlayer.release()
-        jumpPlayer.release()
-        losePlayer.release()
+        musicManager.stopGameMusic()
     }
 
     fun update() {
@@ -212,8 +194,8 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
 
     private fun gameOver() {
         isGameOver = true
-        backgroundPlayer.pause()
-        losePlayer.start()
+        musicManager.pauseGameMusic()
+        musicManager.playLoseSound()
         showGameOverDialog()
     }
 
@@ -222,13 +204,13 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         repeat(obstacleCount) { i ->
             obstacles.add(
                 Obstacle(
-                x = baseX + i * (obstacleWidth + minDistanceInGroup),
-                y = groundLevel - obstacleHeight,
-                width = obstacleWidth,
-                height = obstacleHeight,
-                context = context,
-                groupId = currentObstacleGroup
-            )
+                    x = baseX + i * (obstacleWidth + minDistanceInGroup),
+                    y = groundLevel - obstacleHeight,
+                    width = obstacleWidth,
+                    height = obstacleHeight,
+                    context = context,
+                    groupId = currentObstacleGroup
+                )
             )
         }
     }
@@ -263,7 +245,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
             drawCheetah(canvas)
         }
 
-        // Кнопка паузы (левый верхний угол)
+        // Кнопка паузы
         pauseButtonRect.set(30f, 30f, 130f, 130f)
         paint.color = Color.argb(150, 100, 100, 100)
         canvas.drawRoundRect(pauseButtonRect, 20f, 20f, paint)
@@ -271,14 +253,14 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         paint.textSize = 60f
         canvas.drawText("II", pauseButtonRect.left + 35f, pauseButtonRect.top + 80f, paint)
 
-        // Счет (правый верхний угол)
+        // Счет
         paint.color = Color.WHITE
         paint.style = Paint.Style.FILL_AND_STROKE
         paint.strokeWidth = 2f
         paint.textSize = 50f
         val scoreText = "Очки: $score"
         val textWidth = paint.measureText(scoreText)
-        canvas.drawText(scoreText, width - textWidth - 50f, 80f, paint) // Правая сторона с отступом 50px
+        canvas.drawText(scoreText, width - textWidth - 50f, 80f, paint)
 
         if (isGameOver) {
             paint.color = Color.RED
@@ -313,7 +295,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                 if (pauseButtonRect.contains(event.x, event.y)) {
                     if (!isPaused) {
                         isPaused = true
-                        backgroundPlayer.pause()
+                        musicManager.pauseGameMusic()
                         showPauseMenu()
                     }
                     return true
@@ -330,8 +312,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         if (!isJumping) {
             isJumping = true
             jumpVelocity = initialJumpVelocity
-            jumpPlayer.seekTo(0)
-            jumpPlayer.start()
+            musicManager.playJumpSound()
         }
     }
 
@@ -348,8 +329,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
         movieStartTime = 0
         lastObstacleGroupPassed = -1
         currentObstacleGroup = 0
-        backgroundPlayer.seekTo(0)
-        backgroundPlayer.start()
+        musicManager.playGameMusic(R.raw.fon_music_cr)
     }
 
     private fun showPauseMenu() {
@@ -383,7 +363,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                     postDelayed({
                         isPaused = false
                         pausedBackground = null
-                        backgroundPlayer.start()
+                        musicManager.playGameMusic(R.raw.fon_music_cr)
                     }, 2000)
                 }
                 .setNegativeButton("В меню") { _, _ ->
@@ -457,7 +437,7 @@ class GameViewCR(context: Context) : SurfaceView(context), SurfaceHolder.Callbac
                 .setView(layout)
                 .setPositiveButton("Заново") { _, _ ->
                     resetGame()
-                    backgroundPlayer.start()
+                    musicManager.playGameMusic(R.raw.fon_music_cr)
                 }
                 .setNegativeButton("В меню") { _, _ ->
                     stopGame()

@@ -6,17 +6,23 @@ import android.media.MediaPlayer
 import com.example.walkiepaws.R
 
 class MusicManager private constructor(context: Context) {
-    private var mediaPlayer: MediaPlayer? = null
+    // Основной плеер для главного меню
+    private var mainPlayer: MediaPlayer? = null
+    // Плеер для игр
+    private var gamePlayer: MediaPlayer? = null
+    // Плеер для звуков
     private var soundPlayer: MediaPlayer? = null
+
     private var currentVolume = 0.5f
     private var isMusicEnabled = true
     private var areSoundsEnabled = true
-    private val prefs: SharedPreferences = context.getSharedPreferences("music_prefs", Context.MODE_PRIVATE)
+
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences("music_prefs", Context.MODE_PRIVATE)
     private val appContext: Context = context.applicationContext
 
     companion object {
-        @Volatile
-        private var instance: MusicManager? = null
+        @Volatile private var instance: MusicManager? = null
 
         fun getInstance(context: Context): MusicManager {
             return instance ?: synchronized(this) {
@@ -25,20 +31,80 @@ class MusicManager private constructor(context: Context) {
         }
     }
 
+    // Инициализация главной музыки
     fun initialize(context: Context) {
         loadSettings()
-        if (isMusicEnabled && mediaPlayer == null) {
-            createMediaPlayer()
+        if (isMusicEnabled) {
+            createMainPlayer()
         }
     }
 
-    private fun createMediaPlayer() {
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer.create(appContext, R.raw.song_main_game)?.apply {
+    private fun createMainPlayer() {
+        mainPlayer?.release()
+        mainPlayer = MediaPlayer.create(appContext, R.raw.song_main_game).apply {
             isLooping = true
             setVolume(currentVolume, currentVolume)
             if (isMusicEnabled) start()
         }
+    }
+
+    // Обратная совместимость для кастомизации
+    @Deprecated("Используйте playMainMusic() для главного меню или playGameMusic() для игр")
+    fun play() {
+        playMainMusic()
+    }
+
+    @Deprecated("Используйте pauseMainMusic() для главного меню или pauseGameMusic() для игр")
+    fun pause() {
+        pauseMainMusic()
+    }
+
+    @Deprecated("Используйте stopMainMusic() для главного меню или stopGameMusic() для игр")
+    fun stop() {
+        stopMainMusic()
+    }
+
+    // Управление основной музыкой
+    fun playMainMusic() {
+        if (isMusicEnabled) {
+            if (mainPlayer == null) {
+                createMainPlayer()
+            } else if (!mainPlayer!!.isPlaying) {
+                mainPlayer?.start()
+            }
+        }
+    }
+
+    fun pauseMainMusic() {
+        mainPlayer?.pause()
+    }
+
+    fun stopMainMusic() {
+        mainPlayer?.stop()
+        mainPlayer?.release()
+        mainPlayer = null
+    }
+
+    // Управление игровой музыкой
+    fun playGameMusic(resId: Int) {
+        if (!isMusicEnabled) return
+
+        gamePlayer?.release()
+        gamePlayer = MediaPlayer.create(appContext, resId).apply {
+            isLooping = true
+            setVolume(currentVolume, currentVolume)
+            start()
+        }
+    }
+
+    fun pauseGameMusic() {
+        gamePlayer?.pause()
+    }
+
+    fun stopGameMusic() {
+        gamePlayer?.stop()
+        gamePlayer?.release()
+        gamePlayer = null
     }
 
     // Звуковые эффекты
@@ -48,51 +114,36 @@ class MusicManager private constructor(context: Context) {
     fun playThanksSound() = playSoundEffect(R.raw.thanks)
     fun playGapeSound() = playSoundEffect(R.raw.gape)
     fun playSadnessSound() = playSoundEffect(R.raw.sadness)
+    fun playJumpSound() = playSoundEffect(R.raw.jump_cr)
+    fun playLoseSound() = playSoundEffect(R.raw.lose_cr)
 
     private fun playSoundEffect(resId: Int) {
         if (!areSoundsEnabled) return
 
         soundPlayer?.release()
         soundPlayer = MediaPlayer.create(appContext, resId).apply {
-            setVolume(1f, 1f) // Полная громкость для звуков
+            setVolume(1f, 1f)
             setOnCompletionListener { it.release() }
             start()
         }
     }
 
-    // Музыка
-    fun play() {
-        if (isMusicEnabled) {
-            if (mediaPlayer == null) {
-                createMediaPlayer()
-            } else if (!mediaPlayer!!.isPlaying) {
-                mediaPlayer?.start()
-            }
-        }
-    }
-
-    fun pause() {
-        mediaPlayer?.pause()
-    }
-
-    fun stop() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-
+    // Настройки
     fun setVolume(volume: Float) {
         currentVolume = volume
-        mediaPlayer?.setVolume(volume, volume)
+        mainPlayer?.setVolume(volume, volume)
+        gamePlayer?.setVolume(volume, volume)
         saveSettings()
     }
 
     fun setMusicEnabled(enabled: Boolean) {
         isMusicEnabled = enabled
         if (enabled) {
-            play()
+            mainPlayer?.start()
+            gamePlayer?.start()
         } else {
-            pause()
+            mainPlayer?.pause()
+            gamePlayer?.pause()
         }
         saveSettings()
     }
@@ -102,16 +153,18 @@ class MusicManager private constructor(context: Context) {
         saveSettings()
     }
 
+    // Геттеры
     fun areSoundsEnabled(): Boolean = areSoundsEnabled
     fun getCurrentVolume(): Float = currentVolume
     fun isMusicEnabled(): Boolean = isMusicEnabled
 
     private fun saveSettings() {
-        prefs.edit()
-            .putFloat("volume", currentVolume)
-            .putBoolean("music_enabled", isMusicEnabled)
-            .putBoolean("sounds_enabled", areSoundsEnabled)
-            .apply()
+        prefs.edit().apply {
+            putFloat("volume", currentVolume)
+            putBoolean("music_enabled", isMusicEnabled)
+            putBoolean("sounds_enabled", areSoundsEnabled)
+            apply()
+        }
     }
 
     private fun loadSettings() {

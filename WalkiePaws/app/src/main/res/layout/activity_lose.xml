@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#c4e1ed"
+    tools:context=".main_game.RegistrationActivity">
+
+    <TextView
+        android:id="@+id/textLose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:textStyle="bold"
+        android:text="@string/lose"
+        android:textColor="@color/main_color_auth"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/textforLose"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:text="@string/textlose"
+        android:textColor="@color/main_color_auth"
+        android:textSize="30sp" />
+
+
+    <Button
+        android:id="@+id/buttonRegistration"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:layout_marginTop="180dp"
+        android:backgroundTint="@color/main_color_auth"
+        android:text="@string/newgame"
+        android:textSize="20sp" />
+
+</LinearLayout>
