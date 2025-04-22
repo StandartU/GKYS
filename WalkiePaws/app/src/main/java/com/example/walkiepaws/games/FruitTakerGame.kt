@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.*
 import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.media.SoundPool
 import android.os.Bundle
 import android.view.MotionEvent
@@ -26,13 +26,12 @@ import com.example.walkiepaws.backend.ApiService
 import com.example.walkiepaws.backend.RetrofitClient
 import com.example.walkiepaws.backend.model.dto.request.UserAddCashDTO
 import com.example.walkiepaws.backend.model.dto.request.UserSetStateDTO
+import com.example.walkiepaws.main_game.MusicManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
-import java.io.InputStream
 
-// Перечисление типов объектов с русскими названиями
 enum class ObjectType(val score: Int) {
     ВИШНЯ(5),
     БАНАН(10),
@@ -41,6 +40,8 @@ enum class ObjectType(val score: Int) {
 }
 
 class FruitTakerActivity : AppCompatActivity() {
+    private lateinit var gameView: GameViewFT
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(GameViewFT(this))
@@ -49,16 +50,31 @@ class FruitTakerActivity : AppCompatActivity() {
             override fun handleOnBackPressed() {
             }
         })
+        gameView = GameViewFT(this)
+        setContentView(gameView)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        gameView.pauseGame()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        gameView.resumeGame()
     }
 }
 
 class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHolder.Callback {
-    // Размеры объектов
+    private val musicManager = MusicManager.getInstance(context)
+    private val prefs: SharedPreferences = context.getSharedPreferences("game_prefs", Context.MODE_PRIVATE)
+
+    // Game dimensions
     private val playerWidth = 200f
     private val playerHeight = 250f
     private val objectSize = 120f
 
-    // Игровые параметры
+    // Game parameters
     private var score = 0
     private var lives = 3
     private var gameSpeed = 1f
@@ -66,27 +82,27 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
     private val difficultyInterval = 5000L
     private var gifStartTime: Long = 0
 
-    // Контроль спавна
+    // Spawn control
     private var lastSpawnTime = 0L
     private var spawnInterval = 1000L
     private var lastDifficultyIncreaseTime = 0L
 
-    // Состояние паузы
+    // Game state
     private var isPaused = false
     private var pauseStartTime = 0L
     private var resumeCountdown = 0
     private var pausedBackground: Bitmap? = null
+    private var isRunning = false
+    private var isGameOver = false
 
-    // Игровые объекты
+    // Game objects
     private val playerRect = RectF()
     private val fallingObjects = mutableListOf<FallingObject>()
     private var gameThread: Thread? = null
-    private var isRunning = false
-    private var isGameOver = false
     private val surfaceHolder: SurfaceHolder = holder
     private val paint = Paint().apply { isAntiAlias = true }
 
-    // Графика
+    // Graphics
     private lateinit var backgroundBitmap: Bitmap
     private lateinit var playerGif: Movie
     private lateinit var grapeBitmap: Bitmap
@@ -94,20 +110,22 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
     private lateinit var bananaBitmap: Bitmap
     private lateinit var bombBitmap: Bitmap
     private lateinit var pauseButtonRect: RectF
-    private lateinit var apiService: ApiService
 
-    // Звуки
+    // Sound
     private lateinit var soundPool: SoundPool
     private var fruitSoundId = 0
     private var bombSoundId = 0
     private var loseSoundId = 0
-    private lateinit var backgroundMusic: MediaPlayer
+
+    // API
+    private lateinit var apiService: ApiService
 
     init {
         isFocusable = true
         holder.addCallback(this)
         loadGraphics()
         initSounds()
+        apiService = RetrofitClient.getApiService()
     }
 
     @SuppressLint("ResourceType")
@@ -115,9 +133,9 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
         try {
             backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.fon_ft)
 
-            val inputStream: InputStream = resources.openRawResource(R.drawable.personazh_ft)
-            playerGif = Movie.decodeStream(inputStream)
-            inputStream.close()
+            resources.openRawResource(R.drawable.personazh_ft).use { stream ->
+                playerGif = Movie.decodeStream(stream)
+            }
 
             cherryBitmap = BitmapFactory.decodeResource(resources, R.drawable.vishnya_ft)
                 .let { Bitmap.createScaledBitmap(it, objectSize.toInt(), objectSize.toInt(), true) }
@@ -151,15 +169,14 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
         bombSoundId = soundPool.load(context, R.raw.bomba_ft, 1)
         loseSoundId = soundPool.load(context, R.raw.lose_ft, 1)
 
-        backgroundMusic = MediaPlayer.create(context, R.raw.fon_ft)
-        backgroundMusic.isLooping = true
-        backgroundMusic.setVolume(0.5f, 0.5f)
+        if (musicManager.isMusicEnabled()) {
+            musicManager.playGameMusic(R.raw.fon_ft)
+        }
     }
 
     override fun run() {
         gifStartTime = System.currentTimeMillis()
         lastDifficultyIncreaseTime = System.currentTimeMillis()
-        backgroundMusic.start()
 
         while (isRunning) {
             if (!surfaceHolder.surface.isValid) continue
@@ -174,26 +191,15 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
             try {
                 Thread.sleep(16)
             } catch (e: InterruptedException) {
-                e.printStackTrace()
+                Thread.currentThread().interrupt()
+                return
             }
         }
     }
 
     private fun update(currentTime: Long) {
-        // Обработка отсчета возобновления игры
         if (resumeCountdown > 0) {
-            val elapsed = currentTime - pauseStartTime
-            val newCountdown = 3 - elapsed / 1000
-            if (newCountdown.toInt() != resumeCountdown) {
-                resumeCountdown = newCountdown.toInt().coerceAtLeast(0)
-                if (resumeCountdown == 0) {
-                    isPaused = false
-                    pausedBackground = null
-                    backgroundMusic.start() // Добавляем возобновление музыки
-                }
-                // Принудительно запрашиваем перерисовку при изменении счетчика
-                postInvalidate()
-            }
+            handleResumeCountdown(currentTime)
             return
         }
 
@@ -207,6 +213,26 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
             lastSpawnTime = currentTime
         }
 
+        updateFallingObjects()
+    }
+
+    private fun handleResumeCountdown(currentTime: Long) {
+        val elapsed = currentTime - pauseStartTime
+        val newCountdown = 3 - elapsed / 1000
+        if (newCountdown.toInt() != resumeCountdown) {
+            resumeCountdown = newCountdown.toInt().coerceAtLeast(0)
+            if (resumeCountdown == 0) {
+                isPaused = false
+                pausedBackground = null
+                if (musicManager.isMusicEnabled()) {
+                    musicManager.playGameMusic(R.raw.fon_ft)
+                }
+            }
+            postInvalidate()
+        }
+    }
+
+    private fun updateFallingObjects() {
         val iterator = fallingObjects.iterator()
         while (iterator.hasNext()) {
             val obj = iterator.next()
@@ -250,16 +276,9 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
         }
 
         val speed = baseSpeed * gameSpeed
+        val bitmap = getBitmapForType(type)
 
-        val bitmap = when (type) {
-            ObjectType.ВИШНЯ -> cherryBitmap
-            ObjectType.БАНАН -> bananaBitmap
-            ObjectType.ВИНОГРАД -> grapeBitmap
-            ObjectType.БОМБА -> bombBitmap
-        }
-
-        fallingObjects.add(
-            FallingObject(
+        fallingObjects.add(FallingObject(
             x = Random.nextInt(0, width - objectSize.toInt()).toFloat(),
             y = -objectSize,
             width = objectSize,
@@ -267,113 +286,143 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
             speed = speed.toFloat(),
             type = type,
             bitmap = bitmap
-        )
-        )
+        ))
+    }
+
+    private fun getBitmapForType(type: ObjectType): Bitmap {
+        return when (type) {
+            ObjectType.ВИШНЯ -> cherryBitmap
+            ObjectType.БАНАН -> bananaBitmap
+            ObjectType.ВИНОГРАД -> grapeBitmap
+            ObjectType.БОМБА -> bombBitmap
+        }
     }
 
     private fun handleCollision(type: ObjectType) {
         score = (score + type.score).coerceAtLeast(0)
-        when {
-            type.score > 0 -> {
-                soundPool.play(fruitSoundId, 1.0f, 1.0f, 0, 0, 1.0f)
-            }
-            else -> {
-                lives--
+        if (type.score < 0) {
+            lives--
+            if (musicManager.areSoundsEnabled()) {
                 soundPool.play(bombSoundId, 1.0f, 1.0f, 0, 0, 1.0f)
-                if (lives <= 0) {
-                    isGameOver = true
-                    soundPool.play(loseSoundId, 1.0f, 1.0f, 0, 0, 1.0f)
-                    backgroundMusic.pause()
-                    showGameOver()
+            }
+            if (lives <= 0) {
+                endGame()
+            }
+        } else if (musicManager.areSoundsEnabled()) {
+            soundPool.play(fruitSoundId, 1.0f, 1.0f, 0, 0, 1.0f)
+        }
+    }
+
+    private fun endGame() {
+        isGameOver = true
+        if (musicManager.areSoundsEnabled()) {
+            soundPool.play(loseSoundId, 1.0f, 1.0f, 0, 0, 1.0f)
+        }
+        musicManager.pauseGameMusic()
+        showGameOver()
+    }
+
+    private fun drawFrame() {
+        val canvas = surfaceHolder.lockCanvas() ?: return
+
+        try {
+            synchronized(surfaceHolder) {
+                drawBackground(canvas)
+
+                if (!isPaused || resumeCountdown > 0) {
+                    drawFallingObjects(canvas)
+                    drawPlayer(canvas)
                 }
+
+                drawUI(canvas)
+                drawGameStateOverlays(canvas)
+            }
+        } finally {
+            surfaceHolder.unlockCanvasAndPost(canvas)
+        }
+    }
+
+    private fun drawBackground(canvas: Canvas) {
+        if (isPaused && pausedBackground != null) {
+            canvas.drawBitmap(pausedBackground!!, 0f, 0f, paint)
+        } else {
+            canvas.drawBitmap(backgroundBitmap, null, Rect(0, 0, width, height), paint)
+
+            if (isPaused && pausedBackground == null) {
+                savePausedBackground()
             }
         }
     }
 
-    private fun drawFrame() {
-        val canvas = surfaceHolder.lockCanvas()
-        try {
-            synchronized(surfaceHolder) {
-                canvas.drawColor(Color.BLACK)
-
-                if (isPaused && pausedBackground != null) {
-                    // Рисуем замороженный фон при паузе
-                    canvas.drawBitmap(pausedBackground!!, 0f, 0f, paint)
-                } else {
-                    // Рисуем обычный фон
-                    canvas.drawBitmap(backgroundBitmap, null, Rect(0, 0, width, height), paint)
-
-                    // Сохраняем текущий фон для паузы
-                    if (isPaused && pausedBackground == null) {
-                        pausedBackground = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                        val tempCanvas = Canvas(pausedBackground!!)
-                        tempCanvas.drawBitmap(backgroundBitmap, null, Rect(0, 0, width, height), paint)
-                        for (obj in fallingObjects) {
-                            tempCanvas.drawBitmap(obj.bitmap, obj.rect.left, obj.rect.top, paint)
-                        }
-                        tempCanvas.translate(playerRect.left, playerRect.top)
-                        tempCanvas.scale(
-                            playerRect.width() / playerGif.width(),
-                            playerRect.height() / playerGif.height()
-                        )
-                        playerGif.setTime((System.currentTimeMillis() - gifStartTime).toInt() % playerGif.duration())
-                        playerGif.draw(tempCanvas, 0f, 0f)
-                    }
-                }
-
-                if (!isPaused || resumeCountdown > 0) {
-                    // Рисуем движущиеся объекты только если не на паузе или во время отсчета
-                    for (obj in fallingObjects) {
-                        canvas.drawBitmap(obj.bitmap, obj.rect.left, obj.rect.top, paint)
-                    }
-
-                    val now = System.currentTimeMillis()
-                    playerGif.setTime((now - gifStartTime).toInt() % playerGif.duration())
-                    canvas.save()
-                    canvas.translate(playerRect.left, playerRect.top)
-                    canvas.scale(
-                        playerRect.width() / playerGif.width(),
-                        playerRect.height() / playerGif.height()
-                    )
-                    playerGif.draw(canvas, 0f, 0f)
-                    canvas.restore()
-                }
-
-                // Рисуем кнопку паузы
-                pauseButtonRect = RectF(30f, 30f, 130f, 130f)
-                paint.color = Color.argb(150, 100, 100, 100)
-                canvas.drawRoundRect(pauseButtonRect, 20f, 20f, paint)
-                paint.color = Color.WHITE
-                paint.textSize = 60f
-                canvas.drawText("II", pauseButtonRect.left + 35f, pauseButtonRect.top + 80f, paint)
-
-                // Рисуем счет очков ниже кнопки паузы
-                paint.color = Color.WHITE
-                paint.textSize = 50f
-                canvas.drawText("Очки: $score", 30f, 180f, paint)
-                canvas.drawText("Жизни: $lives", width - 250f, 80f, paint)
-
-                if (isGameOver) {
-                    paint.color = Color.RED
-                    paint.textSize = 100f
-                    val text = "ИГРА ОКОНЧЕНА"
-                    val textWidth = paint.measureText(text)
-                    canvas.drawText(text, width / 2f - textWidth / 2, height / 2f, paint)
-                }
-
-                if (isPaused && resumeCountdown > 0) {
-                    paint.color = Color.argb(180, 0, 0, 0)
-                    canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
-
-                    paint.color = Color.WHITE
-                    paint.textSize = 150f
-                    val countdownText = resumeCountdown.toString()
-                    val textWidth = paint.measureText(countdownText)
-                    canvas.drawText(countdownText, width / 2f - textWidth / 2, height / 2f, paint)
-                }
+    private fun savePausedBackground() {
+        pausedBackground = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
+            val tempCanvas = Canvas(this)
+            tempCanvas.drawBitmap(backgroundBitmap, null, Rect(0, 0, width, height), paint)
+            fallingObjects.forEach { obj ->
+                tempCanvas.drawBitmap(obj.bitmap, obj.rect.left, obj.rect.top, paint)
             }
-        } finally {
-            surfaceHolder.unlockCanvasAndPost(canvas)
+            tempCanvas.translate(playerRect.left, playerRect.top)
+            tempCanvas.scale(
+                playerRect.width() / playerGif.width(),
+                playerRect.height() / playerGif.height()
+            )
+            playerGif.setTime((System.currentTimeMillis() - gifStartTime).toInt() % playerGif.duration())
+            playerGif.draw(tempCanvas, 0f, 0f)
+        }
+    }
+
+    private fun drawFallingObjects(canvas: Canvas) {
+        fallingObjects.forEach { obj ->
+            canvas.drawBitmap(obj.bitmap, obj.rect.left, obj.rect.top, paint)
+        }
+    }
+
+    private fun drawPlayer(canvas: Canvas) {
+        playerGif.setTime((System.currentTimeMillis() - gifStartTime).toInt() % playerGif.duration())
+        canvas.save()
+        canvas.translate(playerRect.left, playerRect.top)
+        canvas.scale(
+            playerRect.width() / playerGif.width(),
+            playerRect.height() / playerGif.height()
+        )
+        playerGif.draw(canvas, 0f, 0f)
+        canvas.restore()
+    }
+
+    private fun drawUI(canvas: Canvas) {
+        // Pause button
+        pauseButtonRect = RectF(30f, 30f, 130f, 130f)
+        paint.color = Color.argb(150, 100, 100, 100)
+        canvas.drawRoundRect(pauseButtonRect, 20f, 20f, paint)
+        paint.color = Color.WHITE
+        paint.textSize = 60f
+        canvas.drawText("II", pauseButtonRect.left + 35f, pauseButtonRect.top + 80f, paint)
+
+        // Score and lives
+        paint.color = Color.WHITE
+        paint.textSize = 50f
+        canvas.drawText("Очки: $score", 30f, 180f, paint)
+        canvas.drawText("Жизни: $lives", width - 250f, 80f, paint)
+    }
+
+    private fun drawGameStateOverlays(canvas: Canvas) {
+        if (isGameOver) {
+            paint.color = Color.RED
+            paint.textSize = 100f
+            val text = "ИГРА ОКОНЧЕНА"
+            val textWidth = paint.measureText(text)
+            canvas.drawText(text, width / 2f - textWidth / 2, height / 2f, paint)
+        }
+
+        if (isPaused && resumeCountdown > 0) {
+            paint.color = Color.argb(180, 0, 0, 0)
+            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+
+            paint.color = Color.WHITE
+            paint.textSize = 150f
+            val countdownText = resumeCountdown.toString()
+            val textWidth = paint.measureText(countdownText)
+            canvas.drawText(countdownText, width / 2f - textWidth / 2, height / 2f, paint)
         }
     }
 
@@ -387,146 +436,136 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
 
         if (!isRunning) {
             isRunning = true
-            gameThread = Thread(this)
-            gameThread?.start()
+            gameThread = Thread(this).apply { start() }
         }
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        stopGame()
+    override fun surfaceDestroyed(holder: SurfaceHolder) = stopGame()
+
+    fun pauseGame() {
+        isPaused = true
+        musicManager.pauseGameMusic()
+        showPauseMenu()
+    }
+
+    fun resumeGame() {
+        if (!isPaused && !isGameOver && musicManager.isMusicEnabled()) {
+            musicManager.playGameMusic(R.raw.fon_ft)
+        }
     }
 
     private fun showPauseMenu() {
         (context as FruitTakerActivity).runOnUiThread {
-            val layout = LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(50, 50, 50, 50)
-                setBackgroundColor(Color.argb(220, 40, 40, 40))
-
-                val title = TextView(context).apply {
-                    text = "ПАУЗА"
-                    setTextColor(Color.YELLOW)
-                    textSize = 28f
-                    gravity = android.view.Gravity.CENTER
-                    setPadding(0, 0, 0, 30)
-                }
-                addView(title)
-
-                val scoreText = TextView(context).apply {
-                    text = "Ваш счет: $score"
-                    setTextColor(Color.WHITE)
-                    textSize = 24f
-                    gravity = android.view.Gravity.CENTER
-                }
-                addView(scoreText)
-            }
-
             AlertDialog.Builder(context)
-                .setView(layout)
-                .setPositiveButton("Вернуться") { _, _ ->
-                    resumeAfterDelay()
-                }
-                .setNegativeButton("В меню") { _, _ ->
-                    apiService = RetrofitClient.getApiService()
-                    apiService.addCash((DataManager.appContext as App).token, UserAddCashDTO(score, false)).enqueue(
-                        object : Callback<Void> {
-                            override fun onResponse(call: Call<Void>, response: Response<Void>) {}
-                            override fun onFailure(call: Call<Void>, t: Throwable) {}
-                        }
-                    )
-                    context.startActivity(Intent(DataManager.appContext, MainGameScreen::class.java))
-                }
+                .setView(createPauseMenuView())
+                .setPositiveButton("Вернуться") { _, _ -> resumeAfterDelay() }
+                .setNegativeButton("В меню") { _, _ -> exitToMenu() }
                 .setCancelable(false)
                 .create()
-                .also { dialog ->
-                    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-                    dialog.show()
-
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.apply {
-                        setTextColor(Color.WHITE)
-                        setBackgroundColor(Color.argb(100, 0, 150, 0))
-                    }
-                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.apply {
-                        setTextColor(Color.WHITE)
-                        setBackgroundColor(Color.argb(100, 150, 0, 0))
-                    }
+                .apply {
+                    window?.setBackgroundDrawableResource(android.R.color.transparent)
+                    show()
+                    styleDialogButtons(this)
                 }
+        }
+    }
+
+    private fun createPauseMenuView(): LinearLayout {
+        return LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(50, 50, 50, 50)
+            setBackgroundColor(Color.argb(220, 40, 40, 40))
+
+            addView(TextView(context).apply {
+                text = "ПАУЗА"
+                setTextColor(Color.YELLOW)
+                textSize = 28f
+                gravity = android.view.Gravity.CENTER
+                setPadding(0, 0, 0, 30)
+            })
+
+            addView(TextView(context).apply {
+                text = "Ваш счет: $score"
+                setTextColor(Color.WHITE)
+                textSize = 24f
+                gravity = android.view.Gravity.CENTER
+            })
+        }
+    }
+
+    private fun styleDialogButtons(dialog: AlertDialog) {
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.apply {
+            setTextColor(Color.WHITE)
+            setBackgroundColor(Color.argb(100, 0, 150, 0))
+        }
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.apply {
+            setTextColor(Color.WHITE)
+            setBackgroundColor(Color.argb(100, 150, 0, 0))
         }
     }
 
     private fun resumeAfterDelay() {
         isPaused = true
-        postDelayed({
-            isPaused = false
-            backgroundMusic.start()
-        }, 2000) // 2 секунды задержки
+        pauseStartTime = System.currentTimeMillis()
+        resumeCountdown = 3
+        postInvalidate()
+    }
+
+    private fun exitToMenu() {
+        submitScore()
+        context.startActivity(Intent(context, MainGameScreen::class.java))
     }
 
     private fun showGameOver() {
         (context as FruitTakerActivity).runOnUiThread {
-            val layout = LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(50, 50, 50, 50)
-                setBackgroundColor(Color.argb(220, 40, 40, 40))
-
-                val title = TextView(context).apply {
-                    text = "ИГРА ОКОНЧЕНА"
-                    setTextColor(Color.RED)
-                    textSize = 28f
-                    gravity = android.view.Gravity.CENTER
-                    setPadding(0, 0, 0, 30)
-                }
-                addView(title)
-
-                val scoreText = TextView(context).apply {
-                    text = "Ваш счет: $score"
-                    setTextColor(Color.WHITE)
-                    textSize = 24f
-                    gravity = android.view.Gravity.CENTER
-                }
-                addView(scoreText)
-            }
-            apiService = RetrofitClient.getApiService()
-            apiService.addCash((DataManager.appContext as App).token, UserAddCashDTO(score, false)).enqueue(
-                object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {}
-                    override fun onFailure(call: Call<Void>, t: Throwable) {}
-                }
-            )
-            apiService.setState((DataManager.appContext as App).token, UserSetStateDTO("happiness", 10)).enqueue(
-                object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {}
-                    override fun onFailure(call: Call<Void>, t: Throwable) {}
-                }
-            )
-
-
             AlertDialog.Builder(context)
-                .setView(layout)
-                .setPositiveButton("Заново") { _, _ ->
-                    resetGame()
-                    backgroundMusic.start()
-                }
-                .setNegativeButton("В меню") { _, _ ->
-                    context.startActivity(Intent(context, MainGameScreen::class.java))
-                }
+                .setView(createGameOverView())
+                .setPositiveButton("Заново") { _, _ -> resetGame() }
+                .setNegativeButton("В меню") { _, _ -> exitToMenu() }
                 .setCancelable(false)
                 .create()
-                .also { dialog ->
-                    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-                    dialog.show()
-
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.apply {
-                        setTextColor(Color.WHITE)
-                        setBackgroundColor(Color.argb(100, 0, 150, 0))
-                    }
-                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.apply {
-                        setTextColor(Color.WHITE)
-                        setBackgroundColor(Color.argb(100, 150, 0, 0))
-                    }
+                .apply {
+                    window?.setBackgroundDrawableResource(android.R.color.transparent)
+                    show()
+                    styleDialogButtons(this)
                 }
         }
+    }
+
+    private fun createGameOverView(): LinearLayout {
+        return LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(50, 50, 50, 50)
+            setBackgroundColor(Color.argb(220, 40, 40, 40))
+
+            addView(TextView(context).apply {
+                text = "ИГРА ОКОНЧЕНА"
+                setTextColor(Color.RED)
+                textSize = 28f
+                gravity = android.view.Gravity.CENTER
+                setPadding(0, 0, 0, 30)
+            })
+
+            addView(TextView(context).apply {
+                text = "Ваш счет: $score"
+                setTextColor(Color.WHITE)
+                textSize = 24f
+                gravity = android.view.Gravity.CENTER
+            })
+        }
+    }
+
+    private fun submitScore() {
+        val token = (DataManager.appContext as App).token
+        apiService.addCash(token, UserAddCashDTO(score, false)).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {}
+            override fun onFailure(call: Call<Void>, t: Throwable) {}
+        })
+        apiService.setState(token, UserSetStateDTO("happiness", 10)).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {}
+            override fun onFailure(call: Call<Void>, t: Throwable) {}
+        })
     }
 
     private fun resetGame() {
@@ -542,27 +581,25 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
         pausedBackground = null
         gifStartTime = System.currentTimeMillis()
         lastDifficultyIncreaseTime = System.currentTimeMillis()
-        backgroundMusic.start()
+        if (musicManager.isMusicEnabled()) {
+            musicManager.playGameMusic(R.raw.fon_ft)
+        }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isGameOver) return false
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (pauseButtonRect.contains(event.x, event.y) && !isPaused) {
-                    isPaused = true
-                    backgroundMusic.pause()
-                    showPauseMenu()
+                    pauseGame()
                     return true
                 }
             }
             MotionEvent.ACTION_MOVE -> {
                 if (!isPaused) {
-                    playerRect.offsetTo(event.x - playerRect.width() / 2, playerRect.top)
-
-                    if (playerRect.left < 0) playerRect.offsetTo(0f, playerRect.top)
-                    if (playerRect.right > width) playerRect.offsetTo(width - playerRect.width(), playerRect.top)
+                    updatePlayerPosition(event.x)
                     return true
                 }
             }
@@ -570,11 +607,30 @@ class GameViewFT(context: Context) : SurfaceView(context), Runnable, SurfaceHold
         return true
     }
 
+    private fun updatePlayerPosition(touchX: Float) {
+        playerRect.offsetTo(touchX - playerRect.width() / 2, playerRect.top)
+
+        when {
+            playerRect.left < 0 -> playerRect.offsetTo(0f, playerRect.top)
+            playerRect.right > width -> playerRect.offsetTo(width - playerRect.width(), playerRect.top)
+        }
+    }
+
     private fun stopGame() {
         isRunning = false
         gameThread?.join()
+        releaseResources()
+    }
+
+    private fun releaseResources() {
         soundPool.release()
-        backgroundMusic.release()
+        musicManager.stopGameMusic()
+        backgroundBitmap.recycle()
+        cherryBitmap.recycle()
+        bananaBitmap.recycle()
+        grapeBitmap.recycle()
+        bombBitmap.recycle()
+        pausedBackground?.recycle()
     }
 }
 
