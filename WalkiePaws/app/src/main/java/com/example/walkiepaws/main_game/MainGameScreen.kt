@@ -10,14 +10,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.walkiepaws.R
 import com.example.walkiepaws.backend.ApiService
@@ -49,6 +53,8 @@ class MainGameScreen : AppCompatActivity() {
         override fun run() {
             DataManager.updateCharList()
             DataManager.initWeekSteps()
+            DataManager.updateRoomsTemplates()
+            DataManager.initItems()
             textSteps = findViewById(R.id.number_of_steps)
             apiService.getState("${(applicationContext as App).token}")
                 .enqueue(object : Callback<UserStateDTO> {
@@ -121,6 +127,12 @@ class MainGameScreen : AppCompatActivity() {
 
         viewPager = findViewById(R.id.viewPager)
         viewPager.adapter = ScreenSlidePagerAdapter(this)
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
+
         val sharedPreferences = applicationContext.getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
         val isSleep = sharedPreferences.getBoolean("is_sleeping", false)
         if (isSleep) {

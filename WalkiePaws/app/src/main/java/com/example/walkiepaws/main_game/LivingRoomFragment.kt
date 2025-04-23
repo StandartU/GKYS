@@ -2,11 +2,14 @@ package com.example.walkiepaws.main_game
 
 import android.content.Intent
 import android.graphics.ImageDecoder
+import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedImageDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,8 +34,7 @@ class LivingRoomFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        DataManager.updateRoomsTemplates()
-        handler.postDelayed(updateRoom, 1000)
+        handler.post(updateRoom)
         val view = inflater.inflate(R.layout.activity_living_game_screen, container, false)
 
         initViews(view)
@@ -93,6 +95,25 @@ class LivingRoomFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
+    fun playLoopedAnimations(drawables: List<AnimatedImageDrawable>) {
+        drawables.forEach { it.clearAnimationCallbacks() }
+
+        drawables.firstOrNull()?.let { mainDrawable ->
+            mainDrawable.registerAnimationCallback(object : Animatable2.AnimationCallback() {
+                override fun onAnimationEnd(drawable: Drawable?) {
+                    drawables.forEach {
+                        it.stop()
+                        it.start()
+                    }
+                }
+            })
+        }
+
+        drawables.forEach { it.start() }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.P)
     fun showCharacterSmoothly() {
         val items = DataManager.getCharacterWithItems()
 
@@ -103,11 +124,14 @@ class LivingRoomFragment : Fragment() {
             items.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
         )
 
-        drawables.forEach { it.start() }
+        playLoopedAnimations(drawables)
     }
 
-    val updateRoom = Runnable {
-        mainLayout.setBackgroundResource(DataManager.rooms["living"]?.get(0) ?: 0)
+    val updateRoom = object : Runnable {
+        override fun run() {
+            mainLayout.setBackgroundResource(DataManager.rooms["living"]?.get(0) ?: 0)
+            handler.postDelayed(this, 1000)
+        }
     }
 
     private fun openShop() {

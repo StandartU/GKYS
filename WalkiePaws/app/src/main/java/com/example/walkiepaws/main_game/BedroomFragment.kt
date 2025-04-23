@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.ImageDecoder
+import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedImageDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -85,8 +87,7 @@ class BedroomFragment : Fragment() {
         DataManager.updateRoomsTemplates()
         val sharedPreferences = requireContext().getSharedPreferences("game_preferences", Context.MODE_PRIVATE)
         isSleeping = sharedPreferences.getBoolean("is_sleeping", false)
-        Log.d("PUTEDDD IN", isSleeping.toString())
-        handler.postDelayed(updateRoom, 1000)
+        handler.post(updateRoom)
         val view = inflater.inflate(R.layout.activity_bedroom_game_screen, container, false)
 
         initViews(view)
@@ -135,6 +136,24 @@ class BedroomFragment : Fragment() {
         animateCharNotSleep(items)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
+    fun playLoopedAnimations(drawables: List<AnimatedImageDrawable>) {
+        drawables.forEach { it.clearAnimationCallbacks() }
+
+        drawables.firstOrNull()?.let { mainDrawable ->
+            mainDrawable.registerAnimationCallback(object : Animatable2.AnimationCallback() {
+                override fun onAnimationEnd(drawable: Drawable?) {
+                    drawables.forEach {
+                        it.stop()
+                        it.start()
+                    }
+                }
+            })
+        }
+
+        drawables.forEach { it.start() }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun animateCharNotSleep(items: List<Int>) {
@@ -146,7 +165,7 @@ class BedroomFragment : Fragment() {
             items.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
         )
 
-        drawables.forEach { it.start() }
+        playLoopedAnimations(drawables)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -227,10 +246,12 @@ class BedroomFragment : Fragment() {
         else return null
     }
 
-
-    private val updateRoom = Runnable {
-        imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)
-        mainLayout.setBackgroundResource(DataManager.rooms["bedroom"]?.getOrNull(0) ?: 0)
+    val updateRoom = object : Runnable {
+        override fun run() {
+            imageBlanket.setImageResource(DataManager.rooms["bedroom"]?.getOrNull(1) ?: 0)
+            mainLayout.setBackgroundResource(DataManager.rooms["bedroom"]?.getOrNull(0) ?: 0)
+            handler.postDelayed(this, 1000)
+        }
     }
 
     private fun openShop() {

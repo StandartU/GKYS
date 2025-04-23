@@ -104,7 +104,7 @@ object DataManager {
         { appContext.startActivity(Intent(appContext, CheetahJumping::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })}
     )
 
-    val rooms: MutableMap<String, List<Int>> = mutableMapOf()
+    var rooms: MutableMap<String, List<Int>> = mutableMapOf()
 
     private val sleepingCharacters = listOf(
         R.drawable.gepard_sleep,
@@ -185,11 +185,10 @@ object DataManager {
         })
     }
 
-    private fun initPetItems() {
+    fun initPetItems() {
         petItems = mutableListOf()
         apiService.getPetItems((appContext as App).token).enqueue(object : Callback<GetPetItemDTO> {
             override fun onResponse(call: Call<GetPetItemDTO>, response: Response<GetPetItemDTO>) {
-                Log.d("WEAR", response.code().toString())
                 response.body()?.petItemModels?.forEach{
                     petItem ->
                     petItems.add(petItem)

@@ -2,7 +2,9 @@ package com.example.walkiepaws.main_game
 
 import android.content.Intent
 import android.graphics.ImageDecoder
+import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedImageDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -59,7 +61,7 @@ class KitchenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         DataManager.updateRoomsTemplates()
-        handler.postDelayed(updateRoom, 1000)
+        handler.post(updateRoom)
         val view = inflater.inflate(R.layout.activity_kitchen_game_screen, container, false)
 
         initViews(view)
@@ -145,8 +147,8 @@ class KitchenFragment : Fragment() {
         MusicManager.getInstance(requireContext()).playEatSound()
 
         val message = when (random.nextInt(3)) {
-            0 -> "${foodItem.name} съедено! +${foodItem.healthValue} HP"
-            else -> "Ням-ням! +${foodItem.healthValue} HP"
+            0 -> "${foodItem.name} съедено!"
+            else -> "Ням-ням!"
         }
         lifecycleScope.launch {
             showEatingChar()
@@ -211,12 +213,35 @@ class KitchenFragment : Fragment() {
     fun showCharacterSmoothly() {
         val items = DataManager.getCharacterWithItems()
 
+        characterImage.setImageDrawable(null)
+        hatImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        accessoryImage.setImageDrawable(null)
+
         val drawables = listOfNotNull(
             items.getOrNull(0)?.let { animateAppearance(characterImage, it) },
             items.getOrNull(1)?.let { animateAppearance(hatImage, it) },
             items.getOrNull(2)?.let { animateAppearance(topImage, it) },
             items.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
         )
+
+        playLoopedAnimations(drawables)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    fun playLoopedAnimations(drawables: List<AnimatedImageDrawable>) {
+        drawables.forEach { it.clearAnimationCallbacks() }
+
+        drawables.firstOrNull()?.let { mainDrawable ->
+            mainDrawable.registerAnimationCallback(object : Animatable2.AnimationCallback() {
+                override fun onAnimationEnd(drawable: Drawable?) {
+                    drawables.forEach {
+                        it.stop()
+                        it.start()
+                    }
+                }
+            })
+        }
 
         drawables.forEach { it.start() }
     }
@@ -225,6 +250,11 @@ class KitchenFragment : Fragment() {
     fun showEatingChar() {
         val eatItems = DataManager.getCharacterEating()
 
+        characterImage.setImageDrawable(null)
+        hatImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        accessoryImage.setImageDrawable(null)
+
         val drawables = listOfNotNull(
             eatItems.getOrNull(0)?.let { animateAppearance(characterImage, it) },
             eatItems.getOrNull(1)?.let { animateAppearance(hatImage, it) },
@@ -232,14 +262,18 @@ class KitchenFragment : Fragment() {
             eatItems.getOrNull(3)?.let { animateAppearance(accessoryImage, it) }
         )
 
-        drawables.forEach { it.start() }
+        playLoopedAnimations(drawables)
     }
 
-    private val updateRoom = Runnable {
-        foodItems = DataManager.currentFoodItems
-        imageTable.setImageResource(DataManager.rooms["kitchen"]?.get(1) ?: 0)
-        mainLayout.setBackgroundResource(DataManager.rooms["kitchen"]?.get(0) ?: 0)
+    val updateRoom = object : Runnable {
+        override fun run() {
+            foodItems = DataManager.currentFoodItems
+            imageTable.setImageResource(DataManager.rooms["kitchen"]?.get(1) ?: 0)
+            mainLayout.setBackgroundResource(DataManager.rooms["kitchen"]?.get(0) ?: 0)
+            handler.postDelayed(this, 1000)
+        }
     }
+
 
     private fun openShop() {
         startActivity(Intent(activity, ShopActivity::class.java))

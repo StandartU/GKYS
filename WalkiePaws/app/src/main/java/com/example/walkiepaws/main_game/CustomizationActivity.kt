@@ -1,6 +1,8 @@
 package com.example.walkiepaws.main_game
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -53,16 +55,21 @@ class CustomizationActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        DataManager.initItems()
     }
 
     override fun onResume() {
         super.onResume()
+        hatsItems = DataManager.hatsItems
+        topsItems = DataManager.topsItems
+        accessoriesItems = DataManager.accessoriesItems
         MusicManager.getInstance(this).play()
     }
 
     override fun onPause() {
         super.onPause()
+        hatsItems = mutableListOf()
+        topsItems = mutableListOf()
+        accessoriesItems = mutableListOf()
         if (!isChangingConfigurations) {
             MusicManager.getInstance(this).pause()
         }
@@ -122,6 +129,9 @@ class CustomizationActivity : AppCompatActivity() {
 
     private fun loadCategory(categoryIndex: Int) {
         itemsContainer.removeAllViews()
+        hatsItems = DataManager.hatsItems
+        topsItems = DataManager.topsItems
+        accessoriesItems = DataManager.accessoriesItems
 
         when (categoryIndex) {
             0 -> displayItems(hatsItems)
@@ -159,7 +169,7 @@ class CustomizationActivity : AppCompatActivity() {
             0 -> {
                 if (DataManager.currentHat?.name == item.name) {
                     DataManager.currentHat = null
-                    Toast.makeText(this, "Шапка снята", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "${item.name} снят(а)", Toast.LENGTH_SHORT).show()
                 } else {
                     val res = DataManager.getItemToChar(item)
                     if (res != null) {
@@ -171,7 +181,7 @@ class CustomizationActivity : AppCompatActivity() {
             1 -> {
                 if (DataManager.currentTop?.name == item.name) {
                     DataManager.currentTop = null
-                    Toast.makeText(this, "Одежда снята", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "${item.name} снят(а)", Toast.LENGTH_SHORT).show()
                 } else {
                     val res = DataManager.getItemToChar(item)
                     if (res != null) {
@@ -183,7 +193,7 @@ class CustomizationActivity : AppCompatActivity() {
             2 -> {
                 if (DataManager.currentAccessory?.name == item.name) {
                     DataManager.currentAccessory = null
-                    Toast.makeText(this, "Аксессуар снят", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "${item.name} снят(а)", Toast.LENGTH_SHORT).show()
                 } else {
                     val res = DataManager.getItemToChar(item)
                     if (res != null) {

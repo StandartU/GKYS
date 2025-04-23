@@ -217,13 +217,14 @@ public class StepService extends Service implements SensorEventListener {
                 // !!! ВОЗВРАТ В ФАЗУ ПИКА !!!
                 isPeakDetectionPhase = true;
                 if (stepCount % 25 == 0) {
-                    stepCount = 0;
                     apiService.addCash(
                             ((App) getApplication().getApplicationContext()).getToken(),
                             new UserAddCashDTO(stepCount, true)
                     ).enqueue(new Callback<Void>() {
                         @Override
-                        public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {}
+                        public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                            if (response.isSuccessful()) { stepCount = 0; }
+                        }
 
                         @Override
                         public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}

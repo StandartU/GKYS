@@ -180,6 +180,8 @@ class ShopActivity : AppCompatActivity() {
 
                         override fun onFailure(call: Call<Void>, t: Throwable) {}
                     })
+                DataManager.initItems()
+                DataManager.initPetItems()
             }
             is MarketModel -> {
                 DataManager.currentFoodItems.add(DataManager.FoodItem(item.name, item.price, item.imageRes, item.dto.id))
@@ -203,6 +205,7 @@ class ShopActivity : AppCompatActivity() {
 
                         override fun onFailure(call: Call<Void>, t: Throwable) {}
                     })
+                DataManager.updateRoomsTemplates()
             }
         }
         Toast.makeText(this, "Выбранно: ${item.name}", Toast.LENGTH_SHORT).show()
