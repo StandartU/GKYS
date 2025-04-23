@@ -189,6 +189,10 @@ class KitchenFragment : Fragment() {
     }
 
     override fun onPause() {
+        characterImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        accessoryImage.setImageDrawable(null)
+        hatImage.setImageDrawable(null)
         super.onPause()
 
     }

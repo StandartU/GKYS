@@ -91,8 +91,6 @@ public class StepService extends Service implements SensorEventListener {
 
         resetAlgorithmState();
 
-
-
         startForeground(NOTIFICATION_ID, createNotification("Служба шагомера запущена"));
         Log.i(TAG, "onCreate: Service started in foreground.");
     }
@@ -216,6 +214,7 @@ public class StepService extends Service implements SensorEventListener {
                 }
                 // !!! ВОЗВРАТ В ФАЗУ ПИКА !!!
                 isPeakDetectionPhase = true;
+                Log.d("StepDetect", String.valueOf(stepCount));
                 if (stepCount % 25 == 0) {
                     apiService.addCash(
                             ((App) getApplication().getApplicationContext()).getToken(),
@@ -259,22 +258,30 @@ public class StepService extends Service implements SensorEventListener {
 
 
     // --- Методы для Foreground Service (createNotification, updateNotification, createNotificationChannel) ---
-    private Notification createNotification(String text) {
-        createNotificationChannel();
-        // !!! ВАЖНО: Замени MainActivity.class, если твоя активность называется иначе !!!
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    private Notification createNotification(String content) {
+        String channelId = "step_channel_id";
+        String channelName = "Step Counter Service";
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Шагомер Активен")
-                .setContentText(text)
-                // !!! ВАЖНО: Убедись, что иконка @mipmap/ic_launcher существует или замени ее !!!
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(pendingIntent)
-                .setOnlyAlertOnce(true)
-                .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
+        // Создаём канал уведомлений (только для Android 8.0+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setContentTitle("WalkiePaws")
+                .setContentText(content)
+                .setSmallIcon(R.drawable.icon_coin)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setOngoing(true);
 
         return builder.build();
     }

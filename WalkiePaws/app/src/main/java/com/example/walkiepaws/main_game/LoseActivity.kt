@@ -97,6 +97,7 @@ class LoseActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
             == PackageManager.PERMISSION_GRANTED
         ) {
+
             startStepServiceActual()
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -118,21 +119,12 @@ class LoseActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestActivityRecognitionPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                ACTIVITY_RECOGNITION_PERMISSION_CODE
-            )
-            startStepServiceActual()
-        } else {
-            onRequestPermissionsResult(
-                ACTIVITY_RECOGNITION_PERMISSION_CODE,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                intArrayOf(PackageManager.PERMISSION_GRANTED)
-            )
-            startStepServiceActual()
-        }
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+            ACTIVITY_RECOGNITION_PERMISSION_CODE
+        )
+        startStepServiceActual()
     }
 
     private fun startStepServiceActual() {
@@ -156,6 +148,7 @@ class LoseActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startStepServiceActual()
             } else {
+
                 Toast.makeText(
                     this,
                     "Без разрешения подсчет шагов невозможен",

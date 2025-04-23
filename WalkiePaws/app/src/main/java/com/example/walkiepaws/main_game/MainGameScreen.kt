@@ -114,6 +114,7 @@ class MainGameScreen : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate called")
         tryStartStepService()
         DataManager.updateCharList()
         super.onCreate(savedInstanceState)
@@ -209,9 +210,13 @@ class MainGameScreen : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun tryStartStepService() {
+        Log.d(TAG, "tryStartStepService() called")
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
             == PackageManager.PERMISSION_GRANTED
         ) {
+            val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+            Log.d(TAG, "Permission check result: $permissionCheck")
+
             Log.d(TAG, "ACTIVITY_RECOGNITION permission already granted.")
             startStepServiceActual()
         } else {
@@ -236,21 +241,12 @@ class MainGameScreen : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestActivityRecognitionPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                ACTIVITY_RECOGNITION_PERMISSION_CODE
-            )
-            startStepServiceActual()
-        } else {
-            onRequestPermissionsResult(
-                ACTIVITY_RECOGNITION_PERMISSION_CODE,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                intArrayOf(PackageManager.PERMISSION_GRANTED)
-            )
-            startStepServiceActual()
-        }
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+            ACTIVITY_RECOGNITION_PERMISSION_CODE
+        )
+        startStepServiceActual()
     }
 
     private fun startStepServiceActual() {

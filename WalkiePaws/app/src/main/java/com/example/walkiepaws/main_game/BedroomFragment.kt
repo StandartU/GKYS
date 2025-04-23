@@ -108,6 +108,10 @@ class BedroomFragment : Fragment() {
     // from fragment -> fragment
     override fun onPause() {
         super.onPause()
+        characterImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        accessoryImage.setImageDrawable(null)
+        hatImage.setImageDrawable(null)
         isSleeping = false
 
     }

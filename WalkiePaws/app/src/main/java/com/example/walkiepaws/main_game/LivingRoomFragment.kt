@@ -77,6 +77,10 @@ class LivingRoomFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        characterImage.setImageDrawable(null)
+        topImage.setImageDrawable(null)
+        accessoryImage.setImageDrawable(null)
+        hatImage.setImageDrawable(null)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
