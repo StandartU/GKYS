@@ -55,6 +55,7 @@ class MainGameScreen : AppCompatActivity() {
             DataManager.initWeekSteps()
             DataManager.updateRoomsTemplates()
             DataManager.initItems()
+            DataManager.initMarkets()
             textSteps = findViewById(R.id.number_of_steps)
             apiService.getState("${(applicationContext as App).token}")
                 .enqueue(object : Callback<UserStateDTO> {

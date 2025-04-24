@@ -149,7 +149,7 @@ object DataManager {
         }.start()
     }
 
-    private fun initMarkets() {
+     fun initMarkets() {
         foodItems = emptyList<Item>().toMutableList()
         clothesItems = emptyList<Item>().toMutableList()
         roomsItems = emptyList<Item>().toMutableList()
