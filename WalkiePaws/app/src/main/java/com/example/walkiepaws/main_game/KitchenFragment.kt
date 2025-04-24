@@ -144,23 +144,24 @@ class KitchenFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun useFoodItem(foodItem: DataManager.FoodItem) {
-        MusicManager.getInstance(requireContext()).playEatSound()
-
-        val message = when (random.nextInt(3)) {
-            0 -> "${foodItem.name} съедено!"
-            else -> "Ням-ням!"
-        }
-        lifecycleScope.launch {
-            showEatingChar()
-            delay(3000)
-            showCharacterSmoothly()
-        }
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         RetrofitClient.getApiService().buyState((DataManager.appContext as App).token, MarketBuyDTO(foodItem.healthValue))
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (!response.isSuccessful) {
                         Toast.makeText(requireContext(), "Недостаточно средств", Toast.LENGTH_SHORT).show()
+                    } else {
+                        MusicManager.getInstance(requireContext()).playEatSound()
+
+                        val message = when (random.nextInt(3)) {
+                            0 -> "${foodItem.name} съедено!"
+                            else -> "Ням-ням!"
+                        }
+                        lifecycleScope.launch {
+                            showEatingChar()
+                            delay(3000)
+                            showCharacterSmoothly()
+                        }
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                     }
                 }
 
